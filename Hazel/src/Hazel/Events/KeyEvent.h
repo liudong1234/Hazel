@@ -2,8 +2,6 @@
 
 #include "Event.h"
 
-#include <sstream>
-
 namespace Hazel
 {
 	class HAZEL_API KeyEvent :
@@ -22,6 +20,7 @@ namespace Hazel
 	class HAZEL_API KeyPressEvent :
 		public KeyEvent
 	{
+	public:
 		KeyPressEvent(int keycode, int repeatCount) :
 			KeyEvent(keycode), m_RepeatCount(repeatCount) {}
 

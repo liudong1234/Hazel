@@ -1,4 +1,4 @@
-workspace "Hazel"
+﻿workspace "Hazel"
     architecture "x64"
 
     configurations
@@ -9,6 +9,13 @@ workspace "Hazel"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+-- Include directories relative to root folder(solution directory)
+IncludeDir = {}
+IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
+
+include "Hazel/vendor/GLFW"
+
 project "Hazel"
     location "Hazel"
     kind "SharedLib"
@@ -17,6 +24,9 @@ project "Hazel"
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
     
+    pchheader "hzpch.h"
+    pchsource "Hazel/src/hzpch.cpp"
+
     files
     {
         "%{prj.name}/src/**.h",
@@ -26,7 +36,15 @@ project "Hazel"
     includedirs
     {
         "%{prj.name}/src",
-        "%{prj.name}/vendor/spdlog/include"
+        "%{prj.name}/vendor/spdlog/include",
+        "%{IncludeDir.GLFW}"
+    }
+
+    links
+    {
+        "GLFW",
+        "opengl32.lib",
+        "dwmapi.lib"
     }
 
     filter "system:windows"
@@ -36,13 +54,13 @@ project "Hazel"
 
         defines
         {
-            "HZ_PLATFORM_WINDOWS",
+            "HZ_PLATFORM_WINDOW",
             "HZ_BUILD_DLL",
         }
 
         postbuildcommands
         {
-            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "Sandbox")
+            ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
         }
 
     filter "configurations:Debug"
@@ -89,7 +107,7 @@ project "Sandbox"
 
         defines
         {
-            "HZ_PLATFORM_WINDOWS",
+            "HZ_PLATFORM_WINDOW",
         }
 
     filter "configurations:Debug"

@@ -9,9 +9,6 @@ extern Hazel::Application* Hazel::CreateApplication();
 int main()
 {
 	Hazel::Log::Init();
-	HZ_CORE_WARN("hahah");
-	HZ_INFO("dslfjafas;fj");
-
 	auto app = Hazel::CreateApplication();
 	app->Run();
 	delete app;

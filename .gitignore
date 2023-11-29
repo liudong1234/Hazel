@@ -5,4 +5,4 @@ bin-int/
 
 #File
 *user
-log.*
+*.tlog

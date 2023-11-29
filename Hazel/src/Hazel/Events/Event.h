@@ -1,12 +1,9 @@
 ﻿#pragma once
+#include "hzpch.h"
 #include "Hazel/Core.h"
-#include <string>
-#include <functional>
 
 namespace Hazel
 {
-	//
-
 	enum class EventType
 	{
 		None = 0,
@@ -45,7 +42,7 @@ namespace Hazel
 
 		inline bool IsInCategory(EventCategory category) { return GetCategoryFlags() & category; }
 
-	protected:
+	public:
 		bool m_Handled = false;
 	private:
 
