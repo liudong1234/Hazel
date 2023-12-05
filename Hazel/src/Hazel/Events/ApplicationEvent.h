@@ -1,5 +1,7 @@
 ﻿#pragma
 #include "Event.h"
+#ifndef EVENT_H_H
+#define EVENT_H_H
 
 namespace Hazel
 {
@@ -70,3 +72,5 @@ namespace Hazel
 	};
 
 }
+
+#endif // !EVENTL_H_H
