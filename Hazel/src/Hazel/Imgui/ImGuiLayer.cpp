@@ -3,7 +3,7 @@
 
 #include "Hazel/Application.h"
 #include "imgui.h"
-#include "imgui_impl_opengl3.h"
+#include "platform/OpenGL/ImGuiOpenGLRenderer.h"
 
 //暂时头文件
 #include <glfw/glfw3.h>

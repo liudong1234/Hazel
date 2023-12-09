@@ -1,5 +1,6 @@
 ﻿#include "hzpch.h"
 #include "Application.h"
+#include "Input.h"
 
 #include <glad/glad.h>
 namespace Hazel
@@ -9,7 +10,7 @@ namespace Hazel
 
 	Application::Application()
 	{
-		HZ_CORE_ASSERT(s_Instance, "application already exist! ");
+		HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
 		s_Instance = this;
 		this->m_Windnow = std::unique_ptr<Window>(Window::Create());
 		this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
@@ -23,7 +24,7 @@ namespace Hazel
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
-		HZ_CORE_TRACE("{0}", e);
+		//HZ_CORE_TRACE("{0}", e);
 
 		for (auto it = this->m_LayerStack.end(); it != this->m_LayerStack.begin(); )
 		{
@@ -42,6 +43,7 @@ namespace Hazel
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnUpdate();
 
+			HZ_CORE_TRACE("{0}, {1}", Input::GetMouseX(), Input::GetMouseY());
 			this->m_Windnow->OnUpdate();
 		}
 	}
