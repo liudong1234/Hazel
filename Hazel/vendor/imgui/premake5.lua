@@ -1,6 +1,8 @@
 ﻿project "ImGui"
 	kind "StaticLib"
 	language "C++"
+	cppdialect "C++17"
+	staticruntime "on"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -30,10 +32,13 @@
 		"..\\Glad\\include"
     }
 
-	filter "system:windows"
+	filter {"system:windows"}
 		systemversion "10.0"
-		cppdialect "C++17"
-		staticruntime "On"
 
-	filter {"system:windows", "configurations:Release" }
-		runtime "Release"
+	filter "configurations:Debug"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        runtime "Release"
+        optimize "on"

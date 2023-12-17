@@ -14,10 +14,15 @@ namespace Hazel
 		s_Instance = this;
 		this->m_Windnow = std::unique_ptr<Window>(Window::Create());
 		this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+		//this->m_ImGuiLayer = std::make_unique<ImGuiLayer>();
+		this->m_ImGuiLayer = new ImGuiLayer();
+		PushOverLayer(this->m_ImGuiLayer);
 	}
 
 	Application::~Application()
 	{
+		if (this->m_ImGuiLayer)
+			delete this->m_ImGuiLayer;
 	}
 	void Application::OnEvent(Event& e)
 	{
@@ -43,7 +48,12 @@ namespace Hazel
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnUpdate();
 
-			HZ_CORE_TRACE("{0}, {1}", Input::GetMouseX(), Input::GetMouseY());
+			this->m_ImGuiLayer->Begin();
+			for (Layer* layer : this->m_LayerStack)
+				layer->OnImGuiRender();
+			this->m_ImGuiLayer->End();
+
+			//HZ_CORE_TRACE("{0}, {1}", Input::GetMouseX(), Input::GetMouseY());
 			this->m_Windnow->OnUpdate();
 		}
 	}

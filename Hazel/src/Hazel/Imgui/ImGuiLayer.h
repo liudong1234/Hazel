@@ -1,4 +1,5 @@
-﻿#include "Hazel/Layer.h"
+﻿#pragma once
+#include "Hazel/Layer.h"
 
 #include "Hazel/Events/KeyEvent.h"
 #include "Hazel/Events/MouseEvent.h"
@@ -14,21 +15,25 @@ namespace Hazel
 		ImGuiLayer();
 		~ImGuiLayer();
 
-		void OnAttach() override;
-		void OnDetach() override;
-		void OnUpdate() override;
-		void OnEvent(Event& event) override;
-	private:
-		bool OnMouseButtonPressedEvent(MouseButtonPressEvent& e);
-		bool OnMouseButtonReleaseEvent(MouseButtonReleaseEvent& e);
-		bool OnMouseMovedEvent(MouseMovedEvent& e);
-		bool OnMouseScrolledEvent(MouseScrolledEvent& e);
-		bool OnKeyPressedEvent(KeyPressEvent& e);
-		bool OnKeyReleaseEvent(KeyReleaseEvent& e);
-		bool OnKeyTypeEvent(KeyTypeEvent& e);
-		bool OnWindowResizeEvent(WindowResizeEvent& e);
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		//virtual void OnUpdate() override;
+		virtual void OnImGuiRender() override;
 
-		float m_Time;
+		void Begin();
+		void End();
+
+		//		virtual void OnEvent(Event& event) override;
+	private:
+		/*	bool OnMouseButtonPressedEvent(MouseButtonPressEvent& e);
+			bool OnMouseButtonReleaseEvent(MouseButtonReleaseEvent& e);
+			bool OnMouseMovedEvent(MouseMovedEvent& e);
+			bool OnMouseScrolledEvent(MouseScrolledEvent& e);
+			bool OnKeyPressedEvent(KeyPressEvent& e);
+			bool OnKeyReleaseEvent(KeyReleaseEvent& e);
+			bool OnKeyTypeEvent(KeyTypeEvent& e);
+			bool OnWindowResizeEvent(WindowResizeEvent& e);
+		*/
 
 
 	};
