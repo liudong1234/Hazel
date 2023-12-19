@@ -16,9 +16,9 @@ public:
 
 	void OnUpdate() override
 	{
-		HZ_INFO("EXAMPLE layer: update");
+		//HZ_INFO("EXAMPLE layer: update");
 		if (Hazel::Input::IsKeyPressed(HZ_KEY_TAB))
-			HZ_TRACE("tag is pressed!");
+			HZ_TRACE("tab is pressed!");
 	}
 
 	void OnImGuiRender() override
@@ -30,7 +30,7 @@ public:
 
 	void OnEvent(Hazel::Event& e) override
 	{
-		HZ_TRACE("{0}", e);
+		//HZ_TRACE("{0}", e);
 	}
 
 };

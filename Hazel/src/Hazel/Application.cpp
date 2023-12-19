@@ -5,7 +5,7 @@
 #include <glad/glad.h>
 namespace Hazel
 {
-#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+	#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 	Application* Application::s_Instance = nullptr;
 
 	Application::Application()
@@ -17,6 +17,33 @@ namespace Hazel
 		//this->m_ImGuiLayer = std::make_unique<ImGuiLayer>();
 		this->m_ImGuiLayer = new ImGuiLayer();
 		PushOverLayer(this->m_ImGuiLayer);
+
+
+		glGenVertexArrays(1, &this->m_VertexArray);
+		glBindVertexArray(this->m_VertexArray);
+
+		glGenBuffers(1, &this->m_VertexBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, this->m_VertexBuffer);
+
+		float vertices[] =
+		{
+			-0.5f, 0.0f, 0.0f,
+			0.5f,  0.0f, 0.0f,
+			0.0f,  0.5f, 0.0f
+		};
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		unsigned indices[] =
+		{
+			0, 1, 2
+		};
+		glGenBuffers(1, &this->m_IndexBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->m_IndexBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
+
 	}
 
 	Application::~Application()
@@ -44,6 +71,9 @@ namespace Hazel
 		{
 			glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			glBindVertexArray(this->m_VertexArray);
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnUpdate();

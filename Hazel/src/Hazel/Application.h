@@ -31,6 +31,10 @@ namespace Hazel
 
 		LayerStack m_LayerStack;
 		static Application* s_Instance;
+
+
+		unsigned int m_VertexBuffer, m_VertexArray, m_IndexBuffer;
+
 	};
 
 	Application* CreateApplication();
