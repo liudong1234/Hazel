@@ -44,6 +44,28 @@ namespace Hazel
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);
 
+
+		std::string vertexSrc =
+			R"(
+			#version 330 core
+			layout(location=0) in vec3 a_Position;
+			void main()
+			{
+				gl_Position = vec4(a_Position, 1.0f);
+			}
+		)";
+
+		std::string fragmentSrc =
+			R"(
+			#version 330 core
+			//layout(location=0) out vec3 a_Position;
+			out vec4 color;
+			void main()
+			{
+				color = vec4(0.8f, 0.2f, 0.1f, 1.0f);
+			}
+		)";
+		this->shader.reset(new Shader(vertexSrc, fragmentSrc));
 	}
 
 	Application::~Application()
@@ -72,6 +94,7 @@ namespace Hazel
 			glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			this->shader->Bind();
 			glBindVertexArray(this->m_VertexArray);
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
