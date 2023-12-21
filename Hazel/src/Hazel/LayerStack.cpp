@@ -13,7 +13,8 @@ namespace Hazel
 	{
 		for (Layer* layer : this->m_Layers)
 		{
-			delete layer;
+			if (layer != nullptr)
+				delete layer;
 		}
 	}
 
