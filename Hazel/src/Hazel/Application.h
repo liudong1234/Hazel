@@ -8,6 +8,8 @@
 
 #include "Hazel/Renderer/Shader.h"
 #include "Hazel/Renderer/Buffer.h"
+#include "Hazel/Renderer/VertexArray.h"
+
 namespace Hazel
 {
 	class HAZEL_API Application
@@ -35,10 +37,12 @@ namespace Hazel
 		static Application* s_Instance;
 
 
-		unsigned int m_VertexArray;
-		std::unique_ptr<Shader> shader;
-		std::unique_ptr<VertexBuffer> m_VertexBuffer;
-		std::unique_ptr<IndexBuffer> m_IndexBuffer;
+		//unsigned int m_VertexArray;
+		std::shared_ptr<VertexArray> m_VertexArray;
+		std::shared_ptr<Shader> shader;
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+
 	};
 
 	Application* CreateApplication();
