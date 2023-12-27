@@ -1,4 +1,4 @@
-﻿#pragma
+﻿#pragma once
 #include "Hazel/Renderer/Buffer.h"
 
 #include <memory>
