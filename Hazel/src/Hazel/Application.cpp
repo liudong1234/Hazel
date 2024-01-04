@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "Input.h"
 
+#include "Hazel/Renderer/Renderer.h"
+
 #include <glad/glad.h>
 namespace Hazel
 {
@@ -96,14 +98,13 @@ namespace Hazel
 	{
 		while (this->is_Running)
 		{
-			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+			glClearColor(1.0f, 0.1f, 1.0f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
+			Renderer::BeginScene();
 			this->shader->Bind();
-
-			//glBindVertexArray(this->m_VertexArray);
-			this->m_VertexArray->Bind();
-			glDrawElements(GL_TRIANGLES, this->m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			Renderer::Submit(this->m_VertexArray);
+			Renderer::EndScend();
 
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnUpdate();
