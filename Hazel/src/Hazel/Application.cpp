@@ -11,7 +11,8 @@ namespace Hazel
 	Application* Application::s_Instance = nullptr;
 
 
-	Application::Application()
+	Application::Application() :
+		m_Camera(-10.0f, 10.0f, -10.0f, 10.0f)
 	{
 		HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
 		s_Instance = this;
@@ -28,40 +29,21 @@ namespace Hazel
 			0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 			0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
-
-		this->m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
+		std::shared_ptr<VertexBuffer> m_VertexBuffer;
+		m_VertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		BufferLayout layout =
 		{
 			{ "g_Position", ShaderDataType::Float3 },
 			{ "g_Color", ShaderDataType::Float4 }
 		};
-		this->m_VertexBuffer->SetLayout(layout);
+		m_VertexBuffer->SetLayout(layout);
 		this->m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 		uint32_t indices[] = { 0, 1, 2 };
-		this->m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		//this->m_IndexBuffer->Bind();
+		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+		m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		this->m_VertexArray->SetIndexBuffer(m_IndexBuffer);
-
-
-
-		/*uint32_t index = 0;
-		const auto& layout = this->m_VertexBuffer->GetLayout();
-		for (auto element : layout.GetElements())
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index++,
-				element.GetComponentCount(),
-				ShaderDataTypeToGLBaseType(element.Type),
-				element.Normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
-				(const void*)element.Offset);
-		}*/
-
-		/*glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, this->m_IndexBuffer->GetCount(), GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);*/
-
 
 		std::string vertexSrc =
 			R"(
@@ -70,10 +52,12 @@ namespace Hazel
 			layout(location=1) in vec4 a_Color;
 			out vec4 v_Color;
 			out vec3 v_Position;
+			uniform mat4 projection;
+			uniform mat4 view;
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0f);
+				gl_Position = projection * view * vec4(a_Position, 1.0f);
 				v_Color = a_Color;
 			}
 		)";
@@ -91,6 +75,47 @@ namespace Hazel
 			}
 		)";
 		this->shader.reset(new Shader(vertexSrc, fragmentSrc));
+
+		float quadVertices[] =
+		{
+			-0.5f,  0.5f, 0.0f,
+			-0.5f, -0.5f, 0.0f,
+			0.5f,  -0.5f, 0.0f,
+			0.5f,   0.5f, 0.0f
+		};
+		this->quadVa.reset(VertexArray::Create());
+		m_VertexBuffer.reset(VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
+
+		layout = { { "g_Position", ShaderDataType::Float3 } };
+		m_VertexBuffer->SetLayout(layout);
+		this->quadVa->AddVertexBuffer(m_VertexBuffer);
+
+		uint32_t quadIndices[] = { 0, 1, 2, 0, 3, 2 };
+		m_IndexBuffer.reset(IndexBuffer::Create(quadIndices, sizeof(quadIndices) / sizeof(uint32_t)));
+		this->quadVa->SetIndexBuffer(m_IndexBuffer);
+
+		std::string vertexSrc2 =
+			R"(
+			#version 330 core
+			layout(location=0) in vec3 a_Position;
+			uniform mat4 projection;
+			uniform mat4 view;
+			void main()
+			{
+				gl_Position = projection * view * vec4(a_Position, 1.0f);
+			}
+		)";
+
+		std::string fragmentSrc2 =
+			R"(
+			#version 330 core
+			layout(location=0) out vec4 color;
+			void main()
+			{
+				color = vec4(0.1f, 0.3f, 0.2f, 1.0f);
+			}
+		)";
+		this->quadShader.reset(new Shader(vertexSrc2, fragmentSrc2));
 	}
 
 	Application::~Application()
@@ -116,21 +141,19 @@ namespace Hazel
 	{
 		while (this->is_Running)
 		{
-			/*glClearColor(1.0f, 0.1f, 1.0f, 1.0f);
-			glClear(GL_COLOR_BUFFER_BIT);*/
+
 			RenderCommand::SetClearColor({ 1.0f, 0.1f, 1.0f, 1.0f });
 			RenderCommand::Clear();
 
-			Renderer::BeginScene();
-			this->shader->Bind();
-			Renderer::Submit(this->m_VertexArray);
+			this->m_Camera.SetPosition({ 1.0f, 0.0f, 0.0f });
+			this->m_Camera.SetRotation(180.0f);
+
+			Renderer::BeginScene(this->m_Camera);
+			Renderer::Submit(this->quadVa, this->quadShader);
+			Renderer::Submit(this->m_VertexArray, this->shader);
 			Renderer::EndScend();
 
-			//RenderCommand::DrawIndexed(this->m_IndexBuffer);
 
-			//glBindVertexArray(this->m_VertexArray);
-			//this->m_VertexArray->Bind();
-			/*glDrawElements(GL_TRIANGLES, this->m_IndexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);*/
 
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnUpdate();
