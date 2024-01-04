@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include"imgui/imgui.h"
+//#include "imgui/imgui.h"
 
 class ExampleLayer :
 	public Hazel::Layer
@@ -23,9 +23,7 @@ public:
 
 	void OnImGuiRender() override
 	{
-		ImGui::Begin("Test");
-		ImGui::Text("hello world");
-		ImGui::End();
+
 	}
 
 	void OnEvent(Hazel::Event& e) override

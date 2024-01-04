@@ -43,24 +43,6 @@ namespace Hazel
 		this->m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
 
-
-		/*uint32_t index = 0;
-		const auto& layout = this->m_VertexBuffer->GetLayout();
-		for (auto element : layout.GetElements())
-		{
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index++,
-				element.GetComponentCount(),
-				ShaderDataTypeToGLBaseType(element.Type),
-				element.Normalized ? GL_TRUE : GL_FALSE,
-				layout.GetStride(),
-				(const void*)element.Offset);
-		}*/
-
-		/*glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, this->m_IndexBuffer->GetCount(), GL_FLOAT, GL_FALSE, 3 * sizeof(float), nullptr);*/
-
-
 		std::string vertexSrc =
 			R"(
 			#version 330 core
@@ -114,7 +96,7 @@ namespace Hazel
 	{
 		while (this->is_Running)
 		{
-			glClearColor(1.0f, 0.1f, 1.0f, 1.0f);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			this->shader->Bind();
