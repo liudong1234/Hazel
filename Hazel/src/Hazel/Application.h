@@ -10,6 +10,8 @@
 #include "Hazel/Renderer/Buffer.h"
 #include "Hazel/Renderer/VertexArray.h"
 
+#include "Hazel/Renderer/OrthoGraphicCamera.h"
+
 namespace Hazel
 {
 	class HAZEL_API Application
@@ -37,11 +39,18 @@ namespace Hazel
 		static Application* s_Instance;
 
 
-		//unsigned int m_VertexArray;
+		//unsigned int m_VertexArray;//三角形
 		std::shared_ptr<VertexArray> m_VertexArray;
 		std::shared_ptr<Shader> shader;
 		std::shared_ptr<VertexBuffer> m_VertexBuffer;
 		std::shared_ptr<IndexBuffer> m_IndexBuffer;
+
+		std::shared_ptr<VertexArray> quadVa;
+		std::shared_ptr<VertexBuffer> quadVb;
+		std::shared_ptr<Shader> quadShader;
+		std::shared_ptr<IndexBuffer> quadib;
+
+		OrthoGraphicCamera m_Camera;
 
 	};
 

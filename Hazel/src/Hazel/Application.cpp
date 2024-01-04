@@ -10,8 +10,8 @@ namespace Hazel
 	#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
 	Application* Application::s_Instance = nullptr;
 
-
-	Application::Application()
+	Application::Application():
+		m_Camera(-1.0f, 1.0f, -1.0f, 1.0f)
 	{
 		HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
 		s_Instance = this;
@@ -41,7 +41,6 @@ namespace Hazel
 
 		uint32_t indices[] = { 0, 1, 2 };
 		this->m_IndexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
-		//this->m_IndexBuffer->Bind();
 		this->m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
 
@@ -52,10 +51,14 @@ namespace Hazel
 			layout(location=1) in vec4 a_Color;
 			out vec4 v_Color;
 			out vec3 v_Position;
+
+			uniform mat4 projection;
+			uniform mat4 view;
+
 			void main()
 			{
 				v_Position = a_Position;
-				gl_Position = vec4(a_Position, 1.0f);
+				gl_Position = projection * view * vec4(a_Position, 1.0f);
 				v_Color = a_Color;
 			}
 		)";
@@ -67,12 +70,65 @@ namespace Hazel
 			layout(location=0) out vec4 color;
 			in vec4 v_Color;
 			in vec3 v_Position;
+
 			void main()
 			{
 				color = v_Color;
 			}
 		)";
 		this->shader.reset(new Shader(vertexSrc, fragmentSrc));
+
+
+		//正方形
+
+		float quadVertices[] =
+		{
+			//position		
+			-0.7f, 0.0f, 0.0f, 
+			0.7f,  0.0f, 0.0f, 
+			0.0f,  0.7f, 0.0f,
+			0.0f, -0.7f, 0.0f,
+		};
+		uint32_t quadIndices[] = { 0, 1, 2, 0, 1, 3 };
+		this->quadVa.reset(VertexArray::Create());
+		this->quadVb.reset(VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
+
+		BufferLayout layout2 = { { "g_Position", ShaderDataType::Float3 } };
+
+		this->quadVb->SetLayout(layout2);
+		this->quadVa->AddVertexBuffer(this->quadVb);
+		this->quadib.reset(IndexBuffer::Create(quadIndices, sizeof(quadIndices) / sizeof(uint32_t)));
+		this->quadVa->SetIndexBuffer(this->quadib);
+
+		std::string vertexSrc2 =
+			R"(
+			#version 330 core
+			layout(location=0) in vec3 a_Position;
+			out vec3 v_Position;
+
+			uniform mat4 projection;
+			uniform mat4 view;
+
+			void main()
+			{
+				v_Position = a_Position;
+				gl_Position = projection * view * vec4(a_Position, 1.0f);
+			}
+		)";
+
+		std::string fragmentSrc2 =
+			R"(
+			#version 330 core
+			layout(location=0) out vec4 color;
+			void main()
+			{
+				color = vec4(0.4f, 0.23f, 0.3f, 1.0f);
+			}
+		)";
+
+
+		this->quadShader.reset(new Shader(vertexSrc2, fragmentSrc2));
+
 	}
 
 	Application::~Application()
@@ -98,13 +154,26 @@ namespace Hazel
 	{
 		while (this->is_Running)
 		{
-			glClearColor(1.0f, 0.1f, 1.0f, 1.0f);
+			glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 			glClear(GL_COLOR_BUFFER_BIT);
 
 			Renderer::BeginScene();
+			this->quadShader->Bind();
+			this->quadShader->SetUniformMatrix4("projection", this->m_Camera.GetProjectionMatrix());
+			this->quadShader->SetUniformMatrix4("view", this->m_Camera.GetViewMatrix());
+			Renderer::Submit(this->quadVa);
+			Renderer::EndScend();
+
+			Renderer::BeginScene();
 			this->shader->Bind();
+			this->shader->SetUniformMatrix4("projection", this->m_Camera.GetProjectionMatrix());
+			this->shader->SetUniformMatrix4("view", this->m_Camera.GetViewMatrix());
 			Renderer::Submit(this->m_VertexArray);
 			Renderer::EndScend();
+
+
+
+
 
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnUpdate();
