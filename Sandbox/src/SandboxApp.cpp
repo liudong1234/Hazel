@@ -5,6 +5,7 @@
 #include"imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Hazel/Core/TimeStep.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 class ExampleLayer :
 	public Hazel::Layer
@@ -70,7 +71,7 @@ public:
 				color = v_Color;
 			}
 		)";
-		this->shader.reset(new Hazel::Shader(vertexSrc, fragmentSrc));
+		this->shader.reset(Hazel::Shader::Create(vertexSrc, fragmentSrc));
 
 		float quadVertices[] =
 		{
@@ -113,7 +114,7 @@ public:
 				color = Color;
 			}
 		)";
-		this->quadShader.reset(new Hazel::Shader(vertexSrc2, fragmentSrc2));
+		this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
 	}
 
 	void OnUpdate(Hazel::TimeStep ts) override
@@ -152,9 +153,9 @@ public:
 
 				//glm::mat4 transform = glm::translate(model, glm::vec3(0.11f * j, 0.11f * i, 0.0f));
 				if (j % 2 == 0)
-					this->quadShader->SetUniformFloat4("Color", red);
+					std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->SetUniformFloat4("Color", red);
 				else
-					this->quadShader->SetUniformFloat4("Color", blue);
+					std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->SetUniformFloat4("Color", blue);
 				Hazel::Renderer::Submit(this->quadVa, this->quadShader, transform);
 
 			}
