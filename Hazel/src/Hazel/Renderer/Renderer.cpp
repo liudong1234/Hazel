@@ -18,7 +18,7 @@ namespace Hazel
 
 	}
 
-	void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader, const glm::mat4 transform)
+	void Renderer::Submit(const Hazel::Ref<VertexArray>& vertexArray, const Hazel::Ref<Shader>& shader, const glm::mat4 transform)
 	{
 		shader->Bind();
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(shader)->SetUniformMat4("projection", m_SceneData->projectionMatrix);

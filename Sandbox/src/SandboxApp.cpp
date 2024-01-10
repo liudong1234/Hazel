@@ -26,7 +26,7 @@ public:
 			0.5f,  0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,
 			0.0f,  0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f
 		};
-		std::shared_ptr<Hazel::VertexBuffer> m_VertexBuffer;
+		Hazel::Ref<Hazel::VertexBuffer> m_VertexBuffer;
 		m_VertexBuffer.reset(Hazel::VertexBuffer::Create(vertices, sizeof(vertices)));
 
 		Hazel::BufferLayout layout =
@@ -38,7 +38,7 @@ public:
 		this->m_VertexArray->AddVertexBuffer(m_VertexBuffer);
 
 		uint32_t indices[] = { 0, 1, 2 };
-		std::shared_ptr<Hazel::IndexBuffer> m_IndexBuffer;
+		Hazel::Ref<Hazel::IndexBuffer> m_IndexBuffer;
 		m_IndexBuffer.reset(Hazel::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 		this->m_VertexArray->SetIndexBuffer(m_IndexBuffer);
 
@@ -75,15 +75,18 @@ public:
 
 		float quadVertices[] =
 		{
-			-0.5f,  0.5f, 0.0f,
-			-0.5f, -0.5f, 0.0f,
-			0.5f,  -0.5f, 0.0f,
-			0.5f,   0.5f, 0.0f
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+			 0.5f, -0.5f, 0.0f,	1.0f, 0.0f,
+			 0.5f,  0.5f, 0.0f,	1.0f, 1.0f,
+			-0.5f,  0.5f, 0.0f,	0.0f, 1.0f
 		};
 		this->quadVa.reset(Hazel::VertexArray::Create());
 		m_VertexBuffer.reset(Hazel::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
 
-		layout = { { "g_Position", Hazel::ShaderDataType::Float3 } };
+		layout = {
+			{ "g_Position", Hazel::ShaderDataType::Float3 },
+			{"g_Texture", Hazel::ShaderDataType::Float2}
+		};
 		m_VertexBuffer->SetLayout(layout);
 		this->quadVa->AddVertexBuffer(m_VertexBuffer);
 
@@ -95,11 +98,14 @@ public:
 			R"(
 			#version 330 core
 			layout(location=0) in vec3 a_Position;
+			layout(location=1) in vec2 a_TexCoord;
 			uniform mat4 projection;
 			uniform mat4 view;
 			uniform mat4 transform;
+			out vec2 v_TexCoord;
 			void main()
 			{
+				v_TexCoord = a_TexCoord;
 				gl_Position = projection * view * transform * vec4(a_Position, 1.0f);
 			}
 		)";
@@ -107,14 +113,22 @@ public:
 		std::string fragmentSrc2 =
 			R"(
 			#version 330 core
-			layout(location=0) out vec4 color;
-			uniform vec4 Color;
+			out vec4 FragColor;
+			in vec2 v_TexCoord;
+			uniform sampler2D tex;
+
 			void main()
 			{
-				color = Color;
+				FragColor = texture(tex, v_TexCoord);
 			}
 		)";
 		this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
+
+		this->quadTexture.reset(Hazel::Texture2D::Create((std::string)"Assets/Textures/1.png"));
+
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->Bind();
+		std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->SetUniformInt("tex", 0);
+
 	}
 
 	void OnUpdate(Hazel::TimeStep ts) override
@@ -160,7 +174,9 @@ public:
 
 			}
 		}
-		Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
+		this->quadTexture->Bind();
+		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+		//Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
 		Hazel::Renderer::EndScend();
 
 	}
@@ -169,6 +185,7 @@ public:
 	{
 		ImGui::Begin("Test");
 		ImGui::DragFloat3(u8"位置", &this->m_Pos.x, 0.1f);
+		ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 		ImGui::End();
 	}
 
@@ -177,11 +194,13 @@ public:
 		//HZ_TRACE("{0}", e);
 	}
 private:
-	std::shared_ptr<Hazel::VertexArray> m_VertexArray;
-	std::shared_ptr<Hazel::Shader> shader;
+	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
+	Hazel::Ref<Hazel::Shader> shader;
 
-	std::shared_ptr<Hazel::VertexArray> quadVa;
-	std::shared_ptr<Hazel::Shader> quadShader;
+	Hazel::Ref<Hazel::VertexArray> quadVa;
+	Hazel::Ref<Hazel::Shader> quadShader;
+	Hazel::Ref<Hazel::Texture2D> quadTexture;
+
 	Hazel::OrthographicCamera m_Camera;
 
 	float m_MoveSpeed = 1.0f;

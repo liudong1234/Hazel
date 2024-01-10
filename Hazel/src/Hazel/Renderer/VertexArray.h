@@ -13,11 +13,11 @@ namespace Hazel
 		virtual void Bind() const = 0;
 		virtual void UnBind() const = 0;
 
-		virtual void AddVertexBuffer(const std::shared_ptr<VertexBuffer>& vertexBuffer) = 0;
-		virtual void SetIndexBuffer(const std::shared_ptr<IndexBuffer>& indexBuffer) = 0;
+		virtual void AddVertexBuffer(const Hazel::Ref<VertexBuffer>& vertexBuffer) = 0;
+		virtual void SetIndexBuffer(const Hazel::Ref<IndexBuffer>& indexBuffer) = 0;
 
-		virtual const std::vector<std::shared_ptr<VertexBuffer>>& GetVertexBuffers() const = 0;
-		virtual const std::shared_ptr<IndexBuffer>& GetIndexBuffers() const = 0;
+		virtual const std::vector<Hazel::Ref<VertexBuffer>>& GetVertexBuffers() const = 0;
+		virtual const Hazel::Ref<IndexBuffer>& GetIndexBuffers() const = 0;
 
 		static VertexArray* Create();
 

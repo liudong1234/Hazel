@@ -15,6 +15,7 @@ namespace Hazel
 
 		void SetUniformMat4(const std::string& name, const glm::mat4& matrix);
 		void SetUniformFloat4(const std::string& name, const glm::vec4& value);
+		void OpenGLShader::SetUniformInt(const std::string& name, const int value);
 	private:
 		uint32_t m_RendererID;
 

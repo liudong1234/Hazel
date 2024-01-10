@@ -15,8 +15,9 @@ namespace Hazel
 	{
 		HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
 		s_Instance = this;
-		this->m_Windnow = std::unique_ptr<Window>(Window::Create());
+		this->m_Windnow = std::unique_ptr<Window>(Window::Create({ "Game Engine", 720, 960 }));
 		this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
+
 
 		this->m_Windnow->SetVSync(true);
 

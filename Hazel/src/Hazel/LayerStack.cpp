@@ -11,11 +11,11 @@ namespace Hazel
 
 	LayerStack::~LayerStack()
 	{
-		for (Layer* layer : this->m_Layers)
-		{
-			if (layer != nullptr)
-				delete layer;
-		}
+		//for (Layer* layer : this->m_Layers)
+		//{
+		//	if (layer != nullptr)
+		//		delete layer;
+		//}
 	}
 
 	void LayerStack::PushLayer(Layer* layer)

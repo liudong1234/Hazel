@@ -137,4 +137,10 @@ namespace Hazel
 		glUniform4f(location, value.x, value.y, value.z, value.w);
 	}
 
+	void OpenGLShader::SetUniformInt(const std::string& name, const int value)
+	{
+		int location = glGetUniformLocation(this->m_RendererID, name.c_str());
+		glUniform1i(location, value);
+	}
+
 }
