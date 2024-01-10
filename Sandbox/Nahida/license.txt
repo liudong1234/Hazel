@@ -1,0 +1,11 @@
+Model Information:
+* title:	NPC_Avatar_YoungGirl_Catalyst_Nahida (merge)
+* source:	https://sketchfab.com/3d-models/npc-avatar-younggirl-catalyst-nahida-merge-a3d8bf1b1c3042aca90e5fab821d8d89
+* author:	mc.boueibu.official (https://sketchfab.com/mc.boueibu.official)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "NPC_Avatar_YoungGirl_Catalyst_Nahida (merge)" (https://sketchfab.com/3d-models/npc-avatar-younggirl-catalyst-nahida-merge-a3d8bf1b1c3042aca90e5fab821d8d89) by mc.boueibu.official (https://sketchfab.com/mc.boueibu.official) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
