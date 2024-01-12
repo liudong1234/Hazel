@@ -93,8 +93,7 @@ public:
 		m_VertexBuffer.reset(Hazel::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
 
 
-		texture.reset(Hazel::Texture2D::Create("res/container2.png"));
-
+		texture.reset(Hazel::Texture2D::Create("Assets/Textures/container2.png"));
 
 		Hazel::BufferLayout layout2 = 
 		{ { "g_Position", Hazel::ShaderDataType::Float3 },
@@ -137,7 +136,8 @@ public:
 		)";
 
 
-		this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
+		//this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
+		this->quadShader.reset(Hazel::Shader::Create((std::string)"Assets/Shaders/quad.glsl"));
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(quadShader)->SetUniformInt("tex", 0);
 	}
@@ -168,7 +168,7 @@ public:
 		this->quadShader->Bind();
 		this->texture->Bind();
 		Hazel::Renderer::Submit(this->quadVa, this->quadShader);
-		//Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
+		Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
 		Hazel::Renderer::EndScend();
 	}
 
