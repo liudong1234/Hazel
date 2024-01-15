@@ -75,7 +75,7 @@ public:
 				color = v_Color;
 			}
 		)";
-		this->shader.reset(Hazel::Shader::Create(vertexSrc, fragmentSrc));
+		this->shader = Hazel::Shader::Create("triangle shader", vertexSrc, fragmentSrc);
 
 
 		//正方形
@@ -135,9 +135,10 @@ public:
 			}
 		)";
 
-
+		Hazel::ShaderLibray shaderLibrary;
 		//this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
-		this->quadShader.reset(Hazel::Shader::Create((std::string)"Assets/Shaders/quad.glsl"));
+		//this->quadShader = Hazel::Shader::Create("Assets/Shaders/quad.glsl");
+		this->quadShader = shaderLibrary.Load("Assets/Shaders/quad.glsl");
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(quadShader)->SetUniformInt("tex", 0);
 	}

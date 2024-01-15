@@ -20,21 +20,28 @@ namespace Hazel
 
 
 
-	OpenGLShader::OpenGLShader(std::string& filepath) :
+	OpenGLShader::OpenGLShader(const std::string& filepath) :
 		m_RendererID(0)
 	{
 		std::string source = ReadFile(filepath);
-		this->m_OpenGLSource = PreProcess(source);
-		this->CreateProgram();
+		auto& m_OpenGLSource = PreProcess(source);
+		this->Compile(m_OpenGLSource);
 
+		auto lastSlash = filepath.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = filepath.rfind('.');
+		auto count = lastDot == std::string::npos ? filepath.size() - lastSlash : lastDot - lastSlash;
+		this->m_Name = filepath.substr(lastSlash, count);
 	}
 
-	OpenGLShader::OpenGLShader(std::string& vertexSrc, std::string& fragmentSrc):
-		m_RendererID(0)
+	OpenGLShader::OpenGLShader(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc):
+		m_RendererID(0),
+		m_Name(name)
 	{
-		this->m_OpenGLSource[GL_VERTEX_SHADER] = vertexSrc;
-		this->m_OpenGLSource[GL_FRAGMENT_SHADER] = fragmentSrc;
-		this->CreateProgram();
+		std::unordered_map<GLenum, std::string> m_OpenGLSource;
+		m_OpenGLSource[GL_VERTEX_SHADER] = vertexSrc;
+		m_OpenGLSource[GL_FRAGMENT_SHADER] = fragmentSrc;
+		this->Compile(m_OpenGLSource);
 	}
 	OpenGLShader::~OpenGLShader()
 	{
@@ -49,6 +56,11 @@ namespace Hazel
 		glUseProgram(0);
 	}
 
+	const std::string& OpenGLShader::GetName() const
+	{
+		return this->m_Name;
+	}
+
 	void OpenGLShader::SetUniformInt(const std::string& name, const int value)
 	{
 		int location = glGetUniformLocation(this->m_RendererID, name.c_str());
@@ -61,7 +73,7 @@ namespace Hazel
 		glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(matrix));
 	}
 
-	std::string OpenGLShader::ReadFile(std::string& filepath)
+	std::string OpenGLShader::ReadFile(const std::string& filepath)
 	{
 		std::string result;
 		std::ifstream in(filepath, std::ios::in | std::ios::binary); // ifstream closes itself due to RAII
@@ -114,13 +126,13 @@ namespace Hazel
 		return shaderSource;
 	}
 	
-	void OpenGLShader::CreateProgram()
+	void OpenGLShader::Compile(std::unordered_map<GLenum, std::string> m_OpenGLSource)
 	{
 		GLint program = glCreateProgram();
 
-		std::vector<GLuint> shaderIDs(this->m_OpenGLSource.size());
+		std::vector<GLuint> shaderIDs(m_OpenGLSource.size());
 
-		for (auto& kv : this->m_OpenGLSource)
+		for (auto& kv : m_OpenGLSource)
 		{
 			GLenum type = kv.first;
 			const std::string& source = kv.second;
