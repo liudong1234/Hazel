@@ -71,7 +71,7 @@ public:
 				color = v_Color;
 			}
 		)";
-		this->shader.reset(Hazel::Shader::Create(vertexSrc, fragmentSrc));
+		this->shader = Hazel::Shader::Create("basic", vertexSrc, fragmentSrc);
 
 		float quadVertices[] =
 		{
@@ -122,9 +122,12 @@ public:
 				FragColor = texture(tex, v_TexCoord);
 			}
 		)";
-		this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
+		//this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
+		this->quadShader = Hazel::Shader::Create("Assets/Shaders/Texture.glsl");
 
 		this->quadTexture.reset(Hazel::Texture2D::Create((std::string)"Assets/Textures/1.png"));
+		this->texture2.reset(Hazel::Texture2D::Create((std::string)"Assets/Textures/3.png"));
+
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->Bind();
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->SetUniformInt("tex", 0);
@@ -176,7 +179,9 @@ public:
 		}
 		this->quadTexture->Bind();
 		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
-		//Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
+		this->texture2->Bind();
+		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
+		Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
 		Hazel::Renderer::EndScend();
 
 	}
@@ -199,7 +204,7 @@ private:
 
 	Hazel::Ref<Hazel::VertexArray> quadVa;
 	Hazel::Ref<Hazel::Shader> quadShader;
-	Hazel::Ref<Hazel::Texture2D> quadTexture;
+	Hazel::Ref<Hazel::Texture2D> quadTexture, texture2;
 
 	Hazel::OrthographicCamera m_Camera;
 

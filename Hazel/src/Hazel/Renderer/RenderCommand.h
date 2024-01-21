@@ -7,6 +7,11 @@ namespace Hazel
 	class RenderCommand
 	{
 	public:
+		inline void Init()
+		{
+			s_RendererAPI->Init();
+		}
+
 		inline static void SetClearColor(glm::vec4&& color)
 		{
 			s_RendererAPI->SetClearColor(color);

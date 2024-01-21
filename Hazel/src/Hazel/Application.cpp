@@ -1,7 +1,7 @@
 ﻿#include "hzpch.h"
 #include "Application.h"
 #include "Input.h"
-
+#include "Hazel/Renderer/Renderer.h"
 #include <GLFW/glfw3.h>
 
 namespace Hazel
@@ -17,9 +17,9 @@ namespace Hazel
 		s_Instance = this;
 		this->m_Windnow = std::unique_ptr<Window>(Window::Create({ "Game Engine", 720, 960 }));
 		this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
-
-
 		this->m_Windnow->SetVSync(true);
+
+		Hazel::Renderer::Init();
 
 		this->m_ImGuiLayer = new ImGuiLayer();
 		PushOverLayer(this->m_ImGuiLayer);
