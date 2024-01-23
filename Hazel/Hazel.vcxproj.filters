@@ -1406,6 +1406,7 @@
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Texture.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h" />
+    <ClInclude Include="src\Hazel\OrthographicCameraController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Application.cpp">
@@ -1479,5 +1480,6 @@
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Texture.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp" />
+    <ClCompile Include="src\Hazel\OrthographicCameraController.cpp" />
   </ItemGroup>
 </Project>

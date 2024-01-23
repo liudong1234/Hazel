@@ -13,11 +13,8 @@ class ExampleLayer :
 public:
 	ExampleLayer() :
 		Layer("Example"),
-		m_Camera(-1.0f, 1.0f, -1.0f, 1.0f),
-		m_CameraPos(0.0f),
-		m_CameraRotation(0.0f),
-		m_RotationSpeed(10.0f),
-		m_Pos(glm::vec3(1.0f))
+		m_Pos(glm::vec3(1.0f)),
+		m_CameraController(960.0f / 720.0f, true)
 	{
 		this->m_VertexArray.reset(Hazel::VertexArray::Create());
 		float vertices[] =
@@ -138,24 +135,14 @@ public:
 	{
 		HZ_INFO("time : {0}, {1}", ts.GetSeconds(), ts.GetMilliSeconds());
 
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-			this->m_CameraPos.y += this->m_MoveSpeed * ts.GetSeconds();
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-			this->m_CameraPos.y -= this->m_MoveSpeed * ts;
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-			this->m_CameraPos.x -= this->m_MoveSpeed * ts;
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-			this->m_CameraPos.x += this->m_MoveSpeed * ts;
+		this->m_CameraController.OnUpdate(ts);
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), this->m_Pos);
 
 		Hazel::RenderCommand::SetClearColor({ 1.0f, 0.1f, 1.0f, 1.0f });
 		Hazel::RenderCommand::Clear();
 
-		this->m_Camera.SetPosition(this->m_CameraPos);
-		//this->m_Camera.SetRotation(180.0f);
-
-		Hazel::Renderer::BeginScene(this->m_Camera);
+		Hazel::Renderer::BeginScene(this->m_CameraController.GetCamera());
 
 		glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f, 0.1f, 0.1f));
 
@@ -181,7 +168,7 @@ public:
 		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
 		this->texture2->Bind();
 		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
-		Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
+		//Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
 		Hazel::Renderer::EndScend();
 
 	}
@@ -197,6 +184,7 @@ public:
 	void OnEvent(Hazel::Event& e) override
 	{
 		//HZ_TRACE("{0}", e);
+		this->m_CameraController.OnEvent(e);
 	}
 private:
 	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
@@ -206,13 +194,7 @@ private:
 	Hazel::Ref<Hazel::Shader> quadShader;
 	Hazel::Ref<Hazel::Texture2D> quadTexture, texture2;
 
-	Hazel::OrthographicCamera m_Camera;
-
-	float m_MoveSpeed = 1.0f;
-	float m_RotationSpeed;
-
-	glm::vec3 m_CameraPos;
-	float m_CameraRotation;
+	Hazel::OrthographicCameraController m_CameraController;
 
 	glm::vec3 m_Pos;
 };
