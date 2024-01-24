@@ -10,6 +10,8 @@ namespace Hazel
 	public:
 		static void Init();
 
+		static void OnResize(uint16_t width, uint16_t height);
+
 		static void BeginScene(OrthographicCamera& camera); //场景开始
 
 		static void EndScend(); //

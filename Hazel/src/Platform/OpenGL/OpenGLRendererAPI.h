@@ -8,6 +8,7 @@ namespace Hazel
 	{
 	public:
 		virtual void Init() override;
+		virtual void SetViewPort(uint16_t x, uint16_t y, uint16_t width, uint16_t height) override;
 		virtual void SetClearColor(const glm::vec4& color) override;
 		virtual void Clear() override;
 

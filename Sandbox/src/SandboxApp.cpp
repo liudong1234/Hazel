@@ -13,8 +13,8 @@ class ExampleLayer :
 public:
 	ExampleLayer() :
 		Layer("Example"),
-		m_Pos(glm::vec3(1.0f)),
-		m_CameraController(960.0f / 720.0f, true)
+		m_CameraController(1280.0f / 720.0f, true),
+		m_Pos(glm::vec3(1.0f))
 	{
 		this->m_VertexArray.reset(Hazel::VertexArray::Create());
 		float vertices[] =
@@ -133,7 +133,6 @@ public:
 
 	void OnUpdate(Hazel::TimeStep ts) override
 	{
-		HZ_INFO("time : {0}, {1}", ts.GetSeconds(), ts.GetMilliSeconds());
 
 		this->m_CameraController.OnUpdate(ts);
 

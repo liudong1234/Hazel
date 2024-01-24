@@ -24,15 +24,19 @@ namespace Hazel
 		inline Window& GetWindow() { return *this->m_Windnow; }
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool OnWindowResize(WindowResizeEvent& e);
+
 		std::unique_ptr<Window> m_Windnow;
 		//std::unique_ptr<ImGuiLayer> m_ImGuiLayer;
 		ImGuiLayer* m_ImGuiLayer;
 		bool is_Running = true;
+		bool is_Minimum;
 
 		LayerStack m_LayerStack;
 		static Application* s_Instance;
 
 		float m_LastTime;
+
 
 	};
 

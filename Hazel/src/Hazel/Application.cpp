@@ -11,11 +11,12 @@ namespace Hazel
 
 
 	Application::Application() :
-		m_LastTime(0.0f)
+		m_LastTime(0.0f),
+		is_Minimum(false)
 	{
 		HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
 		s_Instance = this;
-		this->m_Windnow = std::unique_ptr<Window>(Window::Create({ "Game Engine", 720, 960 }));
+		this->m_Windnow = std::unique_ptr<Window>(Window::Create({ "Game Engine", 1280, 720 }));
 		this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 		this->m_Windnow->SetVSync(true);
 
@@ -36,6 +37,7 @@ namespace Hazel
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
+		dispatcher.Dispatch<WindowResizeEvent>(BIND_EVENT_FN(Application::OnWindowResize));
 		//HZ_CORE_TRACE("{0}", e);
 
 		for (auto it = this->m_LayerStack.end(); it != this->m_LayerStack.begin(); )
@@ -53,15 +55,17 @@ namespace Hazel
 			TimeStep ts(curtime - this->m_LastTime);
 			this->m_LastTime = curtime;
 
-			for (Layer* layer : this->m_LayerStack)
-				layer->OnUpdate(ts);
+			if (!this->is_Minimum)
+			{
+				for (Layer* layer : this->m_LayerStack)
+					layer->OnUpdate(ts);
+			}
 
 			this->m_ImGuiLayer->Begin();
 			for (Layer* layer : this->m_LayerStack)
 				layer->OnImGuiRender();
 			this->m_ImGuiLayer->End();
 
-			//HZ_CORE_TRACE("{0}, {1}", Input::GetMouseX(), Input::GetMouseY());
 			this->m_Windnow->OnUpdate();
 		}
 	}
@@ -81,6 +85,17 @@ namespace Hazel
 	{
 		this->is_Running = false;
 
+		return false;
+	}
+	bool Application::OnWindowResize(WindowResizeEvent& e)
+	{
+		if (e.GetHeight() == 0 || e.GetWidth() == 0)
+		{
+			this->is_Minimum = true;
+			return false;
+		}
+		this->is_Minimum = false;
+		Renderer::OnResize(e.GetWidth(), e.GetHeight());
 		return false;
 	}
 }

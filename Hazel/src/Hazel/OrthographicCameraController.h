@@ -27,14 +27,17 @@ namespace Hazel
 		bool MouseEventScrolled(MouseScrolledEvent& e);
 		bool WindowResized(WindowResizeEvent& e);
 	private:
-		OrthographicCamera m_Camera;
-		glm::vec3 m_CameraPos;
-		float m_CameraRotation;
+		//重点：定义的顺序决定初始化的顺序！！！
 		float m_ZoomLevel;
 		float m_AspectRatio;
 
+		OrthographicCamera m_Camera;
+		glm::vec3 m_CameraPos;
+
+		float m_CameraRotation;
 		float m_CameraTranslationSpeed;
 		float m_CameraRotationSpeed;
+
 
 		bool m_Rotation;
 	};

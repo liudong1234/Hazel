@@ -6,15 +6,16 @@
 
 namespace Hazel
 {
-	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation)
-		:m_CameraRotationSpeed(180.0f), m_CameraTranslationSpeed(1.0f),
-		m_ZoomLevel(1.0f),
-		m_CameraPos(glm::vec3(0.0f)),
-		m_CameraRotation(0.0f),
-		m_Rotation(rotation),
+	OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) :
 		m_AspectRatio(aspectRatio),
-		m_Camera(-aspectRatio * this->m_ZoomLevel, aspectRatio* this->m_ZoomLevel, -this->m_ZoomLevel, this->m_ZoomLevel)
+		m_ZoomLevel(1.0f),
+		m_Camera(-m_AspectRatio * this->m_ZoomLevel, m_AspectRatio* this->m_ZoomLevel, -this->m_ZoomLevel, this->m_ZoomLevel),
+		m_CameraRotationSpeed(180.0f), m_CameraTranslationSpeed(5.0f),
+		m_CameraPos({ 0.0f, 0.0f, 0.0f }),
+		m_CameraRotation(0.0f),
+		m_Rotation(rotation)
 	{
+		HZ_CORE_WARN("{0}", m_ZoomLevel);
 	}
 
 	void OrthographicCameraController::OnResize(float width, float height)
@@ -25,13 +26,13 @@ namespace Hazel
 
 	void OrthographicCameraController::OnUpdate(TimeStep& ts)
 	{
-		if (Input::IsKeyPressed(HZ_KEY_UP))
+		if (Input::IsKeyPressed(HZ_KEY_W))
 			this->m_CameraPos.y += this->m_CameraTranslationSpeed * ts.GetSeconds();
-		if (Input::IsKeyPressed(HZ_KEY_DOWN))
+		if (Input::IsKeyPressed(HZ_KEY_S))
 			this->m_CameraPos.y -= this->m_CameraTranslationSpeed * ts;
-		if (Input::IsKeyPressed(HZ_KEY_LEFT))
+		if (Input::IsKeyPressed(HZ_KEY_A))
 			this->m_CameraPos.x -= this->m_CameraTranslationSpeed * ts;
-		if (Input::IsKeyPressed(HZ_KEY_RIGHT))
+		if (Input::IsKeyPressed(HZ_KEY_D))
 			this->m_CameraPos.x += this->m_CameraTranslationSpeed * ts;
 
 		if (this->m_Rotation)
@@ -64,6 +65,7 @@ namespace Hazel
 	bool OrthographicCameraController::WindowResized(WindowResizeEvent& e)
 	{
 		this->OnResize((float)e.GetWidth(), (float)e.GetHeight());
+
 		return false;
 	}
 }
