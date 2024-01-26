@@ -57,17 +57,38 @@
     <ClInclude Include="src\Hazel.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Application.h">
-      <Filter>src\Hazel</Filter>
+    <ClInclude Include="src\Hazel\Core\Application.h">
+      <Filter>src\Hazel\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Core.h">
-      <Filter>src\Hazel</Filter>
+    <ClInclude Include="src\Hazel\Core\Core.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\EntryPoint.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Input.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\KeyCodes.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Layer.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\LayerStack.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Log.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\MouseButtonCodes.h">
+      <Filter>src\Hazel\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Core\TimeStep.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\EntryPoint.h">
-      <Filter>src\Hazel</Filter>
+    <ClInclude Include="src\Hazel\Core\Window.h">
+      <Filter>src\Hazel\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Events\ApplicationEvent.h">
       <Filter>src\Hazel\Events</Filter>
@@ -84,31 +105,22 @@
     <ClInclude Include="src\Hazel\Imgui\ImGuiLayer.h">
       <Filter>src\Hazel\Imgui</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Input.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\KeyCodes.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Layer.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\LayerStack.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Log.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\MouseButtonCodes.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Buffer.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\GraphicsContext.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Hazel\Renderer\Mesh.h">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Renderer\Model.h">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\OrthoGraphicCamera.h">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Renderer\OrthoGraphicCameraController.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\RenderCommand.h">
@@ -129,13 +141,16 @@
     <ClInclude Include="src\Hazel\Renderer\VertexArray.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Window.h">
-      <Filter>src\Hazel</Filter>
-    </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLModel.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1412,8 +1427,17 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Hazel\Application.cpp">
-      <Filter>src\Hazel</Filter>
+    <ClCompile Include="src\Hazel\Core\Application.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Core\Layer.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Core\LayerStack.cpp">
+      <Filter>src\Hazel\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Core\Log.cpp">
+      <Filter>src\Hazel\Core</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Imgui\ImGuiBuild.cpp">
       <Filter>src\Hazel\Imgui</Filter>
@@ -1421,22 +1445,22 @@
     <ClCompile Include="src\Hazel\Imgui\ImGuiLayer.cpp">
       <Filter>src\Hazel\Imgui</Filter>
     </ClCompile>
-    <ClCompile Include="src\Hazel\Layer.cpp">
-      <Filter>src\Hazel</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\LayerStack.cpp">
-      <Filter>src\Hazel</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Log.cpp">
-      <Filter>src\Hazel</Filter>
-    </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Buffer.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\GraphicsContext.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Hazel\Renderer\Mesh.cpp">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Renderer\Model.cpp">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\OrthoGraphicCamera.cpp">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Renderer\OrthoGraphicCameraController.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\RenderCommand.cpp">
@@ -1461,6 +1485,12 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLModel.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">

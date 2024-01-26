@@ -2,12 +2,12 @@
 #include <memory>
 
 //for use by Hazel applications
-#include "Hazel/Application.h"
-#include "Hazel/Layer.h"
-#include "Hazel/Input.h"
-#include "Hazel/KeyCodes.h"
-#include "Hazel/MouseButtonCodes.h"
-#include "Hazel/Log.h"
+#include "Hazel/Core/Application.h"
+#include "Hazel/Core/Layer.h"
+#include "Hazel/Core/Input.h"
+#include "Hazel/Core/KeyCodes.h"
+#include "Hazel/Core/MouseButtonCodes.h"
+#include "Hazel/Core/Log.h"
 #include "Hazel/ImGui/ImGuiLayer.h"
 
 
@@ -22,6 +22,8 @@
 
 //------------------------
 
+#include "Hazel/Renderer/OrthoGraphicCameraController.h"
+
 //------Entry point--------
-#include "Hazel/EntryPoint.h"
+//#include "Hazel/Core/EntryPoint.h"
 //-------------------------

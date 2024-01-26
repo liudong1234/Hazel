@@ -1,12 +1,37 @@
-﻿#include "Hazel.h"
-
-#include <string>
+﻿#include <string>
+#include "Hazel.h"
+#include "Hazel/Core/EntryPoint.h"
 #include "Hazel/Core/TimeStep.h"
-//#include "Model.h"
+
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
-#define BIND_EVENT_FN(x) std::bind(&x, this, std::placeholders::_1)
+#include "Hazel/Renderer/Model.h"
+#include "Sandbox2D.h"
+
+class Sandbox :
+	public Hazel::Application
+{
+public:
+	Sandbox()
+	{
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
+	}
+	~Sandbox()
+	{
+
+	}
+
+private:
+
+};
+Hazel::Application* Hazel::CreateApplication()
+{
+	return new Sandbox();
+}
+
+
 
 class ExampleLayer :
 	public Hazel::Layer
@@ -14,9 +39,7 @@ class ExampleLayer :
 public:
 	ExampleLayer() :
 		Layer("Example"),
-		m_Camera(-1.0f, 1.0f, -1.0f, 1.0f),
-		cameraPosition(0.0f),
-		cameraRotation(0.0f)
+		m_CameraController(1280.0f / 720.0f)
 	{
 		this->m_VertexArray.reset(Hazel::VertexArray::Create());
 		float vertices[] =
@@ -95,7 +118,7 @@ public:
 
 		texture.reset(Hazel::Texture2D::Create("Assets/Textures/container2.png"));
 
-		Hazel::BufferLayout layout2 = 
+		Hazel::BufferLayout layout2 =
 		{ { "g_Position", Hazel::ShaderDataType::Float3 },
 			{"g_Texture", Hazel::ShaderDataType::Float2}
 		};
@@ -141,35 +164,28 @@ public:
 		this->quadShader = shaderLibrary.Load("Assets/Shaders/quad.glsl");
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(quadShader)->SetUniformInt("tex", 0);
+
+		this->modelShader = Hazel::Shader::Create("Assets/Shaders/Basic.shader");
+		//m_Model = Hazel::Model::Create("Assets/models/Nahida/scene.gltf");
+
 	}
 
 	void OnUpdate(Hazel::TimeStep ts) override
 	{
 		Hazel::RenderCommand::Clear();
-		Hazel::RenderCommand::SetClearColor({0.1f, 0.1f, 0.1f, 1.0f});
+		Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
 
-		if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_LEFT))
-			this->cameraRotation += this->rotationSpeed * ts;
-		if (Hazel::Input::IsMouseButtonPressed(HZ_MOUSE_BUTTON_RIGHT))
-			this->cameraRotation -= this->rotationSpeed * ts;
+		this->m_CameraController.OnUpdate(ts);
 
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-			this->cameraPosition.y += this->moveSpeed * ts;
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-			this->cameraPosition.y -= this->moveSpeed * ts;
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-			this->cameraPosition.x += this->moveSpeed * ts;
-		if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-			this->cameraPosition.x -= this->moveSpeed * ts;
 
-		this->m_Camera.SetRotation(this->cameraRotation);
-		this->m_Camera.SetPosition(this->cameraPosition);
 
-		Hazel::Renderer::BeginScene(this->m_Camera);
+		Hazel::Renderer::BeginScene(this->m_CameraController.GetCamera());
+
 		this->quadShader->Bind();
 		this->texture->Bind();
 		Hazel::Renderer::Submit(this->quadVa, this->quadShader);
 		Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
+
 		Hazel::Renderer::EndScend();
 	}
 
@@ -180,27 +196,9 @@ public:
 
 	void OnEvent(Hazel::Event& e) override
 	{
+		this->m_CameraController.OnEvent(e);
 		/*Hazel::EventDispatcher dispatcher(e);
 		dispatcher.Dispatch<Hazel::KeyPressEvent>(BIND_EVENT_FN(ExampleLayer::OnKeyBoardDown));*/
-	}
-
-	bool OnKeyBoardDown(Hazel::Event& event)
-	{
-		if (event.GetEventType() == Hazel::EventType::KeyPressed)
-		{
-			Hazel::KeyPressEvent& e = (Hazel::KeyPressEvent&)event;
-			if (e.GetKeyCode() == HZ_KEY_UP)
-				this->cameraPosition.y += this->moveSpeed;
-			if (e.GetKeyCode() == HZ_KEY_DOWN)
-				this->cameraPosition.y -= this->moveSpeed;
-			if (e.GetKeyCode() == HZ_KEY_RIGHT)
-				this->cameraPosition.x += this->moveSpeed;
-			if (e.GetKeyCode() == HZ_KEY_LEFT)
-				this->cameraPosition.x -= this->moveSpeed;
-			return true;
-		}
-
-		return false;
 	}
 
 private:
@@ -208,37 +206,14 @@ private:
 	Hazel::Ref<Hazel::VertexArray> m_VertexArray;
 	Hazel::Ref<Hazel::Shader> shader;
 
+	Hazel::Ref<Hazel::Shader> modelShader;
+
 	Hazel::Ref<Hazel::VertexArray> quadVa;
 	Hazel::Ref<Hazel::Shader> quadShader;
 
-
+	Hazel::OrthoGraphicCameraController m_CameraController;
 	Hazel::Ref<Hazel::Texture> texture;
 
-	Hazel::OrthoGraphicCamera m_Camera;
-
-	glm::vec3 cameraPosition;
-	float cameraRotation;
-	float moveSpeed = 1.0f;
-	float rotationSpeed = 30.0f;
-};
-
-class Sandbox :
-	public Hazel::Application
-{
-public:
-	Sandbox()
-	{
-		PushLayer(new ExampleLayer());
-	}
-	~Sandbox()
-	{
-
-	}
-
-private:
+	Hazel::Ref<Hazel::Model> m_Model;
 
 };
-Hazel::Application* Hazel::CreateApplication()
-{
-	return new Sandbox();
-}

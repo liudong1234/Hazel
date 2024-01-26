@@ -3,12 +3,15 @@
 #include "RenderCommand.h"
 #include "OrthoGraphicCamera.h"
 #include "Shader.h"
+
 namespace Hazel
 {
 	class Renderer
 	{
 	public:
 		static void BeginScene(const OrthoGraphicCamera& camera); //场景开始
+		static void OnWindowResize(uint32_t width, uint32_t height);
+
 
 		static void EndScend(); //
 

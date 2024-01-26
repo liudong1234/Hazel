@@ -17,10 +17,14 @@ IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
 IncludeDir["Imgui"] = "Hazel/vendor/Imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
+IncludeDir["Assimp"] = "Hazel/vendor/Assimp"
 
-include "Hazel/vendor/GLFW"
-include "Hazel/vendor/Glad"
-include "Hazel/vendor/Imgui"
+group "Dependencies"
+    include "Hazel/vendor/GLFW"
+    include "Hazel/vendor/Glad"
+    include "Hazel/vendor/Imgui"
+    include "Hazel/vendor/Assimp"
+group ""
 
 project "Hazel"
     location "Hazel"
@@ -50,11 +54,13 @@ project "Hazel"
     {
         "%{prj.name}/src",
         "%{prj.name}/vendor/spdlog/include",
+        "%{prj.name}/vendor/assimp/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.Imgui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.Assimp}"
     }
 
     links
@@ -62,7 +68,8 @@ project "Hazel"
         "GLFW",
         "Glad",
         "Imgui",
-        "opengl32.lib"
+        "opengl32.lib",
+        "Assimp",
     }
 
     filter "system:windows"
@@ -111,7 +118,8 @@ project "Sandbox"
     {
         "Hazel/vendor/spdlog/include",
         "Hazel/src",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "Hazel/vendor/assimp/include"
     }
 
     links

@@ -6,7 +6,9 @@
 
 namespace Hazel
 {
-	OpenGLTexture2D::OpenGLTexture2D(std::string filepath)
+	OpenGLTexture2D::OpenGLTexture2D(std::string filepath):
+		m_Type(""),
+		m_Path(filepath)
 	{
 		//glGenTextures(1, &this->m_TextureID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &this->m_RendererID);
@@ -32,6 +34,45 @@ namespace Hazel
 			stbi_image_free(m_LocalBuffer);
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(std::string filepath, std::string type="") :
+		m_Type(type), m_Path(filepath)
+	{
+		//glGenTextures(1, &this->m_TextureID);
+		glCreateTextures(GL_TEXTURE_2D, 1, &this->m_RendererID);
+		int width, height, channels;
+		//上下翻转,opengl以左下角为（0， 0）点，相当于从下往上
+		stbi_set_flip_vertically_on_load(1);
+		stbi_uc* m_LocalBuffer = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
+		this->m_Width = width;
+		this->m_Height = height;
+
+		GLenum picType;
+		switch (channels)
+		{
+		case 3:
+			picType = GL_RGB8;
+			break;
+		case 4:
+			picType = GL_RGBA8;
+			break;
+		}
+
+		glTextureStorage2D(this->m_RendererID, 1, picType, this->m_Width, this->m_Width);
+
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+		glTextureSubImage2D(this->m_RendererID, 0, 0, 0, this->m_Width, this->m_Height, picType, GL_UNSIGNED_BYTE, m_LocalBuffer);
+
+		HZ_ASSERT(m_LocalBuffer, "加载纹理失败");
+
+		if (m_LocalBuffer)
+			stbi_image_free(m_LocalBuffer);
+	}
+
+
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		glDeleteTextures(1, &this->m_RendererID);
@@ -45,6 +86,11 @@ namespace Hazel
 	void OpenGLTexture2D::UnBind()
 	{
 		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void OpenGLTexture2D::ActivateTexture(uint32_t slot)
+	{
+		glActiveTexture(GL_TEXTURE0 + slot);
 	}
 }
 
