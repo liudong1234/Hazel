@@ -1,4 +1,5 @@
 ﻿#include "Hazel.h"
+#include "Hazel/Core/EntryPoint.h"
 
 #include <string>
 
@@ -6,6 +7,32 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Hazel/Core/TimeStep.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+
+#include "Sandbox2D.h"
+
+
+class Sandbox :
+	public Hazel::Application
+{
+public:
+	Sandbox()
+	{
+		//PushLayer(new ExampleLayer());
+		PushLayer(new Sandbox2D());
+	}
+	~Sandbox()
+	{
+
+	}
+
+private:
+
+};
+Hazel::Application* Hazel::CreateApplication()
+{
+	return new Sandbox();
+}
+
 
 class ExampleLayer :
 	public Hazel::Layer
@@ -166,7 +193,6 @@ public:
 		this->quadTexture->Bind();
 		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
 		this->texture2->Bind();
-		Hazel::Renderer::Submit(this->quadVa, this->quadShader, glm::scale(glm::mat4(1.0f), glm::vec3(1.0f, 1.0f, 1.0f)));
 		//Hazel::Renderer::Submit(this->m_VertexArray, this->shader);
 		Hazel::Renderer::EndScend();
 
@@ -197,24 +223,3 @@ private:
 
 	glm::vec3 m_Pos;
 };
-
-class Sandbox :
-	public Hazel::Application
-{
-public:
-	Sandbox()
-	{
-		PushLayer(new ExampleLayer());
-	}
-	~Sandbox()
-	{
-
-	}
-
-private:
-
-};
-Hazel::Application* Hazel::CreateApplication()
-{
-	return new Sandbox();
-}

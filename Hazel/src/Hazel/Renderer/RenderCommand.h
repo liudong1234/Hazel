@@ -16,6 +16,10 @@ namespace Hazel
 			s_RendererAPI->SetViewPort(x, y, width, height);
 		}
 
+		inline static void SetClearColor(glm::vec4& color)
+		{
+			s_RendererAPI->SetClearColor(color);
+		}
 		inline static void SetClearColor(glm::vec4&& color)
 		{
 			s_RendererAPI->SetClearColor(color);

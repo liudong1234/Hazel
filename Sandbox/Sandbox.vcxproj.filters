@@ -18,8 +18,16 @@
     <ClCompile Include="src\SandboxApp.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\Sandbox2D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\Shaders\Texture.glsl" />
+    <ClInclude Include="src\Sandbox2D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\quad.glsl" />
   </ItemGroup>
 </Project>

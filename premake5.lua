@@ -18,9 +18,11 @@ IncludeDir["Imgui"] = "Hazel/vendor/Imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
 IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
 
+group "Dependencies"
 include "Hazel/vendor/GLFW"
 include "Hazel/vendor/Glad"
 include "Hazel/vendor/Imgui"
+group ""
 
 project "Hazel"
     location "Hazel"
@@ -111,6 +113,7 @@ project "Sandbox"
     {
         "Hazel/vendor/spdlog/include",
         "Hazel/src",
+        "Hazel/vendor",
         "%{IncludeDir.glm}"
     }
 
