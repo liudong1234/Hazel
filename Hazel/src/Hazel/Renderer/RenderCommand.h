@@ -7,7 +7,7 @@ namespace Hazel
 	class RenderCommand
 	{
 	public:
-		inline void Init()
+		inline static void Init()
 		{
 			s_RendererAPI->Init();
 		}

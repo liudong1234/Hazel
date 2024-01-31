@@ -1,7 +1,7 @@
 ﻿#include "hzpch.h"
 #include "Renderer2D.h"
 
-#include "Platform/OpenGL/OpenGLShader.h"
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Hazel
 {
@@ -35,12 +35,13 @@ namespace Hazel
 		m_QuadIndex.reset(IndexBuffer::Create(quadIndices, sizeof(quadIndices) / sizeof(uint32_t)));
 		s_Data->QuadVertexArray->SetIndexBuffer(m_QuadIndex);
 
-		s_Data->FlatColorShader = Shader::Create("Assets/Shaders/quad.glsl");
+		s_Data->TextureShader = Shader::Create("Assets/Shaders/Texture.glsl");
+		s_Data->TextureShader->Bind();
+		s_Data->TextureShader->SetUniformInt("tex", 0);
 
-		s_Data->QuadTexture.reset(Texture2D::Create((std::string)"Assets/Textures/1.png"));
-
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->SetUniformInt("tex", 0);
-
+		s_Data->WhiteTexture = Texture2D::Create(1, 1);
+		uint32_t whiteTextureData = 0xffffffff;
+		s_Data->WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
 	}
 
 	void Renderer2D::Shutdown()
@@ -50,14 +51,18 @@ namespace Hazel
 
 	void Renderer2D::BeginScene(const OrthographicCamera& camera)
 	{
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->SetUniformMat4("projection", camera.GetProjectionMatrix());
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->SetUniformMat4("view", camera.GetViewMatrix());
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->SetUniformMat4("transform", glm::mat4(1.0f));
+		s_Data->TextureShader->Bind();
+		s_Data->TextureShader->SetUniformMat4("projection", camera.GetProjectionMatrix());
+		s_Data->TextureShader->SetUniformMat4("view", camera.GetViewMatrix());
 	}
 
 	void Renderer2D::EndScene()
 	{
+	}
+
+	void Renderer2D::Draw()
+	{
+
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4 color)
@@ -67,10 +72,52 @@ namespace Hazel
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4 color)
 	{
-		std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->Bind();
-		//std::dynamic_pointer_cast<OpenGLShader>(s_Data->FlatColorShader)->SetUniformFloat4("color", color);
+		s_Data->TextureShader->Bind();
+		s_Data->WhiteTexture->Bind();
+
+
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
+		transform = glm::scale(transform, { size.x, size.y, 1.0f });
+
+		s_Data->TextureShader->SetUniformFloat4("color", color);
+		s_Data->TextureShader->SetUniformMat4("transform", transform);
+
 		s_Data->QuadVertexArray->Bind();
-		s_Data->QuadTexture->Bind();
 		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		s_Data->WhiteTexture->UnBind();
 	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4 color, const float rotation)
+	{
+		s_Data->TextureShader->Bind();
+		s_Data->TextureShader->SetUniformFloat4("color", color);
+		s_Data->WhiteTexture->Bind();
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), { position.x, position.y, 0.0f });
+		transform = glm::scale(transform, { size.x, size.y, 1.0f });
+		transform = glm::rotate(transform, glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f));
+		s_Data->TextureShader->SetUniformMat4("transform", transform);
+		s_Data->QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		s_Data->WhiteTexture->UnBind();
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+	{
+		DrawQuad({ position.x, position.y, 0.0f }, size, texture);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture)
+	{
+		s_Data->TextureShader->Bind();
+		s_Data->TextureShader->SetUniformFloat4("color", glm::vec4(1.0f));
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position);
+		transform = glm::scale(transform, { size.x, size.y, 1.0f });
+		s_Data->TextureShader->SetUniformMat4("transform", transform);
+
+		texture->Bind();
+		s_Data->QuadVertexArray->Bind();
+		RenderCommand::DrawIndexed(s_Data->QuadVertexArray);
+		texture->UnBind();
+	}
+
 }

@@ -2,10 +2,10 @@
 #include "OpenGLTexture2D.h"
 
 #include "stb_image.h"
-#include <glad/glad.h>
+
 namespace Hazel
 {
-	OpenGLTexture2D::OpenGLTexture2D(std::string& filepath)
+	OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath)
 	{
 		int width, height, channels;
 		stbi_set_flip_vertically_on_load(1);
@@ -28,6 +28,9 @@ namespace Hazel
 			internalFormat = GL_RGB8;
 			dataFormat = GL_RGB;
 		}
+		this->m_DataFormat = dataFormat;
+		this->m_InternalFormat = internalFormat;
+
 		HZ_CORE_ASSERT(internalFormat & dataFormat, "texuture format doesn't support");
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &this->m_RendererID);
@@ -42,6 +45,26 @@ namespace Hazel
 
 	}
 
+	OpenGLTexture2D::OpenGLTexture2D(const char* filepath) :
+		OpenGLTexture2D(std::string(filepath))
+	{
+
+	}
+
+	OpenGLTexture2D::OpenGLTexture2D(const uint32_t width, const uint32_t height) :
+		m_Width(width),
+		m_Height(height),
+		m_InternalFormat(GL_RGBA8),
+		m_DataFormat(GL_RGBA)
+	{
+		glCreateTextures(GL_TEXTURE_2D, 1, &this->m_RendererID);
+		glTextureStorage2D(this->m_RendererID, 1, this->m_InternalFormat, width, height);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(this->m_RendererID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	}
+
 	OpenGLTexture2D::~OpenGLTexture2D()
 	{
 		glDeleteTextures(1, &this->m_RendererID);
@@ -50,5 +73,20 @@ namespace Hazel
 	void OpenGLTexture2D::Bind(uint32_t slot)
 	{
 		glBindTextureUnit(slot, this->m_RendererID);
+	}
+
+	void OpenGLTexture2D::UnBind()
+	{
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+
+	void OpenGLTexture2D::SetData(void* data, uint32_t size)
+	{
+		uint32_t bbp = this->m_DataFormat == GL_RGBA ? 4 : 3;
+
+		HZ_CORE_ASSERT(size == this->m_Width * this->m_Height * bbp, "Data must be entire texture!");
+
+		glTextureSubImage2D(this->m_RendererID, 0, 0, 0, this->m_Width, this->m_Height, this->m_DataFormat, GL_UNSIGNED_BYTE, data);
+
 	}
 }

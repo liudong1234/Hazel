@@ -19,8 +19,6 @@ public:
 	void OnImGuiRender() override;
 	void OnEvent(Hazel::Event& e) override;
 private:
-	Hazel::Ref<Hazel::VertexArray> quadVa;
-	Hazel::Ref<Hazel::Shader> quadShader;
 	Hazel::Ref<Hazel::Texture2D> quadTexture;
 
 	Hazel::OrthographicCameraController m_CameraController;
@@ -28,5 +26,9 @@ private:
 	glm::vec3 m_Pos;
 
 	glm::vec4 m_Color;
+
+	glm::vec2 m_QuadPos;
+	glm::vec2 m_QuadSize;
+	float m_QuadAngle;
 
 };

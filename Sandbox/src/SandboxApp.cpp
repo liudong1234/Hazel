@@ -149,8 +149,8 @@ public:
 		//this->quadShader.reset(Hazel::Shader::Create(vertexSrc2, fragmentSrc2));
 		this->quadShader = Hazel::Shader::Create("Assets/Shaders/Texture.glsl");
 
-		this->quadTexture.reset(Hazel::Texture2D::Create((std::string)"Assets/Textures/1.png"));
-		this->texture2.reset(Hazel::Texture2D::Create((std::string)"Assets/Textures/3.png"));
+		this->quadTexture = (Hazel::Texture2D::Create((std::string)"Assets/Textures/1.png"));
+		this->texture2 = (Hazel::Texture2D::Create((std::string)"Assets/Textures/3.png"));
 
 
 		std::dynamic_pointer_cast<Hazel::OpenGLShader>(this->quadShader)->Bind();

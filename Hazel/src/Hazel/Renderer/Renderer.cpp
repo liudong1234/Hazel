@@ -2,6 +2,7 @@
 #include "Renderer.h"
 #include "Renderer2D.h"
 
+#include "RenderCommand.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Hazel
@@ -9,8 +10,8 @@ namespace Hazel
 	Renderer::SceneData* Renderer::m_SceneData = new Renderer::SceneData;
 	void Renderer::Init()
 	{
-		Hazel::Renderer2D::Init();
-
+		RenderCommand::Init();
+		Renderer2D::Init();
 	}
 	void Renderer::OnResize(uint16_t width, uint16_t height)
 	{
