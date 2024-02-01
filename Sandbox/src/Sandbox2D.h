@@ -31,4 +31,10 @@ private:
 	glm::vec2 m_QuadSize;
 	float m_QuadAngle;
 
+	struct ProfileResult
+	{
+		const char* Name;
+		float Time;
+	};
+	std::vector<ProfileResult> m_ProfileResults;
 };

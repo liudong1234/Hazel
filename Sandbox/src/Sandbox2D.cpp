@@ -4,6 +4,49 @@
 
 #include "Platform/OpenGL/OpenGLShader.h"
 
+#include <chrono>
+
+template<typename Fn>
+class InstrumentationTimer
+{
+private:
+	const char* name;//方法名
+	std::chrono::time_point<std::chrono::steady_clock> m_start;
+	bool m_stop;
+	Fn m_Func;
+public:
+	InstrumentationTimer(const char* name, Fn&& func) :
+		m_Func(func),
+		name(name),
+		m_stop(false)
+	{
+		m_start = std::chrono::high_resolution_clock::now();
+	}
+
+	void stop()
+	{
+		auto m_end = std::chrono::high_resolution_clock::now();
+		long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_start).time_since_epoch().count();
+		long long end = std::chrono::time_point_cast<std::chrono::microseconds>(m_end).time_since_epoch().count();
+
+		//uint32_t threadId = std::hash<std::thread::id>()(std::this_thread::get_id());
+
+		float during = (end - start) * 0.001f;
+
+		this->m_Func({ this->name, during });
+		//std::cout << name << ": " << (end - start) * 0.001 << "ms\n";
+		m_stop = true;
+	}
+
+	~InstrumentationTimer()
+	{
+		if (!m_stop)
+			stop();
+	}
+};
+
+#define PROFILE_SCOPE(name) InstrumentationTimer timer##__LINE__(name, [&](ProfileResult result){m_ProfileResults.push_back(result);})
+
 Sandbox2D::Sandbox2D() :
 	Layer("Sandbox2D"),
 	m_CameraController(1280.0f / 720.0f),
@@ -35,6 +78,8 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
 {
+	//InstrumentationTimer timer("sandbox2D Onupdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
+	PROFILE_SCOPE("Sandbox2D OnUpdate");
 	this->m_CameraController.OnUpdate(ts);
 	Hazel::RenderCommand::Clear();
 	Hazel::RenderCommand::SetClearColor({ 0.8f, 0.2f, 0.4f, 1.0f });
@@ -56,7 +101,14 @@ void Sandbox2D::OnImGuiRender()
 	ImGui::DragFloat("QuadRotation", &this->m_QuadAngle, 5.0f);
 	ImGui::ColorEdit4("Background", &this->m_Color[0]);
 
-
+	for (auto& result : this->m_ProfileResults)
+	{
+		char txt[63];
+		strcpy(txt, "%.3fms  ");
+		strcat(txt, result.Name);
+		ImGui::Text(txt, result.Time);
+	}
+	this->m_ProfileResults.clear();
 	ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
 }
