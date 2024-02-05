@@ -25,3 +25,4 @@
 //------Entry point--------
 //#include "Hazel/Core/EntryPoint.h"
 //-------------------------
+#include "Hazel/Debug/Instrumentor.h"
