@@ -13,6 +13,7 @@
 namespace Hazel
 {
     static bool s_GLFWInitialized = false;
+    static uint8_t s_GLFWWindowCount = 0;
 
     static void GLFWErrorCallback(int error, const char* description)
     {

@@ -129,8 +129,8 @@ namespace Hazel
 #if HZ_PROFILE
 #define HZ_PROFILE_BEGIN_SESSION(name, filepath) Hazel::Instrumentor::Get().BeginSession(name, filepath)
 #define HZ_PROFILE_END_SESSION() Hazel::Instrumentor::Get().EndSession()
-#define HZ_PROFILE_SCOPE(name) Hazel::InstrumentationTimer timer##_LINE__(name)
-#define HZ_PROFILE_FUNCTION() HZ_PROFILE_SCOPE(__FUNCSIG__) 
+#define HZ_PROFILE_SCOPE(name) Hazel::InstrumentationTimer timer##_LINE__(name) //具体到函数的一个过程
+#define HZ_PROFILE_FUNCTION() HZ_PROFILE_SCOPE(__FUNCSIG__) //一个函数
 
 #else
 #define HZ_PROFILE_BEGIN_SESSION(name, filepath) 

@@ -202,6 +202,13 @@ namespace Hazel
         this->UpLoadUniformMat4(name, matrix);
     }
 
+    void OpenGLShader::SetUniformFloat(const std::string& name, const float value)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        this->UpLoadUniformFloat(name, value);
+    }
+
     void OpenGLShader::SetUniformFloat4(const std::string& name, const glm::vec4& value)
     {
         HZ_PROFILE_FUNCTION();
@@ -239,6 +246,12 @@ namespace Hazel
     {
         int location = glGetUniformLocation(this->m_RendererID, name.c_str());
         glUniform3f(location, value.x, value.y, value.z);
+    }
+
+    void OpenGLShader::UpLoadUniformFloat(const std::string& name, const float value)
+    {
+        int location = glGetUniformLocation(this->m_RendererID, name.c_str());
+        glUniform1f(location, value);
     }
 
     void OpenGLShader::UpLoadUniformInt(const std::string& name, const int value)

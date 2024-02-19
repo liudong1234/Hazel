@@ -8,8 +8,8 @@ uniform mat4 transform;
 out vec2 v_TexCoord;
 void main()
 {
-	v_TexCoord = a_TexCoord;
-	gl_Position = projection * view * transform * vec4(a_Position, 1.0f);
+    v_TexCoord = a_TexCoord;
+    gl_Position = projection * view * transform * vec4(a_Position, 1.0f);
 }
 
 #type fragment
@@ -17,9 +17,10 @@ void main()
 out vec4 FragColor;
 in vec2 v_TexCoord;
 uniform vec4 color;
+uniform float u_TillingFactor;
 uniform sampler2D tex;
 
 void main()
 {
-	FragColor = texture(tex, v_TexCoord * 10) * color;
+    FragColor = texture(tex, v_TexCoord * u_TillingFactor) * color;
 }
