@@ -1,10 +1,11 @@
 #include "hzpch.h"
 #include "Mesh.h"
 #include "Platform/OpenGL/OpenGLMesh.h"
+#include "Renderer.h"
 
 namespace Hazel
 {
-	/*Ref<Mesh> Mesh::Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Texture2D> vTexture)
+	/*Ref<Mesh> Mesh::Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Ref<Texture2D>> vTexture)
 	{
 		switch (Renderer::GetAPI())
 		{

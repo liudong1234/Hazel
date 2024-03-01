@@ -1,8 +1,12 @@
 #include "hzpch.h"
 #include "OpenGLModel.h"
+#include "glad/glad.h"
+#include "stb_image.h"
 
 namespace Hazel
 {
+	unsigned int TextureFromFile(const char* path, const std::string& directory, [[maybe_unused]] bool gamma);
+
 	OpenGLModel::OpenGLModel(const char* path)
 	{
 		this->LoadModel(path);
@@ -13,7 +17,7 @@ namespace Hazel
 		//std::cout << "OpenGLModel Îö¹¹" << std::endl;
 	}
 
-	void OpenGLModel::Draw(std::shared_ptr<Shader>& shader)
+	void OpenGLModel::Render(std::shared_ptr<Shader>& shader)
 	{
 		for (unsigned int i = 0; i < this->meshes.size(); i++)
 			this->meshes[i].Draw(shader);
@@ -141,7 +145,7 @@ namespace Hazel
 			{
 				if (std::strcmp(texturesLoaded[j].GetPath().c_str(), str.C_Str()) == 0)
 				{
-					this->textureResult.push_back(texturesLoaded[j]);
+					->textureResult->push_back(texturesLoaded[j]);
 					skip = true;
 					break;
 				}
@@ -151,13 +155,62 @@ namespace Hazel
 				// Create a new unique_ptr for each texture
 				std::string filename = std::string(str.C_Str());
 				filename = directory + '/' + filename;
+
 				OpenGLTexture2D texture(filename, typeName);
-				//texture.id = TextureFromFile(str.C_Str(), this->directory, true);
-				//texture.type = typeName;
-				//texture.path = str.C_Str();
+				unsigned int id = TextureFromFile(str.C_Str(), this->directory, true);
+				texture.SetId(id);
 				this->textureResult.push_back(texture);
 				this->texturesLoaded.push_back(texture);
 			}
 		}
+	}
+
+	unsigned int TextureFromFile(const char* path, const std::string& directory, [[maybe_unused]] bool gamma)
+	{
+		std::string filename = std::string(path);
+		filename = directory + '/' + filename;
+
+		unsigned int textureID;
+		glGenTextures(1, &textureID);
+
+		int width, height, nrComponents;
+		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+		if (data)
+		{
+			GLenum internalformat = 0;
+			GLenum dataformat = 0;
+			if (nrComponents == 1)
+			{
+				internalformat = dataformat = GL_RED;
+			}
+			else if (nrComponents == 3)
+			{
+				internalformat = gamma ? GL_SRGB : GL_RGB;
+				dataformat = GL_RGB;
+			}
+			else if (nrComponents == 4)
+			{
+				internalformat = gamma ? GL_SRGB : GL_RGB;
+				dataformat = GL_RGBA;
+			}
+
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, internalformat, width, height, 0, dataformat, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			stbi_image_free(data);
+		}
+		else
+		{
+			std::cout << "Texture failed to load at path: " << path << std::endl;
+			stbi_image_free(data);
+		}
+
+		return textureID;
 	}
 }

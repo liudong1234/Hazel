@@ -1,0 +1,11 @@
+Model Information:
+* title:	Star Rail - Fu Xuan
+* source:	https://sketchfab.com/3d-models/star-rail-fu-xuan-465a6faf755a493da989fc8f99cf1cc3
+* author:	X9_YT (https://sketchfab.com/X9_YT)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Star Rail - Fu Xuan" (https://sketchfab.com/3d-models/star-rail-fu-xuan-465a6faf755a493da989fc8f99cf1cc3) by X9_YT (https://sketchfab.com/X9_YT) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

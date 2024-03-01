@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Input.h"
 #include "Hazel/Renderer/Renderer.h"
+#include "Hazel/Debug/Instrumentor.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -13,12 +14,16 @@ namespace Hazel
 	Application::Application():
 		is_Minimum(false)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
 		s_Instance = this;
-		this->m_Windnow = std::unique_ptr<Window>(Window::Create());
+		this->m_Windnow = Scope<Window>(Window::Create());
 		this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
 
 		this->m_Windnow->SetVSync(false);
+
+		Renderer::Init();
 
 		this->m_ImGuiLayer = new ImGuiLayer();
 		PushOverLayer(this->m_ImGuiLayer);
@@ -26,11 +31,15 @@ namespace Hazel
 
 	Application::~Application()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		if (this->m_ImGuiLayer)
 			delete this->m_ImGuiLayer;
 	}
 	void Application::OnEvent(Event& e)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FN(Application::OnWindowClose));
@@ -46,22 +55,30 @@ namespace Hazel
 	}
 	void Application::Run()
 	{
+		HZ_PROFILE_FUNCTION();
+
 		HZ_CORE_INFO("{0}", glfwGetVersionString());
 		while (this->is_Running)
 		{
+			HZ_PROFILE_SCOPE("Running loop");
 			float curtime = (float)glfwGetTime();
 			TimeStep ts = curtime - m_LastTime;
 			m_LastTime = curtime;
 
 			if (!this->is_Minimum)
 			{
+				HZ_PROFILE_SCOPE("LayerStack OnUpdate");
+
 				for (Layer* layer : this->m_LayerStack)
 					layer->OnUpdate(ts);
 			}
 
 			this->m_ImGuiLayer->Begin();
-			for (Layer* layer : this->m_LayerStack)
-				layer->OnImGuiRender();
+			{
+				HZ_PROFILE_SCOPE("LayerStack OnImGuiRender");
+				for (Layer* layer : this->m_LayerStack)
+					layer->OnImGuiRender();
+			}
 			this->m_ImGuiLayer->End();
 
 			//HZ_CORE_TRACE("{0}, {1}", Input::GetMouseX(), Input::GetMouseY());
@@ -71,12 +88,16 @@ namespace Hazel
 
 	void Application::PushLayer(Layer* layer)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		this->m_LayerStack.PushLayer(layer);
 		layer->OnAttach();
 	}
 
 	void Application::PushOverLayer(Layer* layer)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		this->m_LayerStack.PushOverLayer(layer);
 		layer->OnAttach();
 	}
@@ -89,6 +110,8 @@ namespace Hazel
 
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
+		HZ_PROFILE_FUNCTION();
+
 		//HZ_CORE_WARN("{0}, {1}", e.GetWidth(), e.GetHeight());
 		if (e.GetWidth() == 0 || e.GetHeight() == 0)
 		{

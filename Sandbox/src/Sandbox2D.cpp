@@ -1,68 +1,58 @@
 #include "Sandbox2D.h"
-#include "Platform/OpenGL/OpenGLShader.h"
+#include "Hazel/Renderer/Renderer2D.h"
 
-Sandbox2D::Sandbox2D():
+#include "imgui.h"
+
+Sandbox2D::Sandbox2D() :
 	Hazel::Layer("sandbox2d"),
-	m_CameraController(640.0f / 360.0f)
+	m_CameraController(1280.0f / 720.0f),
+	m_Color(glm::vec4(1.0f)),
+	m_Pos({ 0.0f, 0.0f, 1.0f }),
+	rotation(0.0f)
 {
-	//正方形
-	float quadVertices[] =
-	{
-		//position		
-		-0.7f, -0.7f, 0.0f, 0.0f, 0.0f,
-		 0.7f, -0.7f, 0.0f, 1.0f, 0.0f,
-		 0.7f,  0.7f, 0.0f, 1.0f, 1.0f,
-		-0.7f,  0.7f, 0.0f, 0.0f, 1.0f
-	};
-	uint32_t quadIndices[] = { 0, 1, 2, 0, 2, 3 };
-	Hazel::Ref<Hazel::VertexBuffer> m_QuadBuffer;
-	Hazel::Ref<Hazel::IndexBuffer> m_QuadIndex;
-
-	this->quadVa.reset(Hazel::VertexArray::Create());
-	m_QuadBuffer.reset(Hazel::VertexBuffer::Create(quadVertices, sizeof(quadVertices)));
-
-
-	texture.reset(Hazel::Texture2D::Create("Assets/Textures/container2.png"));
-
-	Hazel::BufferLayout layout2 =
-	{ { "g_Position", Hazel::ShaderDataType::Float3 },
-		{"g_Texture", Hazel::ShaderDataType::Float2}
-	};
-
-	m_QuadBuffer->SetLayout(layout2);
-	this->quadVa->AddVertexBuffer(m_QuadBuffer);
-	m_QuadIndex.reset(Hazel::IndexBuffer::Create(quadIndices, sizeof(quadIndices) / sizeof(uint32_t)));
-	this->quadVa->SetIndexBuffer(m_QuadIndex);
-
-	Hazel::ShaderLibray shaderLibrary;
-	this->quadShader = shaderLibrary.Load("Assets/Shaders/quad.glsl");
-
-	std::dynamic_pointer_cast<Hazel::OpenGLShader>(quadShader)->SetUniformInt("tex", 0);
+	this->texture = Hazel::Texture2D::Create("Assets/Textures/container2.png");
 }
 
 Sandbox2D::~Sandbox2D()
 {
+	Hazel::Renderer2D::Shutdown();
 }
 
 void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
 {
+	HZ_PROFILE_FUNCTION();
+
 	Hazel::RenderCommand::Clear();
-	Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1.0f });
+	Hazel::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
 
 	this->m_CameraController.OnUpdate(ts);
 
-	Hazel::Renderer::BeginScene(this->m_CameraController.GetCamera());
+	Hazel::Renderer2D::BeginScene(this->m_CameraController.GetCamera());
 
-	this->quadShader->Bind();
-	this->texture->Bind();
-	Hazel::Renderer::Submit(this->quadVa, this->quadShader);
+	//Hazel::Renderer2D::DrawQuad(this->m_Pos, { 1.0f, 1.0f }, this->m_Color);
 
-	Hazel::Renderer::EndScend();
+	Hazel::Renderer2D::DrawQuad(this->m_Pos, { 1.0f, 1.0f }, this->texture, rotation, 2);
+
+	//Hazel::Renderer2D::DrawQuad({ -2.0f, -2.0f }, { 1.0f, 1.0f }, this->texture);
+
+	Hazel::Renderer2D::EndScend();
+}
+void Sandbox2D::OnAttach()
+{
+}
+
+void Sandbox2D::OnDetach()
+{
 }
 
 void Sandbox2D::OnImGuiRender()
 {
+	ImGui::Begin("settings");
 
+	ImGui::ColorEdit4(u8"颜色", &this->m_Color[0]);
+	ImGui::DragFloat3(u8"位置", &this->m_Pos.x, 0.5f);
+	ImGui::DragFloat(u8"角度", &this->rotation, 1.0f, 0.0f, 360.0f);
+	ImGui::End();
 }
 
 void Sandbox2D::OnEvent(Hazel::Event& e)

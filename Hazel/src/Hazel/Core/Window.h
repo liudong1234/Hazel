@@ -12,7 +12,7 @@ namespace Hazel
 		unsigned int Height;
 		unsigned int Width;
 
-		WindowProps(const std::string title = "Hazel Engine", unsigned int width = 1280, unsigned int height = 720) :
+		WindowProps(const std::string title = "Hazel Engine", unsigned int width = 480, unsigned int height = 270) :
 			Title(title), Height(height), Width(width)
 		{
 		}

@@ -9,13 +9,17 @@ namespace Hazel
 		virtual ~Texture() = default;
 		virtual void Bind(uint32_t slot = 0) = 0;
 		virtual void UnBind() = 0;
+		virtual std::string GetPath() = 0;
+		virtual void SetData(void* data, uint32_t size) = 0;
+		virtual bool operator == (const Texture& other) = 0;
 	};
 
 	class Texture2D :
 		public Texture
 	{
 	public:
-		static Texture2D* Create(std::string filepath);
+		static Ref<Texture2D> Create(const uint32_t width, const uint32_t height);
+		static Ref<Texture2D> Create(std::string filepath);
 	};
 
 }

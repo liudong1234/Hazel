@@ -17,13 +17,16 @@
 
 #include "Hazel/Renderer/Buffer.h"
 #include "Hazel/Renderer/OrthoGraphicCamera.h"
+#include "Hazel/Renderer/FPSCamera.h"
 #include "Hazel/Renderer/VertexArray.h"
 #include "Hazel/Renderer/Shader.h"
 
 //------------------------
 
 #include "Hazel/Renderer/OrthoGraphicCameraController.h"
+#include "Hazel/Renderer/FPSCameraController.h"
 
 //------Entry point--------
 //#include "Hazel/Core/EntryPoint.h"
 //-------------------------
+#include "Hazel/Debug/Instrumentor.h"

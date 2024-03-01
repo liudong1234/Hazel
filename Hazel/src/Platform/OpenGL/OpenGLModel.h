@@ -16,7 +16,7 @@ namespace Hazel
 		OpenGLModel() {}
 		OpenGLModel(const char* path);
 		~OpenGLModel();
-		virtual void Draw(std::shared_ptr<Shader>& shader) override;
+		virtual void Render(std::shared_ptr<Shader>& shader) override;
 
 		//暂变为public
 		std::vector<OpenGLMesh> meshes;
@@ -26,7 +26,7 @@ namespace Hazel
 		std::string directory;
 	
 		//最终纹理
-		std::vector<OpenGLTexture2D> textureResult;
+		std::vector<Ref<OpenGLTexture2D>> textureResult;
 		//函数
 		//模型导入
 		void LoadModel(std::string path);

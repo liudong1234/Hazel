@@ -7,6 +7,7 @@ namespace Hazel
 		: public VertexBuffer
 	{
 	public:
+		OpenGLVertexBuffer(uint32_t size);
 		OpenGLVertexBuffer(void* vertices, uint32_t size);
 		virtual ~OpenGLVertexBuffer();
 
@@ -14,6 +15,7 @@ namespace Hazel
 		virtual void UnBind() const override;
 		virtual const BufferLayout& GetLayout() const override { return this->m_Layout; };
 		virtual void SetLayout(const BufferLayout& layout) override { this->m_Layout = layout; }
+		virtual void SetData(const void* data, uint32_t size) override;
 
 	private:
 		uint32_t m_RendererID;

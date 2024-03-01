@@ -16,18 +16,14 @@ namespace Hazel
 		//网格数据
 		std::vector<Vertex> vertices;
 		std::vector<unsigned int> indices;
-		std::vector<OpenGLTexture2D> textures;
+		std::vector<Ref<OpenGLTexture2D>> textures;
 		//函数
-		OpenGLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<OpenGLTexture2D> vTexture);
+		OpenGLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, std::vector<Ref<OpenGLTexture2D>> vTexture);
 		~OpenGLMesh();
 		void Draw(std::shared_ptr<Shader>& shader);
 
 	private:
 		std::shared_ptr<OpenGLVertexArray> m_VertexArray;
-		std::shared_ptr<OpenGLIndexBuffer> m_IndexBuffer;
-		std::shared_ptr<OpenGLVertexBuffer> m_VertexBuffer;
-		std::shared_ptr<OpenGLVertexArray> m_LightVAO;
-
 		void SetOpenGLMesh();
 
 	public:
