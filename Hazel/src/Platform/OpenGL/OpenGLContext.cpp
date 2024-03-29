@@ -6,28 +6,32 @@
 
 namespace Hazel
 {
-	OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) :
-		m_WindowHandle(windowHandle)
-	{
-		HZ_CORE_ASSERT(windowHandle, "windowhandle is null");
-	}
+    OpenGLContext::OpenGLContext(GLFWwindow* windowHandle) :
+        m_WindowHandle(windowHandle)
+    {
+        HZ_CORE_ASSERT(windowHandle, "windowhandle is null");
+    }
 
-	void OpenGLContext::Init()
-	{
-		glfwMakeContextCurrent(this->m_WindowHandle);
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		HZ_CORE_ASSERT(status, "Failed to initailize to glad!");
+    void OpenGLContext::Init()
+    {
+        HZ_PROFILE_FUNCTION();
 
-		HZ_CORE_INFO("openGL info: ");
+        glfwMakeContextCurrent(this->m_WindowHandle);
+        int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+        HZ_CORE_ASSERT(status, "Failed to initailize to glad!");
 
-		HZ_CORE_INFO(" vendor: {0}", (char*)glGetString(GL_VENDOR));
-		HZ_CORE_INFO(" Renderer: {0}", (char*)glGetString(GL_RENDERER));
-		HZ_CORE_INFO(" version: {0}", (char*)glGetString(GL_VERSION));
+        HZ_CORE_INFO("openGL info: ");
 
-	}
+        HZ_CORE_INFO(" vendor: {0}", (char*)glGetString(GL_VENDOR));
+        HZ_CORE_INFO(" Renderer: {0}", (char*)glGetString(GL_RENDERER));
+        HZ_CORE_INFO(" version: {0}", (char*)glGetString(GL_VERSION));
 
-	void OpenGLContext::SwapBuffers()
-	{
-		glfwSwapBuffers(this->m_WindowHandle);
-	}
+    }
+
+    void OpenGLContext::SwapBuffers()
+    {
+        HZ_PROFILE_FUNCTION();
+
+        glfwSwapBuffers(this->m_WindowHandle);
+    }
 }

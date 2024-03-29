@@ -6,3 +6,4 @@ bin-int/
 #File
 *user
 *.tlog
+*.json
