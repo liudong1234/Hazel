@@ -48,6 +48,7 @@ public:
 #define PROFILE_SCOPE(name) InstrumentationTimer timer##__LINE__(name, [&](ProfileResult result){m_ProfileResults.push_back(result);})
 
 Sandbox2D::Sandbox2D() :
+<<<<<<< HEAD
 	Layer("Sandbox2D"),
 	m_CameraController(1280.0f / 720.0f),
 	m_Pos(glm::vec3(1.0f)),
@@ -55,6 +56,15 @@ Sandbox2D::Sandbox2D() :
 	m_QuadPos(glm::vec2(1.0f)),
 	m_QuadSize(glm::vec2(1.0f)),
 	m_QuadAngle(0.0f)
+=======
+    Layer("Sandbox2D"),
+    m_CameraController(1280.0f / 720.0f),
+    m_Pos(glm::vec3(1.0f)),
+    m_Color(glm::vec4(0.3f, 0.4f, 0.5f, 1.0f)),
+    m_QuadPos(glm::vec2(0.0f)),
+    m_QuadSize(glm::vec2(1.0f)),
+    m_QuadAngle(0.0f)
+>>>>>>> 100debe (Improving 2D Rendering)
 {
 
 }
@@ -84,10 +94,27 @@ void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
 	Hazel::RenderCommand::Clear();
 	Hazel::RenderCommand::SetClearColor({ 0.8f, 0.2f, 0.4f, 1.0f });
 
+<<<<<<< HEAD
 	Hazel::Renderer2D::BeginScene(this->m_CameraController.GetCamera());
 	Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { 0.1f, 0.2f, 0.3f, 1.0f });
 	Hazel::Renderer2D::DrawQuad(this->m_QuadPos, this->m_QuadSize, this->m_Color, this->m_QuadAngle);
 	Hazel::Renderer2D::DrawQuad({ 0.0f, 0.0f, -0.1f }, { 2.0f, 2.0f }, this->quadTexture);
+=======
+    {
+        HZ_PROFILE_SCOPE("Renderer Prop");
+        Hazel::RenderCommand::Clear();
+        Hazel::RenderCommand::SetClearColor({ 0.8f, 0.2f, 0.4f, 1.0f });
+    }
+
+    {
+        HZ_PROFILE_SCOPE("Draw Quad");
+        Hazel::Renderer2D::BeginScene(this->m_CameraController.GetCamera());
+        Hazel::Renderer2D::DrawQuad({ -0.5f, -0.7f }, { 1.0f, 1.0f }, { 0.1f, 0.2f, 0.3f, 1.0f });
+        Hazel::Renderer2D::DrawRotateQuad({ 1.0f, 0.8f }, this->m_QuadSize, this->m_QuadAngle, this->m_Color);
+        Hazel::Renderer2D::DrawRotateQuad(this->m_QuadPos, this->m_QuadSize, this->m_QuadAngle, this->quadTexture, 2.0f, {1.0f, 0.8f, 0.8f, 1.0f});
+        Hazel::Renderer2D::EndScene();
+    }
+>>>>>>> 100debe (Improving 2D Rendering)
 
 	Hazel::Renderer2D::EndScene();
 }

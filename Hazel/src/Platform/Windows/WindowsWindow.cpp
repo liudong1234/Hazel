@@ -12,7 +12,12 @@
 
 namespace Hazel
 {
+<<<<<<< HEAD
 	static bool s_GLFWInitialized = false;
+=======
+    static bool s_GLFWInitialized = false;
+    static uint8_t s_GLFWWindowCount = 0;
+>>>>>>> 100debe (Improving 2D Rendering)
 
 	static void GLFWErrorCallback(int error, const char* description)
 	{
