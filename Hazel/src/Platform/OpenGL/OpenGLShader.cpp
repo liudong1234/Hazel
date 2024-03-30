@@ -230,6 +230,12 @@ namespace Hazel
         this->UpLoadUniformInt(name, value);
     }
 
+    void OpenGLShader::SetUniformIntArray(const std::string& name, int* value, uint32_t count)
+    {
+        HZ_PROFILE_FUNCTION();
+        this->UpLoadUniformIntArray(name, value, count);
+    }
+
     void OpenGLShader::UpLoadUniformMat4(const std::string& name, const glm::mat4& matrix)
     {
         int location = glGetUniformLocation(this->m_RendererID, name.c_str());
@@ -260,6 +266,11 @@ namespace Hazel
         glUniform1i(location, value);
     }
 
+    void OpenGLShader::UpLoadUniformIntArray(const std::string& name, int* value, uint32_t count)
+    {
+        int location = glGetUniformLocation(this->m_RendererID, name.c_str());
+        glUniform1iv(location, count, value);
+    }
 
 }
 

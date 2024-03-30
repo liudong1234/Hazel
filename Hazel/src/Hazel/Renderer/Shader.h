@@ -20,7 +20,8 @@ namespace Hazel
         virtual void SetUniformFloat3(const std::string& name, const glm::vec3& value) = 0;
         virtual void SetUniformFloat(const std::string& name, const float value) = 0;
         virtual void SetUniformInt(const std::string& name, int value) = 0;
-
+        virtual void SetUniformIntArray(const std::string& name, int* value, uint32_t count) = 0;
+        
 
         static Ref<Shader> Create(const std::string& filepath);
         static Ref<Shader> Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc);

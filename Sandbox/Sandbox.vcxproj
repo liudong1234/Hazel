@@ -144,6 +144,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\quad.glsl" />
+    <None Include="Assets\Shaders\Texture.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

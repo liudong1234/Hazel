@@ -27,7 +27,7 @@ private:
 
     glm::vec4 m_Color;
 
-    glm::vec2 m_QuadPos;
+    glm::vec3 m_QuadPos;
     glm::vec2 m_QuadSize;
     float m_QuadAngle;
 };

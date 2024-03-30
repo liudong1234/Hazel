@@ -10,6 +10,7 @@ namespace Hazel
         static void Init();
         static void Shutdown();
 
+        static void Flush();
         static void BeginScene(const OrthographicCamera& camera);
         static void EndScene();
 
@@ -23,16 +24,18 @@ namespace Hazel
         static void DrawRotateQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tillingFactor = 1.0f, const glm::vec4 & tintColor = glm::vec4(1.0f));
         static void DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tillingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 
-    private:
-        struct Render2DStorage
+        struct Statistics
         {
-            Ref<VertexArray> QuadVertexArray;
-            Ref<Shader> TextureShader;
-            Ref<Texture2D> WhiteTexture;
+            uint32_t DrawCalls = 0;
+            uint32_t QuadCounts = 0;
+
+            uint32_t GetQuadIndexCounts() { return QuadCounts * 6; }
+            uint32_t GetQuadVertexCounts() { return QuadCounts * 4; }
         };
-        static Render2DStorage* s_Data;
+        static Statistics GetStats();
+        static void ResetStatics();
 
-        static void Draw();
-
+    private:
+        static void FlushReset();
     };
 }

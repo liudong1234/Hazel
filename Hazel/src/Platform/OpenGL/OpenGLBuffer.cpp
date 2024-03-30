@@ -15,6 +15,15 @@ namespace Hazel
         glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
     }
 
+    OpenGLVertexBuffer::OpenGLVertexBuffer(uint32_t size)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        glCreateBuffers(1, &this->m_RendererID);
+        this->Bind();
+        glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
+    }
+
     OpenGLVertexBuffer::~OpenGLVertexBuffer()
     {
         HZ_PROFILE_FUNCTION();
@@ -34,6 +43,12 @@ namespace Hazel
         HZ_PROFILE_FUNCTION();
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
+    }
+
+    void OpenGLVertexBuffer::SetData(const void* data, uint32_t size)
+    {
+        glBindBuffer(GL_ARRAY_BUFFER, m_RendererID);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, size, data);
     }
 
 
