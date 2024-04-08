@@ -5,5 +5,7 @@ bin-int/
 
 #File
 *user
-*.tlog
 *.json
+*.tlog
+*.ini
+*.vcxproj

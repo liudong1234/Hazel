@@ -36,6 +36,7 @@ namespace Hazel
         if (this->m_ImGuiLayer)
             delete this->m_ImGuiLayer;
     }
+    
     void Application::OnEvent(Event& e)
     {
         EventDispatcher dispatcher(e);
@@ -51,6 +52,7 @@ namespace Hazel
                 break;
         }
     }
+    
     void Application::Run()
     {
         HZ_PROFILE_FUNCTION();
@@ -84,6 +86,12 @@ namespace Hazel
         }
     }
 
+    void Application::Close()
+    {
+        this->is_Running = false;
+    }
+
+
     void Application::PushLayer(Layer* layer)
     {
         HZ_PROFILE_FUNCTION();
@@ -99,12 +107,14 @@ namespace Hazel
         this->m_LayerStack.PushOverLayer(layer);
         layer->OnAttach();
     }
+    
     bool Application::OnWindowClose(WindowCloseEvent& e)
     {
         this->is_Running = false;
 
         return false;
     }
+    
     bool Application::OnWindowResize(WindowResizeEvent& e)
     {
         HZ_PROFILE_FUNCTION();

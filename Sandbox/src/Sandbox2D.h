@@ -7,6 +7,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Hazel/Core/TimeStep.h"
 
+
 class Sandbox2D :
     public Hazel::Layer
 {
@@ -20,6 +21,10 @@ public:
     void OnEvent(Hazel::Event& e) override;
 private:
     Hazel::Ref<Hazel::Texture2D> quadTexture;
+    Hazel::Ref<Hazel::SubTexture2D> subQuad;
+    std::unordered_map<char, Hazel::Ref<Hazel::SubTexture2D>> s_TextureMap;
+    Hazel::Ref<Hazel::Framebuffer> m_Framebuffer;
+
 
     Hazel::OrthographicCameraController m_CameraController;
 

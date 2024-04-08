@@ -98,9 +98,6 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
-        static bool show = true;
-        ImGui::ShowDemoWindow(&show);
-
         //ImGui::Begin();
     }
 

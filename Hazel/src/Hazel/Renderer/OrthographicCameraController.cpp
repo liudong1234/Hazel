@@ -8,7 +8,7 @@ namespace Hazel
 {
     OrthographicCameraController::OrthographicCameraController(float aspectRatio, bool rotation) :
         m_AspectRatio(aspectRatio),
-        m_ZoomLevel(1.0f),
+        m_ZoomLevel(10.0f),
         m_Camera(-m_AspectRatio * this->m_ZoomLevel, m_AspectRatio* this->m_ZoomLevel, -this->m_ZoomLevel, this->m_ZoomLevel),
         m_CameraRotationSpeed(180.0f), m_CameraTranslationSpeed(5.0f),
         m_CameraPos({ 0.0f, 0.0f, 0.0f }),
@@ -63,8 +63,8 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
-        this->m_ZoomLevel -= e.GetYOffset() * 0.25f;
-        this->m_ZoomLevel = std::max(this->m_ZoomLevel, 0.25f);
+        this->m_ZoomLevel -= e.GetYOffset() * 0.1f;
+        this->m_ZoomLevel = std::max(this->m_ZoomLevel, 0.1f);
         m_Camera.SetProjection(-m_AspectRatio * m_ZoomLevel, m_AspectRatio * m_ZoomLevel, -m_ZoomLevel, m_ZoomLevel);
         return false;
     }

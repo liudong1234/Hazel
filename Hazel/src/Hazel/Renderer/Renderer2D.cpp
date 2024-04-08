@@ -10,14 +10,14 @@ namespace Hazel
         glm::vec3 Position;
         glm::vec4 Color;
         glm::vec2 TexCoord;
-        
+
         float TexIndex;
         float TillingFactor;
     };
 
     struct Render2DData
     {
-        const uint32_t MaxQuad = 10000;
+        const uint32_t MaxQuad = 1000;
         const uint32_t MaxVertices = MaxQuad * 4;
         const uint32_t MaxIndices = MaxQuad * 6;
         static const uint32_t MaxTextureSlots = 32;
@@ -65,7 +65,7 @@ namespace Hazel
         uint32_t* quadIndices = new uint32_t[s_Data.MaxIndices];
 
         uint32_t offset = 0;
-        for (uint32_t i = 0; i < s_Data.MaxIndices; i+=6)
+        for (uint32_t i = 0; i < s_Data.MaxIndices; i += 6)
         {
             quadIndices[i + 0] = offset + 0;
             quadIndices[i + 1] = offset + 1;
@@ -98,8 +98,8 @@ namespace Hazel
 
         //顶点位置信息
         s_Data.QuadVertexPosition[0] = { -0.5f, -0.5f, 0.0f, 1.0f };
-        s_Data.QuadVertexPosition[1] = {  0.5f, -0.5f, 0.0f, 1.0f };
-        s_Data.QuadVertexPosition[2] = {  0.5f,  0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPosition[1] = { 0.5f, -0.5f, 0.0f, 1.0f };
+        s_Data.QuadVertexPosition[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
         s_Data.QuadVertexPosition[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
     }
@@ -141,7 +141,6 @@ namespace Hazel
         s_Data.Stats.DrawCalls++;
     }
 
-
     void Renderer2D::FlushReset()
     {
         EndScene();
@@ -149,6 +148,7 @@ namespace Hazel
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
         s_Data.TextrueSlotIndex = 1;
     }
+
     void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4 color)
     {
         DrawQuad({ position.x, position.y, 0.0f }, size, color);
@@ -158,7 +158,7 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
-        if (s_Data.QuadIndexCount > s_Data.MaxIndices)
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
         {
             FlushReset();
         }
@@ -201,13 +201,13 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
-        if (s_Data.QuadIndexCount > s_Data.MaxIndices)
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
         {
             FlushReset();
         }
 
         float textureIndex = 0.0f;
-        for (uint32_t i = 0; i < s_Data.TextrueSlotIndex; i++)
+        for (uint32_t i = 1; i < s_Data.TextrueSlotIndex; i++)
         {
             if (*s_Data.TextureSlots[i].get() == *texture.get())
             {
@@ -249,6 +249,58 @@ namespace Hazel
 
     }
 
+    void Hazel::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tillingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+        {
+            FlushReset();
+        }
+
+        float textureIndex = 0.0f;
+        auto texture = subTexture->GetTexture();
+        for (uint32_t i = 1; i < s_Data.TextrueSlotIndex; i++)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                textureIndex = (float)i;
+                break;
+            }
+        }
+
+        if (textureIndex == 0.0f)
+        {
+            textureIndex = (float)s_Data.TextrueSlotIndex;
+            s_Data.TextureSlots[s_Data.TextrueSlotIndex] = texture;
+            s_Data.TextrueSlotIndex++;
+        }
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        const glm::vec2* texCoords = subTexture->GetTexCoords();
+
+        for (uint32_t i = 0; i < 4; i++)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+            s_Data.QuadVertexBufferPtr->Color = tintColor;
+            s_Data.QuadVertexBufferPtr->TexCoord = texCoords[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TillingFactor = tillingFactor;
+            s_Data.QuadVertexBufferPtr++;
+        }
+        s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCounts++;
+
+    }
+
     void Renderer2D::DrawRotateQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4 color)
     {
         HZ_PROFILE_FUNCTION();
@@ -259,7 +311,7 @@ namespace Hazel
     void Renderer2D::DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4 color)
     {
         HZ_PROFILE_FUNCTION();
-        if (s_Data.QuadIndexCount > s_Data.MaxIndices)
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
         {
             FlushReset();
         }
@@ -294,19 +346,19 @@ namespace Hazel
     void Renderer2D::DrawRotateQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
     {
         HZ_PROFILE_FUNCTION();
-        
+
         DrawRotateQuad({ position.x, position.y, 0.0f }, size, rotation, texture, tillingFactor, tintColor);
     }
 
     void Renderer2D::DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
     {
         HZ_PROFILE_FUNCTION();
-        if (s_Data.QuadIndexCount > s_Data.MaxIndices)
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
         {
             FlushReset();
         }
         float textureIndex = 0.0f;
-        for (uint32_t i = 0; i < s_Data.TextrueSlotIndex; i++)
+        for (uint32_t i = 1; i < s_Data.TextrueSlotIndex; i++)
         {
             if (*s_Data.TextureSlots[i].get() == *texture.get())
             {
@@ -347,7 +399,59 @@ namespace Hazel
 
         s_Data.Stats.QuadCounts++;
     }
-    
+
+    void Renderer2D::DrawRotateQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
+    {
+        DrawRotateQuad({ position.x, position.y, 0.0f }, size, rotation, subTexture, tillingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
+    {
+        HZ_PROFILE_FUNCTION();
+        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+        {
+            FlushReset();
+        }
+        float textureIndex = 0.0f;
+        auto texture = subTexture->GetTexture();
+        for (uint32_t i = 1; i < s_Data.TextrueSlotIndex; i++)
+        {
+            if (*s_Data.TextureSlots[i].get() == *texture.get())
+            {
+                textureIndex = (float)i;
+                break;
+            }
+        }
+
+        if (textureIndex == 0.0f)
+        {
+            textureIndex = (float)s_Data.TextrueSlotIndex;
+            s_Data.TextureSlots[s_Data.TextrueSlotIndex] = texture;
+            s_Data.TextrueSlotIndex++;
+        }
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0.0f, 0.0f, 1.0f)) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+
+        const glm::vec2* texCoords = subTexture->GetTexCoords();
+
+        for (uint32_t i = 0; i < 4; i++)
+        {
+            s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
+            s_Data.QuadVertexBufferPtr->Color = tintColor;
+            s_Data.QuadVertexBufferPtr->TexCoord = texCoords[i];
+            s_Data.QuadVertexBufferPtr->TexIndex = textureIndex;
+            s_Data.QuadVertexBufferPtr->TillingFactor = tillingFactor;
+            s_Data.QuadVertexBufferPtr++;
+        }
+        s_Data.QuadIndexCount += 6;
+
+        s_Data.Stats.QuadCounts++;
+    }
+
+
+
     void Renderer2D::ResetStatics()
     {
         memset(&s_Data.Stats, 0, sizeof(Statistics));
