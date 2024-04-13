@@ -14,6 +14,7 @@ namespace Hazel
         virtual void UnBind() override;
         virtual uint32_t GetColorAttachmentID() override { return this->m_ColorAttachment; }
 
+        virtual void Resize(const uint32_t width, const uint32_t height) override;
         virtual FramebufferSpecification& GetSpecification() override { return this->m_Spec; }
         virtual const FramebufferSpecification& GetSpecification() const override { return this->m_Spec; }
     private:

@@ -107,7 +107,7 @@ namespace Hazel
             long long start = std::chrono::time_point_cast<std::chrono::microseconds>(m_start).time_since_epoch().count();
             long long end = std::chrono::time_point_cast<std::chrono::microseconds>(m_end).time_since_epoch().count();
 
-            uint32_t threadId = std::hash<std::thread::id>()(std::this_thread::get_id());
+            uint32_t threadId = (uint32_t)std::hash<std::thread::id>()(std::this_thread::get_id());
 
             //std::cout << name << ": " << (end - start) << "ms\n";
 

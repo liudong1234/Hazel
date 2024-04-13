@@ -64,6 +64,16 @@ namespace Hazel
         ImGui::DestroyContext();
     }
 
+    void ImGuiLayer::OnEvent(Event& event)
+    {
+        if (this->m_BlockImGuiEvents)
+        {
+            ImGuiIO& io = ImGui::GetIO();
+            event.m_Handled |= event.IsInCategory(EventCategoryKeyboard) & io.WantCaptureKeyboard;
+            event.m_Handled |= event.IsInCategory(EventCategoryMouse) & io.WantCaptureMouse;
+        }
+    }
+
     void ImGuiLayer::Begin()
     {
         HZ_PROFILE_FUNCTION();

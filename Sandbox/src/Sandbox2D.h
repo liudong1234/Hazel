@@ -23,8 +23,6 @@ private:
     Hazel::Ref<Hazel::Texture2D> quadTexture;
     Hazel::Ref<Hazel::SubTexture2D> subQuad;
     std::unordered_map<char, Hazel::Ref<Hazel::SubTexture2D>> s_TextureMap;
-    Hazel::Ref<Hazel::Framebuffer> m_Framebuffer;
-
 
     Hazel::OrthographicCameraController m_CameraController;
 

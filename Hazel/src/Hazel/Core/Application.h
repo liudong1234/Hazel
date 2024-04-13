@@ -12,7 +12,7 @@ namespace Hazel
     class HAZEL_API Application
     {
     public:
-        Application();
+        Application(const std::string& name = "Hazel Engine");
         virtual ~Application();
 
         void OnEvent(Event& e);
@@ -22,6 +22,7 @@ namespace Hazel
         void PushLayer(Layer* layer);
         void PushOverLayer(Layer* layer);
 
+        ImGuiLayer* GetImGuiLayer() { return this->m_ImGuiLayer; }
         inline static Application& Get() { return *s_Instance; }
         inline Window& GetWindow() { return *this->m_Windnow; }
     private:

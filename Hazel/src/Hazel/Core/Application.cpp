@@ -10,7 +10,7 @@ namespace Hazel
     Application* Application::s_Instance = nullptr;
 
 
-    Application::Application() :
+    Application::Application(const std::string& name) :
         m_LastTime(0.0f),
         is_Minimum(false)
     {
@@ -18,7 +18,7 @@ namespace Hazel
 
         HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
         s_Instance = this;
-        this->m_Windnow = Scope<Window>(Window::Create({ "Game Engine", 1280, 720 }));
+        this->m_Windnow = Scope<Window>(Window::Create({ name, 1280, 720 }));
         this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
         this->m_Windnow->SetVSync(true);
 
