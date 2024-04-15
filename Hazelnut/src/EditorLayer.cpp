@@ -48,6 +48,12 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
+        m_ActiveScene = CreateRef<Scene>();
+        auto square = m_ActiveScene->CreateEntity();
+        m_ActiveScene->Reg().emplace<TransformComponent>(square, glm::mat4(1.0f));
+        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(square, glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+        m_SquareEntity = square;
+
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
         this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
         this->s_TextureMap['W'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 3, 26 }, { 17, 17 });
@@ -69,6 +75,7 @@ namespace Hazel
         //InstrumentationTimer timer("EditorLayer Onupdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
         HZ_PROFILE_FUNCTION();
 
+
         if (this->m_ViewportFocus)
             this->m_CameraController.OnUpdate(ts);
 
@@ -81,7 +88,7 @@ namespace Hazel
             RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
         }
 
-        {
+        /*{
             static float rotation = 0.0f;
             rotation += ts * 50.0f;
             HZ_PROFILE_SCOPE("Draw Quad");
@@ -104,7 +111,12 @@ namespace Hazel
                 }
             }
             Renderer2D::EndScene();
-        }
+        }*/
+        //update scene
+
+        Renderer2D::BeginScene(this->m_CameraController.GetCamera());
+        this->m_ActiveScene->OnUpdate(ts);
+        Renderer2D::EndScene();
 
         this->m_Framebuffer->UnBind();
     }
@@ -165,7 +177,9 @@ namespace Hazel
             ImGui::DragFloat3("QuadPos", &this->m_QuadPos.x, 0.1f);
             ImGui::DragFloat2("QuadSize", &this->m_QuadSize.x, 0.1f);
             ImGui::DragFloat("QuadRotation", &this->m_QuadAngle, 1.0f, 0.0f, 360.0f);
-            ImGui::ColorEdit4("Background", &this->m_Color[0]);
+
+            auto& sprite = this->m_ActiveScene->Reg().get<SpriteRendererComponent>(this->m_SquareEntity);
+            ImGui::ColorEdit4("Background", &sprite.Color[0]);
 
             auto stats = Renderer2D::GetStats();
             ImGui::Text("QuadCalls:%d", stats.DrawCalls);

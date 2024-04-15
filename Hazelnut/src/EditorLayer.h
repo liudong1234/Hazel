@@ -26,9 +26,10 @@ namespace Hazel
         std::unordered_map<char, Ref<SubTexture2D>> s_TextureMap;
         Ref<Framebuffer> m_Framebuffer;
 
-
         OrthographicCameraController m_CameraController;
-
+        
+        Ref<Scene> m_ActiveScene;
+        entt::entity m_SquareEntity;
         glm::vec3 m_Pos;
 
         glm::vec4 m_Color;

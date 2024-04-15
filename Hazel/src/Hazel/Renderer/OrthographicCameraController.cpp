@@ -10,7 +10,7 @@ namespace Hazel
         m_AspectRatio(aspectRatio),
         m_ZoomLevel(10.0f),
         m_Camera(-m_AspectRatio * this->m_ZoomLevel, m_AspectRatio* this->m_ZoomLevel, -this->m_ZoomLevel, this->m_ZoomLevel),
-        m_CameraRotationSpeed(180.0f), m_CameraTranslationSpeed(5.0f),
+        m_CameraRotationSpeed(180.0f), m_CameraTranslationSpeed(10.0f),
         m_CameraPos({ 0.0f, 0.0f, 0.0f }),
         m_CameraRotation(0.0f),
         m_Rotation(rotation)

@@ -17,9 +17,9 @@ namespace Hazel
 
     struct Render2DData
     {
-        const uint32_t MaxQuad = 1000;
-        const uint32_t MaxVertices = MaxQuad * 4;
-        const uint32_t MaxIndices = MaxQuad * 6;
+        const static uint32_t MaxQuad = 1000;
+        const static uint32_t MaxVertices = MaxQuad * 4;
+        const static uint32_t MaxIndices = MaxQuad * 6;
         static const uint32_t MaxTextureSlots = 32;
 
         Ref<VertexArray> QuadVertexArray;
@@ -149,25 +149,12 @@ namespace Hazel
         s_Data.TextrueSlotIndex = 1;
     }
 
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4 color)
-    {
-        DrawQuad({ position.x, position.y, 0.0f }, size, color);
-    }
-
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4 color)
+    void Renderer2D::DrawQuad(const glm::mat4 transform, const glm::vec4& color)
     {
         HZ_PROFILE_FUNCTION();
-
-        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
-        {
-            FlushReset();
-        }
-
-        const float textureIndex = 0;
-        const float tillingFactor = 1;
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        constexpr size_t quadVertexCount = 4;
+        const float textureIndex = 0.0f;
+        const float tillingFactor = 1.0f;
 
         glm::vec2 texCoords[4] =
         {
@@ -177,7 +164,12 @@ namespace Hazel
             {0.0f, 1.0f}
         };
 
-        for (uint32_t i = 0; i < 4; i++)
+        if (s_Data.QuadIndexCount >= Render2DData::MaxIndices)
+        {
+            FlushReset();
+        }
+
+        for (uint32_t i = 0; i < quadVertexCount; i++)
         {
             s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
             s_Data.QuadVertexBufferPtr->Color = color;
@@ -191,13 +183,21 @@ namespace Hazel
         s_Data.Stats.QuadCounts++;
     }
 
-
-    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color)
     {
-        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tillingFactor, tintColor);
+        DrawQuad({ position.x, position.y, 0.0f }, size, color);
     }
 
-    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        DrawQuad(transform, color);
+    }
+
+    void Renderer2D::DrawQuad(const glm::mat4 transform, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
     {
         HZ_PROFILE_FUNCTION();
 
@@ -222,10 +222,7 @@ namespace Hazel
             s_Data.TextureSlots[s_Data.TextrueSlotIndex] = texture;
             s_Data.TextrueSlotIndex++;
         }
-
-        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
-            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-
+        size_t quadVertexCount = 4;
         glm::vec2 texCoords[4] =
         {
             {0.0f, 0.0f},
@@ -234,7 +231,7 @@ namespace Hazel
             {0.0f, 1.0f}
         };
 
-        for (uint32_t i = 0; i < 4; i++)
+        for (uint32_t i = 0; i < quadVertexCount; i++)
         {
             s_Data.QuadVertexBufferPtr->Position = transform * s_Data.QuadVertexPosition[i];
             s_Data.QuadVertexBufferPtr->Color = tintColor;
@@ -246,10 +243,25 @@ namespace Hazel
         s_Data.QuadIndexCount += 6;
 
         s_Data.Stats.QuadCounts++;
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
+    {
+        DrawQuad({ position.x, position.y, 0.0f }, size, texture, tillingFactor, tintColor);
+    }
+
+    void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture2D>& texture, float tillingFactor, const glm::vec4& tintColor)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
+            glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+        
+        DrawQuad(transform, texture, tillingFactor, tintColor);
 
     }
 
-    void Hazel::Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
+    void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
     {
         DrawQuad({ position.x, position.y, 0.0f }, size, subTexture, tillingFactor, tintColor);
     }
@@ -301,14 +313,15 @@ namespace Hazel
 
     }
 
-    void Renderer2D::DrawRotateQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4 color)
+
+    void Renderer2D::DrawRotateQuad(const glm::vec2& position, const glm::vec2& size, float rotation, const glm::vec4& color)
     {
         HZ_PROFILE_FUNCTION();
 
         DrawRotateQuad({ position.x, position.y, 0.0f }, size, rotation, color);
     }
 
-    void Renderer2D::DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4 color)
+    void Renderer2D::DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const glm::vec4& color)
     {
         HZ_PROFILE_FUNCTION();
         if (s_Data.QuadIndexCount >= s_Data.MaxIndices)

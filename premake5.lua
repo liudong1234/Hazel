@@ -16,6 +16,7 @@ IncludeDir["GLFW"] = "Hazel/vendor/GLFW/include"
 IncludeDir["Glad"] = "Hazel/vendor/Glad/include"
 IncludeDir["Imgui"] = "Hazel/vendor/Imgui"
 IncludeDir["glm"] = "Hazel/vendor/glm"
+IncludeDir["entt"] = "Hazel/vendor/entt/include"
 IncludeDir["stb_image"] = "Hazel/vendor/stb_image"
 
 group "Dependencies"
@@ -56,6 +57,7 @@ project "Hazel"
         "%{IncludeDir.Glad}",
         "%{IncludeDir.Imgui}",
         "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}",
         "%{IncludeDir.stb_image}",
     }
 
@@ -165,7 +167,8 @@ project "Hazelnut"
         "Hazel/vendor/spdlog/include",
         "Hazel/src",
         "Hazel/vendor",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.entt}"
     }
 
     links
