@@ -1,6 +1,6 @@
 ﻿#include "hzpch.h"
 #include "Renderer2D.h"
-
+#include "Hazel/Renderer/Camera.h"
 #include <glm/gtc/matrix_transform.hpp>
 
 namespace Hazel
@@ -115,6 +115,19 @@ namespace Hazel
 
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetUniformMat4("projectionView", camera.GetViewProjectionMatrix());
+
+        s_Data.QuadIndexCount = 0;
+        s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
+        s_Data.TextrueSlotIndex = 1;
+    }
+
+    void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        glm::mat4 proView = camera.GetProjection() * glm::inverse(transform);
+        s_Data.TextureShader->Bind();
+        s_Data.TextureShader->SetUniformMat4("projectionView", proView);
 
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;

@@ -29,11 +29,14 @@ namespace Hazel
         OrthographicCameraController m_CameraController;
         
         Ref<Scene> m_ActiveScene;
-        entt::entity m_SquareEntity;
+        Entity m_SquareEntity;
+        Entity m_CameraEntity;
+        Entity m_SecondCameraEntity;
+
+        bool m_PrimaryCamera;
+
         glm::vec3 m_Pos;
-
         glm::vec4 m_Color;
-
         glm::vec3 m_QuadPos;
         glm::vec2 m_QuadSize;
         float m_QuadAngle;

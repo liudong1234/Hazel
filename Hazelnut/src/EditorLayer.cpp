@@ -5,7 +5,7 @@
 #include "Platform/OpenGL/OpenGLShader.h"
 
 #include <chrono>
-
+#include <glm/gtc/type_ptr.hpp >
 static const uint32_t s_MapWidth = 24;
 static const char* s_MapTiles =
 "WWWWWWWWWWWWWWWWWWWWWWWW"
@@ -34,7 +34,8 @@ namespace Hazel
         m_QuadAngle(0.0f),
         m_ViewportSize(glm::vec2(0.0f)),
         m_ViewportFocus(false),
-        m_ViewportHover(false)
+        m_ViewportHover(false),
+        m_PrimaryCamera(true)
     {
 
     }
@@ -49,10 +50,16 @@ namespace Hazel
         HZ_PROFILE_FUNCTION();
 
         m_ActiveScene = CreateRef<Scene>();
-        auto square = m_ActiveScene->CreateEntity();
-        m_ActiveScene->Reg().emplace<TransformComponent>(square, glm::mat4(1.0f));
-        m_ActiveScene->Reg().emplace<SpriteRendererComponent>(square, glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
-        m_SquareEntity = square;
+        auto square = m_ActiveScene->CreateEntity("Square");
+        square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+        
+        this->m_SquareEntity = square;
+        
+        this->m_CameraEntity = this->m_ActiveScene->CreateEntity("Camera");
+        this->m_SecondCameraEntity = this->m_ActiveScene->CreateEntity("second Camera");
+        this->m_CameraEntity.AddComponent<CameraComponent>();
+        auto& second = this->m_SecondCameraEntity.AddComponent<CameraComponent>();
+        this->m_PrimaryCamera = second.Primary;
 
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
         this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
@@ -75,6 +82,16 @@ namespace Hazel
         //InstrumentationTimer timer("EditorLayer Onupdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
         HZ_PROFILE_FUNCTION();
 
+        if (FramebufferSpecification spec = this->m_Framebuffer->GetSpecification();
+            this->m_ViewportSize.x > 0.0f && this->m_ViewportSize.y > 0.0f && //
+            (spec.Width != this->m_ViewportSize.x || spec.Height != this->m_ViewportSize.y))
+        {
+            this->m_Framebuffer->Resize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+            this->m_CameraController.OnResize(this->m_ViewportSize.x, this->m_ViewportSize.y);
+
+            this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+
+        }
 
         if (this->m_ViewportFocus)
             this->m_CameraController.OnUpdate(ts);
@@ -114,9 +131,9 @@ namespace Hazel
         }*/
         //update scene
 
-        Renderer2D::BeginScene(this->m_CameraController.GetCamera());
+        //Renderer2D::BeginScene(this->m_CameraController.GetCamera());
         this->m_ActiveScene->OnUpdate(ts);
-        Renderer2D::EndScene();
+        //Renderer2D::EndScene();
 
         this->m_Framebuffer->UnBind();
     }
@@ -178,8 +195,6 @@ namespace Hazel
             ImGui::DragFloat2("QuadSize", &this->m_QuadSize.x, 0.1f);
             ImGui::DragFloat("QuadRotation", &this->m_QuadAngle, 1.0f, 0.0f, 360.0f);
 
-            auto& sprite = this->m_ActiveScene->Reg().get<SpriteRendererComponent>(this->m_SquareEntity);
-            ImGui::ColorEdit4("Background", &sprite.Color[0]);
 
             auto stats = Renderer2D::GetStats();
             ImGui::Text("QuadCalls:%d", stats.DrawCalls);
@@ -188,7 +203,33 @@ namespace Hazel
             ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
             ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+            ImGui::Separator();
+            auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
+            ImGui::Text("%s", tag.c_str());
+
+            auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
+            ImGui::ColorEdit4("Background", &sprite.Color[0]);
+            ImGui::Separator();
+            ImGui::DragFloat3("camera transform", glm::value_ptr(
+                this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+
+            if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
+            {
+                this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
+                this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
+            }
+
+            {
+                auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
+                float size = camera.GetOrthographicSize();
+                if (ImGui::DragFloat("secondCamera ortho", &size))
+                    camera.SetOrthographicSize(size);
+            }
+
             ImGui::End();
+
+                
+
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
             ImGui::Begin("viewport");
@@ -201,12 +242,8 @@ namespace Hazel
             
             Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus || !this->m_ViewportHover);
 
-            if (this->m_ViewportSize != *((glm::vec2*)&viewPanelSize))
-            {
-                this->m_Framebuffer->Resize(viewPanelSize.x, viewPanelSize.y);
-                this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
-                this->m_CameraController.OnResize(viewPanelSize.x, viewPanelSize.y);
-            }
+            this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
+
 
             ImGui::Image((void*)this->m_Framebuffer->GetColorAttachmentID(), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
             ImGui::End();

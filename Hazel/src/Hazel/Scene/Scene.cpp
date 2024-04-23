@@ -7,11 +7,6 @@
 
 namespace Hazel
 {
-    void DoMath(const glm::mat4& transform)
-    {
-
-    }
-
     Scene::Scene()
     {
         //TransformComponent transform;
@@ -46,20 +41,67 @@ namespace Hazel
 
     }
 
-    entt::entity Scene::CreateEntity()
+    Entity Scene::CreateEntity(std::string name)
     {
-        return this->m_Registry.create();
+        Entity entity = { this->m_Registry.create(), this };
+        entity.AddComponent<TransformComponent>();
+        auto& tag = entity.AddComponent<TagComponent>();
+        tag = name.empty() ? "Entity" : name;
+        
+        return entity;
     }
 
     void Scene::OnUpdate(TimeStep ts)
     {
-        auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-        for (auto entity : group)
+        //render sprites
+        Camera* mainCamera = nullptr;
+        glm::mat4* cameraTransform{ nullptr };
         {
-            auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+            auto views = this->m_Registry.view<TransformComponent, CameraComponent>();
+            for (auto entity : views)
+            {
+                auto& transform = views.get<TransformComponent>(entity);
+                auto& camera = views.get<CameraComponent>(entity);
 
-            Renderer2D::DrawQuad(transform, sprite.Color);
+                if (camera.Primary)
+                {
+                    mainCamera = &camera.Camera;
+                    cameraTransform = &transform.Transform;
+                    break;
+                }
+            
+            }
+        }
+        if (mainCamera)
+        {
+            Renderer2D::BeginScene(*mainCamera, *cameraTransform);
+            auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+            for (auto entity : group)
+            {
+                auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+                Renderer2D::DrawQuad(transform, sprite.Color);
+            }
+            Renderer2D::EndScene();
 
         }
     }
+
+    void Scene::OnViewportResize(uint32_t width, uint32_t height)
+    {
+        this->m_ViewportWidth = width;
+        this->m_ViewportHeight = height;
+
+        auto view = this->m_Registry.view<CameraComponent>();
+        for (auto entity : view)
+        {
+            auto& cameraComponent = view.get<CameraComponent>(entity);
+            if (!cameraComponent.FixedAspectRatio)
+            {
+                cameraComponent.Camera.SetViewportSize(width, height);
+            }
+        }
+    }
+
+
 }
