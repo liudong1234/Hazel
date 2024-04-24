@@ -7,7 +7,8 @@
 
 namespace Hazel
 {
-    Scene::Scene()
+    Scene::Scene():
+        m_ViewportHeight(0), m_ViewportWidth(0)
     {
         //TransformComponent transform;
         //DoMath(transform);
@@ -53,9 +54,27 @@ namespace Hazel
 
     void Scene::OnUpdate(TimeStep ts)
     {
+        //update scripts
+        {
+            this->m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
+                {
+                    if (!nsc.Instance)
+                    {
+                        nsc.InstantiateFunction();
+                        nsc.OnCreateFunction(nsc.Instance);
+                        nsc.Instance->m_Entity = { entity, this };
+                    }
+                    nsc.OnUpdateFunction(nsc.Instance, ts);
+                });
+
+        }
+
+
+
         //render sprites
         Camera* mainCamera = nullptr;
         glm::mat4* cameraTransform{ nullptr };
+
         {
             auto views = this->m_Registry.view<TransformComponent, CameraComponent>();
             for (auto entity : views)

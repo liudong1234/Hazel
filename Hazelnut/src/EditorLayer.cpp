@@ -69,6 +69,35 @@ namespace Hazel
         spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
         spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
         this->m_Framebuffer = Framebuffer::Create(spec);
+
+
+        class CameraColltroller : public ScriptableEntity
+        {
+        public:
+            void OnCreate() 
+            {
+                //HZ_INFO("CameraColltroller:OnCreate!");
+            }
+            void OnDestroy() {}
+            void OnUpdate(TimeStep ts) 
+            {
+                //HZ_INFO("OnUpdate:{0}", ts);
+                auto& transform = GetComponent<TransformComponent>().Transform;
+                float speed = 5.0f;
+                if (Input::IsKeyPressed(HZ_KEY_A))
+                    transform[3][0] -= ts * speed;                
+                if (Input::IsKeyPressed(HZ_KEY_D))
+                    transform[3][0] += ts * speed;                
+                if (Input::IsKeyPressed(HZ_KEY_W))
+                    transform[3][1] += ts * speed;                
+                if (Input::IsKeyPressed(HZ_KEY_S))
+                    transform[3][1] -= ts * speed;
+            }
+        
+        };
+        m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
+
+
     }
 
     void EditorLayer::OnDetach()

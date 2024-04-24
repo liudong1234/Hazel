@@ -21,8 +21,10 @@
 #include "Hazel/Renderer/OrthographicCamera.h"
 #include "Hazel/Renderer/VertexArray.h"
 
+//---------Scene----------------
 #include "Hazel/Scene/Scene.h"
 #include "Hazel/Scene/Entity.h"
+#include "Hazel/Scene/ScriptableEntity.h"
 #include "Hazel/Scene/Components.h"
 //----------End ---------------------
 
