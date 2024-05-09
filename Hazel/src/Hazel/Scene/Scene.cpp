@@ -2,7 +2,6 @@
 #include "Scene.h"
 #include "Components.h"
 #include "Hazel/Renderer/Renderer2D.h"
-
 #include <glm/glm.hpp>
 
 namespace Hazel
@@ -10,31 +9,6 @@ namespace Hazel
     Scene::Scene():
         m_ViewportHeight(0), m_ViewportWidth(0)
     {
-        //TransformComponent transform;
-        //DoMath(transform);
-    #if 0
-        entt::entity entity = this->m_Registry.create();
-
-        this->m_Registry.emplace<TransformComponent>(entity, glm::mat4(1.0f));
-
-        this->m_Registry.on_construct<TransformComponent>().connect<&OnTransformConstruct>();
-
-        if (this->m_Registry.has<TransformComponent>(entity))//?
-            TransformComponent& transform = this->m_Registry.get<TransformComponent>(entity);
-
-        auto view = this->m_Registry.view<TransformComponent>();
-        for (auto entity : view)
-        {
-            TransformComponent& transform = view.get<TransformComponent>(entity);
-
-        }
-
-        auto group = this->m_Registry.group<TransformComponent>(entt::get<MeshComponent>);
-        for (auto entity : group)
-        {
-            auto&[transform, mesh] = group.get<TransformComponent, MeshComponent>(entity);
-        }
-    #endif
     }
 
     Scene::~Scene()
@@ -60,11 +34,11 @@ namespace Hazel
                 {
                     if (!nsc.Instance)
                     {
-                        nsc.InstantiateFunction();
-                        nsc.OnCreateFunction(nsc.Instance);
-                        nsc.Instance->m_Entity = { entity, this };
+                        nsc.Instance = nsc.InstantiateScript();
+                        nsc.Instance->m_Entity = Entity{ entity, this };
+                        nsc.Instance->OnCreate();
                     }
-                    nsc.OnUpdateFunction(nsc.Instance, ts);
+                    nsc.Instance->OnUpdate(ts);
                 });
 
         }
@@ -97,7 +71,7 @@ namespace Hazel
             auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
             for (auto entity : group)
             {
-                auto& [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
                 Renderer2D::DrawQuad(transform, sprite.Color);
             }

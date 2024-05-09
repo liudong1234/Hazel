@@ -56,10 +56,11 @@ namespace Hazel
         this->m_SquareEntity = square;
         
         this->m_CameraEntity = this->m_ActiveScene->CreateEntity("Camera");
-        this->m_SecondCameraEntity = this->m_ActiveScene->CreateEntity("second Camera");
         this->m_CameraEntity.AddComponent<CameraComponent>();
+
+        this->m_SecondCameraEntity = this->m_ActiveScene->CreateEntity("Clip-Space Camera");
         auto& second = this->m_SecondCameraEntity.AddComponent<CameraComponent>();
-        this->m_PrimaryCamera = second.Primary;
+        second.Primary = false;
 
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
         this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
@@ -97,8 +98,7 @@ namespace Hazel
         };
         m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
 
-
-    }
+        this->m_Panel.SetContext(this->m_ActiveScene);    }
 
     void EditorLayer::OnDetach()
     {
@@ -217,6 +217,8 @@ namespace Hazel
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
+
+            this->m_Panel.OnImGuiRender();
 
             ImGui::Begin("Settings");
             ImGui::DragFloat3(u8"位置", &this->m_Pos.x, 0.1f);

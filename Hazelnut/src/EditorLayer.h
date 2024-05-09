@@ -6,6 +6,7 @@
 #include"imgui/imgui.h"
 #include "glm/gtc/matrix_transform.hpp"
 #include "Hazel/Core/TimeStep.h"
+#include "Panels/SceneHierarchyPanel.h"
 
 namespace Hazel
 {
@@ -43,6 +44,9 @@ namespace Hazel
         glm::vec2 m_ViewportSize;
         bool m_ViewportFocus;
         bool m_ViewportHover;
+
+        SceneHierarchyPanel m_Panel;
+
     };
 
 }

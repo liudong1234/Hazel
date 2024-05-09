@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <glm/glm.hpp>
 #include "SceneCamera.h"
 #include "ScriptableEntity.h"
 
@@ -51,28 +50,35 @@ namespace Hazel
 
         CameraComponent() = default;
         CameraComponent(const CameraComponent&) = default;
+
     };
 
     struct NativeScriptComponent
     {
         ScriptableEntity* Instance = nullptr;
-
+        /*
         std::function<void()> InstantiateFunction;//实例化
         std::function<void()> DestroyInstantiateFunction; //销毁
 
         std::function<void(ScriptableEntity*)> OnCreateFunction; // 创建函数
         std::function<void(ScriptableEntity*)> OnDestroyFunction; // 销毁函数
         std::function<void(ScriptableEntity*, TimeStep)> OnUpdateFunction; // 更新函数
-        
+        */
+        ScriptableEntity* (*InstantiateScript)();
+        void (*DestroyScript)(NativeScriptComponent*);
         template<typename T>
         void Bind()
         {
+            InstantiateScript = []() {return static_cast<ScriptableEntity*>(new T()); };
+            DestroyScript = [](NativeScriptComponent* nsc) { delete nsc->Instance; nsc->Instance = nullptr; };
+            /*
             InstantiateFunction = [&] () { Instance = new T(); };
             DestroyInstantiateFunction = [&]() { delete (T*)Instance;  Instance = nullptr; };
 
             OnCreateFunction = [](ScriptableEntity* instance) { ((T*)instance)->OnCreate(); };
             OnDestroyFunction = [](ScriptableEntity* instance) { ((T*)instance)->OnDestroy(); };
             OnUpdateFunction = [](ScriptableEntity* instance, TimeStep ts) { ((T*)instance)->OnUpdate(ts); };
+            */
         }
     };
 
