@@ -1,0 +1,10 @@
+#Directories
+.vs/
+bin/
+bin-int/
+
+#File
+*user
+*.json
+*.tlog
+*.ini
