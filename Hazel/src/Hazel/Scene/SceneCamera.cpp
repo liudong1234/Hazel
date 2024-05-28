@@ -7,14 +7,16 @@ namespace Hazel
 {
     SceneCamera::SceneCamera() :
         m_ProjectionType(ProjectionType::Orthographic), 
-        m_PerspectiveFOV(glm::radians(45.0f)), m_PerspectiveFar(-1.0f), m_PerspectiveNear(1000.0f),
-        m_OrthographiSize(10.0f), m_OrthographicFar(1.0f), m_OrthographicNear(-1.0f)
+        m_PerspectiveFOV(glm::radians(45.0f)), m_PerspectiveFar(0.01f), m_PerspectiveNear(1000.0f),
+        m_OrthographiSize(10.0f), m_OrthographicFar(1.0f), m_OrthographicNear(-1.0f),
+        m_AspectRatio(1.0f)
     {
         ReCalculateProjection();
     }
 
     void SceneCamera::SetOrthographic(float size, float nearClip, float farClip)
     {
+        this->m_ProjectionType = ProjectionType::Orthographic;
         this->m_OrthographiSize = size;
         this->m_OrthographicNear = nearClip;
         this->m_OrthographicFar = farClip;

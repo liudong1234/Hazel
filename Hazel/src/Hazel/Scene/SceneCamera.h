@@ -17,6 +17,8 @@ namespace Hazel
         SceneCamera();
         virtual ~SceneCamera() = default;
 
+        virtual const glm::mat4& GetProjection() const override { return this->m_Projection; }
+
         void SetOrthographic(float size, float nearClip, float farClip);
         void SetViewportSize(uint32_t width, uint32_t height);
 
@@ -37,7 +39,7 @@ namespace Hazel
         void SetOrthographicNear(float neari) { this->m_OrthographicNear = neari; ReCalculateProjection(); }
 
         ProjectionType GetProjectionType() { return this->m_ProjectionType; }
-        void SetProjectionType(ProjectionType type) { this->m_ProjectionType = type; }
+        void SetProjectionType(ProjectionType type) { this->m_ProjectionType = type;  ReCalculateProjection(); }
     private:
         void ReCalculateProjection();
     private:

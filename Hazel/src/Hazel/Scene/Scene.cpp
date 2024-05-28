@@ -16,7 +16,7 @@ namespace Hazel
 
     }
 
-    Entity Scene::CreateEntity(std::string name)
+    Entity Scene::CreateEntity(const std::string& name)
     {
         Entity entity = { this->m_Registry.create(), this };
         entity.AddComponent<TransformComponent>();
@@ -26,6 +26,11 @@ namespace Hazel
         return entity;
     }
 
+    void Scene::DestroyEntity(Entity entity)
+    {
+        this->m_Registry.destroy(entity);
+    }
+    
     void Scene::OnUpdate(TimeStep ts)
     {
         //update scripts
@@ -43,8 +48,6 @@ namespace Hazel
 
         }
 
-
-
         //render sprites
         Camera* mainCamera = nullptr;
         glm::mat4* cameraTransform{ nullptr };
@@ -53,13 +56,14 @@ namespace Hazel
             auto views = this->m_Registry.view<TransformComponent, CameraComponent>();
             for (auto entity : views)
             {
-                auto& transform = views.get<TransformComponent>(entity);
-                auto& camera = views.get<CameraComponent>(entity);
-
+                //auto& transform = views.get<TransformComponent>(entity);
+                //auto& camera = views.get<CameraComponent>(entity);
+                auto [transform, camera] = views.get<TransformComponent, CameraComponent>(entity);
+                
                 if (camera.Primary)
                 {
                     mainCamera = &camera.Camera;
-                    cameraTransform = &transform.Transform;
+                    cameraTransform = &transform.GetTransform();
                     break;
                 }
             
@@ -73,12 +77,13 @@ namespace Hazel
             {
                 auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-                Renderer2D::DrawQuad(transform, sprite.Color);
+                Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
             }
             Renderer2D::EndScene();
 
         }
     }
+
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height)
     {
@@ -97,4 +102,35 @@ namespace Hazel
     }
 
 
+    template<typename T>
+    void Scene::OnComponentAdded(Entity entity, T& component)
+    {
+        static_assert(false);
+    }
+
+    template<>
+    void Scene::OnComponentAdded<TransformComponent>(Entity entity, TransformComponent& component)
+    {
+
+    }
+    template<>
+    void Scene::OnComponentAdded<SpriteRendererComponent>(Entity entity, SpriteRendererComponent& component)
+    {
+
+    }
+    template<>
+    void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
+    {
+        component.Camera.SetViewportSize(this->m_ViewportWidth, this->m_ViewportHeight);
+    }
+    template<>
+    void Scene::OnComponentAdded<TagComponent>(Entity entity, TagComponent& component)
+    {
+
+    }
+    template<>
+    void Scene::OnComponentAdded<NativeScriptComponent>(Entity entity, NativeScriptComponent& component)
+    {
+
+    }
 }
