@@ -31,7 +31,7 @@
 #endif
 
 
-#ifdef HZ_PLATFORM_WINDOW
+#ifdef HZ_PLATFORM_WINDOWS
 #if HZ_SHARED
 #ifdef HZ_BUILD_DLL
 #define HAZEL_API __declspec(dllexport)

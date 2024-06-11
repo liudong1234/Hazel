@@ -48,9 +48,17 @@ namespace Hazel
     void EditorLayer::OnAttach()
     {
         HZ_PROFILE_FUNCTION();
+        this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
+        this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
+        this->s_TextureMap['W'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 3, 26 }, { 17, 17 });
+        this->subQuad = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 0 }, { 17, 17 });
+        FramebufferSpecification spec;
+        spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
+        spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
+        this->m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
-        auto square = m_ActiveScene->CreateEntity("Square");
+        auto square = m_ActiveScene->CreateEntity("Green Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
         
         this->m_SquareEntity = square;
@@ -62,14 +70,6 @@ namespace Hazel
         auto& second = this->m_SecondCameraEntity.AddComponent<CameraComponent>();
         second.Primary = false;
 
-        this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
-        this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
-        this->s_TextureMap['W'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 3, 26 }, { 17, 17 });
-        this->subQuad = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 0 }, { 17, 17 });
-        FramebufferSpecification spec;
-        spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
-        spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
-        this->m_Framebuffer = Framebuffer::Create(spec);
 
 
         class CameraColltroller : public ScriptableEntity
@@ -83,22 +83,24 @@ namespace Hazel
             void OnUpdate(TimeStep ts) 
             {
                 //HZ_INFO("OnUpdate:{0}", ts);
-                auto& transform = GetComponent<TransformComponent>().Transform;
+                auto& transform = GetComponent<TransformComponent>().Translation;
                 float speed = 5.0f;
                 if (Input::IsKeyPressed(HZ_KEY_A))
-                    transform[3][0] -= ts * speed;                
+                    transform.x -= ts * speed;                
                 if (Input::IsKeyPressed(HZ_KEY_D))
-                    transform[3][0] += ts * speed;                
+                    transform.x += ts * speed;                
                 if (Input::IsKeyPressed(HZ_KEY_W))
-                    transform[3][1] += ts * speed;                
+                    transform.y += ts * speed;                
                 if (Input::IsKeyPressed(HZ_KEY_S))
-                    transform[3][1] -= ts * speed;
+                    transform.y -= ts * speed;
             }
         
         };
+        m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
         m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
 
-        this->m_Panel.SetContext(this->m_ActiveScene);    }
+        this->m_Panel.SetContext(this->m_ActiveScene);   
+    }
 
     void EditorLayer::OnDetach()
     {
@@ -130,8 +132,8 @@ namespace Hazel
         {
             HZ_PROFILE_SCOPE("Renderer Prop");
             this->m_Framebuffer->Bind();
-            RenderCommand::Clear();
             RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
+            RenderCommand::Clear();
         }
 
         /*{
@@ -199,11 +201,16 @@ namespace Hazel
             ImGui::PopStyleVar(2);
 
         ImGuiIO& io = ImGui::GetIO();
+        ImGuiStyle& style = ImGui::GetStyle();
+        float minWinSizeX = style.WindowMinSize.x;
+        style.WindowMinSize.x = 370.0f;
         if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
         {
             ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
             ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
         }
+        style.WindowMinSize.x = minWinSizeX;
+
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
@@ -234,43 +241,16 @@ namespace Hazel
             ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
             ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
-            ImGui::Separator();
-            auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
-            ImGui::Text("%s", tag.c_str());
-
-            auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
-            ImGui::ColorEdit4("Background", &sprite.Color[0]);
-            ImGui::Separator();
-            ImGui::DragFloat3("camera transform", glm::value_ptr(
-                this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-            if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
-            {
-                this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
-                this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
-            }
-
-            {
-                auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
-                float size = camera.GetOrthographicSize();
-                if (ImGui::DragFloat("secondCamera ortho", &size))
-                    camera.SetOrthographicSize(size);
-            }
-
             ImGui::End();
-
-                
-
-
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+
             ImGui::Begin("viewport");
             ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
-            
+
             this->m_ViewportFocus = ImGui::IsWindowFocused();
             this->m_ViewportHover = ImGui::IsWindowHovered();
-            
-            //HZ_INFO("{0}, {1}", this->m_ViewportFocus,this->m_ViewportHover);
-            
+
+
             Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus || !this->m_ViewportHover);
 
             this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
@@ -278,6 +258,7 @@ namespace Hazel
 
             ImGui::Image((void*)this->m_Framebuffer->GetColorAttachmentID(), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
             ImGui::End();
+
             ImGui::PopStyleVar();
         }
         ImGui::End();
