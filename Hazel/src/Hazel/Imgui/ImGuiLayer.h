@@ -25,6 +25,7 @@ namespace Hazel
 
         void SetBlockEvents(bool block) { this->m_BlockImGuiEvents = block; }
         //      virtual void OnEvent(Event& event) override;
+        void SetDarkThemeColors();
     private:
         bool m_BlockImGuiEvents;
 

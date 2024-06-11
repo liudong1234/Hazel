@@ -44,6 +44,7 @@ namespace Hazel
         ImGui::End();
 
         ImGui::Begin("Properties");
+
         if (m_SelectedContext)
         {
             this->DrawComponents(m_SelectedContext);
@@ -151,9 +152,13 @@ namespace Hazel
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
-        auto& tc = entity.GetComponent<TagComponent>();
-        ImGuiTreeNodeFlags flag = ((m_SelectedContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
-        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flag, tc.Tag.c_str());
+        ImGuiIO& io = ImGui::GetIO();
+        auto font = io.Fonts->Fonts[0];
+        ImGui::PushID(label.c_str());
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, columnWidth);
+        ImGui::Text(label.c_str());
+        ImGui::NextColumn();
 
         if (ImGui::IsItemClicked())
         {

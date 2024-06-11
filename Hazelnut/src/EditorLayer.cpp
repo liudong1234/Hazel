@@ -57,11 +57,27 @@ namespace Hazel
         spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
         this->m_Framebuffer = Framebuffer::Create(spec);
 
+        this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
+        this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
+        this->s_TextureMap['W'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 3, 26 }, { 17, 17 });
+        this->subQuad = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 0 }, { 17, 17 });
+        FramebufferSpecification spec;
+        spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
+        spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
+        this->m_Framebuffer = Framebuffer::Create(spec);
+
+
         m_ActiveScene = CreateRef<Scene>();
         auto square = m_ActiveScene->CreateEntity("Green Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+        auto square = m_ActiveScene->CreateEntity("Red Square");
+        square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
         
+        auto greenSquare = m_ActiveScene->CreateEntity("Green Square");
+        greenSquare.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+
         this->m_SquareEntity = square;
+        
         
         this->m_CameraEntity = this->m_ActiveScene->CreateEntity("Camera");
         this->m_CameraEntity.AddComponent<CameraComponent>();
@@ -70,36 +86,37 @@ namespace Hazel
         auto& second = this->m_SecondCameraEntity.AddComponent<CameraComponent>();
         second.Primary = false;
 
-
-
         class CameraColltroller : public ScriptableEntity
         {
         public:
             void OnCreate() 
             {
-                //HZ_INFO("CameraColltroller:OnCreate!");
+                auto& transform = GetComponent<TransformComponent>().Translation;
+                transform.x = rand() % 10 - 5.0f;
             }
             void OnDestroy() {}
             void OnUpdate(TimeStep ts) 
             {
                 //HZ_INFO("OnUpdate:{0}", ts);
-                auto& transform = GetComponent<TransformComponent>().Translation;
+                auto& translation = GetComponent<TransformComponent>().Translation;
                 float speed = 5.0f;
                 if (Input::IsKeyPressed(HZ_KEY_A))
-                    transform.x -= ts * speed;                
+                    translation.x -= ts * speed;                
                 if (Input::IsKeyPressed(HZ_KEY_D))
-                    transform.x += ts * speed;                
+                    translation.x += ts * speed;                
                 if (Input::IsKeyPressed(HZ_KEY_W))
-                    transform.y += ts * speed;                
+                    translation.y += ts * speed;                
                 if (Input::IsKeyPressed(HZ_KEY_S))
-                    transform.y -= ts * speed;
+                    translation.y -= ts * speed;
             }
         
         };
+        
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
         m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
 
-        this->m_Panel.SetContext(this->m_ActiveScene);   
+        this->m_Panel.SetContext(this->m_ActiveScene);  
+        
     }
 
     void EditorLayer::OnDetach()
@@ -241,6 +258,29 @@ namespace Hazel
             ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
             ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
+            /*ImGui::Separator();
+            auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
+            ImGui::Text("%s", tag.c_str());
+
+            auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
+            ImGui::ColorEdit4("Background", &sprite.Color[0]);
+            ImGui::Separator();
+            ImGui::DragFloat3("camera transform", glm::value_ptr(
+                this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+
+            if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
+            {
+                //this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
+                //this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
+            }
+
+            {
+                auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
+                float size = camera.GetOrthographicSize();
+                if (ImGui::DragFloat("secondCamera ortho", &size))
+                    camera.SetOrthographicSize(size);
+            }*/
+
             ImGui::End();
             ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 
@@ -249,8 +289,8 @@ namespace Hazel
 
             this->m_ViewportFocus = ImGui::IsWindowFocused();
             this->m_ViewportHover = ImGui::IsWindowHovered();
-
-
+            
+            
             Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus || !this->m_ViewportHover);
 
             this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
