@@ -139,7 +139,7 @@ namespace Hazel
     void ImGuiLayer::OnImGuiRender()
     {
         HZ_PROFILE_FUNCTION();
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
         //ImGui::Begin();
     }
 

@@ -1,6 +1,8 @@
 ﻿#pragma once
 
-#include "Hazel/Scene/Components.h"
+#include "Hazel/Core/Core.h"
+#include "Hazel/Scene/Scene.h"
+#include "Hazel/Scene/Entity.h"
 namespace Hazel
 {
     class SceneHierarchyPanel

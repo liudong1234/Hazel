@@ -3,6 +3,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
+#include "Hazel/Scene/Components.h"
 
 namespace Hazel
 {
@@ -14,21 +15,20 @@ namespace Hazel
     void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
     {
         this->m_Context = context;
+		this->m_SelectedContext = {};
     }
 
     void SceneHierarchyPanel::OnImGuiRender()
     {
         ImGui::Begin("Scene Hierarchy");
 
-        for (auto en : this->m_Context->m_Registry.view<entt::entity>())
-        {
-            Entity entity(en, this->m_Context.get());
-            this->DrawEntityNode(entity);
-        }
-
+		for (auto en : this->m_Context->m_Registry.view<entt::entity>())
+		{
+			Entity entity(en, this->m_Context.get());
+			this->DrawEntityNode(entity);
+		}
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
             m_SelectedContext = {};
-
         //右键菜单
         const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
         if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar))
@@ -41,10 +41,10 @@ namespace Hazel
             }
         }
         ImGui::EndChild();
+
         ImGui::End();
 
         ImGui::Begin("Properties");
-
         if (m_SelectedContext)
         {
             this->DrawComponents(m_SelectedContext);
@@ -68,7 +68,7 @@ namespace Hazel
             ImGui::Separator();
             bool open = ImGui::TreeNodeEx((void*)typeid(T).hash_code(), treeNodeFlags, name.c_str());
             ImGui::PopStyleVar();
-            ImGui::SameLine(contentRegionAvailable.x - lineheight * 0.5);
+            ImGui::SameLine(contentRegionAvailable.x - lineheight * 0.5f);
             if (ImGui::Button("+", ImVec2{ lineheight, lineheight }))
             {
                 ImGui::OpenPopup("ComponentSettings");
@@ -152,13 +152,11 @@ namespace Hazel
 
     void SceneHierarchyPanel::DrawEntityNode(Entity entity)
     {
-        ImGuiIO& io = ImGui::GetIO();
-        auto font = io.Fonts->Fonts[0];
-        ImGui::PushID(label.c_str());
-        ImGui::Columns(2);
-        ImGui::SetColumnWidth(0, columnWidth);
-        ImGui::Text(label.c_str());
-        ImGui::NextColumn();
+        auto& tc = entity.GetComponent<TagComponent>();
+        ImGuiTreeNodeFlags flag = ((m_SelectedContext == entity) ? ImGuiTreeNodeFlags_Selected : 0) | ImGuiTreeNodeFlags_OpenOnArrow;
+        flag |= ImGuiTreeNodeFlags_SpanAvailWidth;
+
+        bool opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)entity, flag, tc.Tag.c_str());
 
         if (ImGui::IsItemClicked())
         {
@@ -171,7 +169,7 @@ namespace Hazel
             if (ImGui::MenuItem("Delete Entity"))
                 deleteEntity = true;
             ImGui::EndPopup();
-
+            //ImGui::OpenPopupOnItemClick("my popup", ImGuiPopupFlags_MouseButtonRight);
         }
         if (opened)
         {
@@ -187,6 +185,7 @@ namespace Hazel
             if (m_SelectedContext == entity)
                 m_SelectedContext = {};
         }
+
 
 
     }
@@ -290,9 +289,10 @@ namespace Hazel
                     ImGui::Checkbox("fixed aspect ratio", &component.FixedAspectRatio);
                 }
             });
-        /*DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
+        
+		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
             {
                 ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
-            });*/
+            });
     }
 }

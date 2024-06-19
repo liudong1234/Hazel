@@ -21,6 +21,13 @@ namespace Hazel
         void OnDetach();
         void OnImGuiRender() override;
         void OnEvent(Event& e) override;
+
+	private:
+		bool OnKeyPressed(KeyPressEvent& event);
+		void NewScene();
+		void OpenScene();
+		void SaveAsScene();
+
     private:
         Ref<Texture2D> quadTexture;
         Ref<SubTexture2D> subQuad;

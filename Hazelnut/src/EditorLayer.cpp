@@ -3,9 +3,13 @@
 #include "Hazel/Renderer/Renderer2D.h"
 #include "Hazel/Debug/Instrumentor.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Hazel/Scene/SceneSerializer.h"
 
 #include <chrono>
 #include <glm/gtc/type_ptr.hpp >
+
+#include "Hazel/Utils/PlatformUtils.h"
+
 static const uint32_t s_MapWidth = 24;
 static const char* s_MapTiles =
 "WWWWWWWWWWWWWWWWWWWWWWWW"
@@ -57,19 +61,8 @@ namespace Hazel
         spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
         this->m_Framebuffer = Framebuffer::Create(spec);
 
-        this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
-        this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
-        this->s_TextureMap['W'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 3, 26 }, { 17, 17 });
-        this->subQuad = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 0 }, { 17, 17 });
-        FramebufferSpecification spec;
-        spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
-        spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
-        this->m_Framebuffer = Framebuffer::Create(spec);
-
-
         m_ActiveScene = CreateRef<Scene>();
-        auto square = m_ActiveScene->CreateEntity("Green Square");
-        square.AddComponent<SpriteRendererComponent>(glm::vec4{ 0.0f, 1.0f, 0.0f, 1.0f });
+		#if 0
         auto square = m_ActiveScene->CreateEntity("Red Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
         
@@ -91,8 +84,8 @@ namespace Hazel
         public:
             void OnCreate() 
             {
-                auto& transform = GetComponent<TransformComponent>().Translation;
-                transform.x = rand() % 10 - 5.0f;
+                /*auto& transform = GetComponent<TransformComponent>().Translation;
+                transform.x = rand() % 10 - 5.0f;*/
             }
             void OnDestroy() {}
             void OnUpdate(TimeStep ts) 
@@ -114,9 +107,9 @@ namespace Hazel
         
         m_CameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
         m_SecondCameraEntity.AddComponent<NativeScriptComponent>().Bind<CameraColltroller>();
-
-        this->m_Panel.SetContext(this->m_ActiveScene);  
         
+		#endif
+        this->m_Panel.SetContext(this->m_ActiveScene);  
     }
 
     void EditorLayer::OnDetach()
@@ -232,9 +225,21 @@ namespace Hazel
         {
             if (ImGui::BeginMenu("File"))
             {
-                ImGui::MenuItem("Fullscreen", NULL, &opt_fullscreen);
-                ImGui::MenuItem("Padding", NULL, &opt_padding);
-                if (ImGui::MenuItem("Exit"))
+				if (ImGui::MenuItem("New", "Ctrl+N"))
+				{
+					NewScene();
+				}
+
+				if (ImGui::MenuItem("Open...", "Ctrl+O"))
+				{
+					OpenScene();
+				}
+
+				if (ImGui::MenuItem("Save as...", "Ctrl+Shift+S"))
+				{
+					SaveAsScene();
+				}
+				if (ImGui::MenuItem("Exit"))
                 {
                     Application::Get().Close();
                 }
@@ -307,5 +312,67 @@ namespace Hazel
     void EditorLayer::OnEvent(Event& e)
     {
         this->m_CameraController.OnEvent(e);
+		EventDispatcher dispatcher(e);
+
+		dispatcher.Dispatch<KeyPressEvent>(HZ_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
     }
+	
+	bool EditorLayer::OnKeyPressed(KeyPressEvent& event)
+	{
+		if (event.GetRepeatCount() > 0)
+			return false;
+		bool controlPress = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL) || Input::IsKeyPressed(HZ_KEY_RIGHT_CONTROL);
+		bool shiftPress = Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT) || Input::IsKeyPressed(HZ_KEY_RIGHT_SHIFT);
+
+		switch (event.GetKeyCode())
+		{
+			case HZ_KEY_N:
+				if (controlPress)
+					NewScene();
+				break;
+			case HZ_KEY_O:
+				if (controlPress)
+					OpenScene();
+				break;
+			case HZ_KEY_S:
+				if (controlPress && shiftPress)
+					SaveAsScene();
+				break;
+			default:
+				break;
+		}
+
+		return true;
+	}
+
+	void EditorLayer::NewScene()
+	{
+		this->m_ActiveScene = CreateRef<Scene>();
+		this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+		this->m_Panel.SetContext(this->m_ActiveScene);
+	}
+
+	void EditorLayer::OpenScene()
+	{
+		std::string filepath = FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
+		if (!filepath.empty())
+		{
+			this->m_ActiveScene = CreateRef<Scene>();
+			this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+			this->m_Panel.SetContext(this->m_ActiveScene);
+
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(filepath);
+		}
+	}
+
+	void EditorLayer::SaveAsScene()
+	{
+		std::string savepath = FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
+		if (!savepath.empty())
+		{
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Serialize("Assets/Scenes/example.hazel");
+		}
+	}
 }
