@@ -9,6 +9,7 @@
 #include <glm/gtc/type_ptr.hpp >
 
 #include "Hazel/Utils/PlatformUtils.h"
+#include "ImGuizmo.h" 
 
 static const uint32_t s_MapWidth = 24;
 static const char* s_MapTiles =

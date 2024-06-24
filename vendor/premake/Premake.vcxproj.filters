@@ -48,9 +48,6 @@
     <None Include="..\..\Hazel\vendor\imgui\premake5.lua">
       <Filter>..\Hazel\vendor\imgui</Filter>
     </None>
-    <None Include="..\..\Hazel\vendor\premake5.lua">
-      <Filter>..\Hazel\vendor</Filter>
-    </None>
     <None Include="..\..\Hazel\vendor\yaml-cpp\premake5.lua">
       <Filter>..\Hazel\vendor\yaml-cpp</Filter>
     </None>
