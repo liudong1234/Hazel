@@ -1,39 +1,44 @@
-#pragma once
+﻿#pragma once
 
-#include "Hazel/Renderer/OrthoGraphicCamera.h"
-#include "Hazel/Core/TimeStep.h"
-#include "Hazel/Events/ApplicationEvent.h"
+#include "Hazel/Renderer/OrthographicCamera.h"
+#include "Hazel/Events/Event.h"
 #include "Hazel/Events/MouseEvent.h"
+#include "Hazel/Events/ApplicationEvent.h"
+#include "Hazel/Core/TimeStep.h"
 namespace Hazel
 {
-	class OrthoGraphicCameraController
+	class OrthographicCameraController
 	{
 	public:
-		OrthoGraphicCameraController(float aspectRatio, bool rotation = false);
+		OrthographicCameraController(float aspectRatio, bool rotation = false);
 
-		OrthoGraphicCamera& GetCamera() { return this->m_Camera; }
-		const OrthoGraphicCamera& GetCamera() const { return this->m_Camera; }
-
-		
+		OrthographicCamera& GetCamera() { return this->m_Camera; }
+		const OrthographicCamera& GetCamera() const { return this->m_Camera; }
 
 		void OnResize(float width, float height);
-		void OnUpdate(TimeStep ts);
+
+		void OnUpdate(TimeStep& ts);
 		void OnEvent(Event& e);
-	private:
-		bool OnMouseScrolled(MouseScrolledEvent& e);
-		bool OnWindowResized(WindowResizeEvent& e);
+
+		float GetZoomLevel() { return this->m_ZoomLevel; }
+		void SetZoomLevel(float zoomLevel) { this->m_ZoomLevel = zoomLevel; }
 
 	private:
-		float m_AspectRatio;
+		bool MouseEventScrolled(MouseScrolledEvent& e);
+		bool WindowResized(WindowResizeEvent& e);
+	private:
+		//重点：定义的顺序决定初始化的顺序！！！
 		float m_ZoomLevel;
+		float m_AspectRatio;
 
-		OrthoGraphicCamera m_Camera;
-		glm::vec3 m_CameraPosition;
+		OrthographicCamera m_Camera;
+		glm::vec3 m_CameraPos;
+
 		float m_CameraRotation;
-		bool m_Rotation;
-
-		float m_CameraRotationSpeed;
 		float m_CameraTranslationSpeed;
-	};
+		float m_CameraRotationSpeed;
 
+
+		bool m_Rotation;
+	};
 }

@@ -10,12 +10,9 @@
     <Filter Include="src\Hazel\Core">
       <UniqueIdentifier>{48D253A8-34A0-47AE-1D34-B8D409A12313}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
     <Filter Include="src\Hazel\Debug">
       <UniqueIdentifier>{6676DAB2-D201-4877-DB12-CB6B471DA477}</UniqueIdentifier>
     </Filter>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <Filter Include="src\Hazel\Events">
       <UniqueIdentifier>{D495B311-C08E-D263-E9C0-B7E8D518B26F}</UniqueIdentifier>
     </Filter>
@@ -25,15 +22,12 @@
     <Filter Include="src\Hazel\Renderer">
       <UniqueIdentifier>{9669EB43-824D-AC99-EBAD-A6ECD7B0961B}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
     <Filter Include="src\Hazel\Scene">
       <UniqueIdentifier>{0DD9E8B3-7964-5678-8275-D96CEE7FB278}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Hazel\Utils">
       <UniqueIdentifier>{506D16B4-BCF8-8378-C509-076D3114E078}</UniqueIdentifier>
     </Filter>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <Filter Include="src\Platform">
       <UniqueIdentifier>{21CA02E5-0D2D-9289-B6B2-CA3FA2F45D0C}</UniqueIdentifier>
     </Filter>
@@ -46,12 +40,9 @@
     <Filter Include="vendor">
       <UniqueIdentifier>{B3738122-9F15-ACF8-88D0-BF4C74113349}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
     <Filter Include="vendor\ImGuizmo">
       <UniqueIdentifier>{73BF7F4C-DF4A-ED10-E85B-700554664911}</UniqueIdentifier>
     </Filter>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <Filter Include="vendor\glm">
       <UniqueIdentifier>{829FC5A8-6E57-07F6-D75E-E051C335A2E6}</UniqueIdentifier>
     </Filter>
@@ -111,12 +102,9 @@
     <ClInclude Include="src\Hazel\Core\Window.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Hazel\Debug\Instrumentor.h">
       <Filter>src\Hazel\Debug</Filter>
     </ClInclude>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClInclude Include="src\Hazel\Events\ApplicationEvent.h">
       <Filter>src\Hazel\Events</Filter>
     </ClInclude>
@@ -135,7 +123,6 @@
     <ClInclude Include="src\Hazel\Renderer\Buffer.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Hazel\Renderer\Camera.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
@@ -149,21 +136,6 @@
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\OrthographicCameraController.h">
-=======
-    <ClInclude Include="src\Hazel\Renderer\GraphicsContext.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\Mesh.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\Model.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\OrthoGraphicCamera.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\OrthoGraphicCameraController.h">
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\RenderCommand.h">
@@ -172,31 +144,24 @@
     <ClInclude Include="src\Hazel\Renderer\Renderer.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Hazel\Renderer\Renderer2D.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClInclude Include="src\Hazel\Renderer\RendererAPI.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Shader.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Hazel\Renderer\SubTexture2D.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClInclude Include="src\Hazel\Renderer\Texture.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\VertexArray.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Hazel\Scene\Components.h">
       <Filter>src\Hazel\Scene</Filter>
     </ClInclude>
@@ -218,19 +183,13 @@
     <ClInclude Include="src\Hazel\Utils\PlatformUtils.h">
       <Filter>src\Hazel\Utils</Filter>
     </ClInclude>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
-=======
-    <ClInclude Include="src\Platform\OpenGL\OpenGLMesh.h">
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -239,29 +198,18 @@
     <ClInclude Include="src\Platform\OpenGL\OpenGLShader.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h">
-=======
-    <ClInclude Include="src\Platform\OpenGL\OpenGLTexture.h">
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
-<<<<<<< HEAD
-=======
-    <ClInclude Include="src\Platform\Windows\WindowsInput.h">
-      <Filter>src\Platform\Windows</Filter>
-    </ClInclude>
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClInclude Include="src\Platform\Windows\WindowsWindow.h">
       <Filter>src\Platform\Windows</Filter>
     </ClInclude>
     <ClInclude Include="src\hzpch.h">
       <Filter>src</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="vendor\ImGuizmo\GraphEditor.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
@@ -280,8 +228,6 @@
     <ClInclude Include="vendor\ImGuizmo\ImZoomSlider.h">
       <Filter>vendor\ImGuizmo</Filter>
     </ClInclude>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClInclude Include="vendor\glm\glm\common.hpp">
       <Filter>vendor\glm\glm</Filter>
     </ClInclude>
@@ -1533,22 +1479,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-<<<<<<< HEAD
-=======
-    <ClInclude Include="src\Hazel\Renderer\Renderer2D.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\FPSCamera.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\FPSCameraController.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Renderer\Renderer3D.h">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Hazel\Debug\Instrumentor.h" />
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Core\Application.cpp">
@@ -1572,7 +1502,6 @@
     <ClCompile Include="src\Hazel\Renderer\Buffer.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Hazel\Renderer\Framebuffer.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
@@ -1583,21 +1512,6 @@
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\OrthographicCameraController.cpp">
-=======
-    <ClCompile Include="src\Hazel\Renderer\GraphicsContext.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\Mesh.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\Model.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\OrthoGraphicCamera.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\OrthoGraphicCameraController.cpp">
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\RenderCommand.cpp">
@@ -1606,31 +1520,24 @@
     <ClCompile Include="src\Hazel\Renderer\Renderer.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Hazel\Renderer\Renderer2D.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClCompile Include="src\Hazel\Renderer\RendererAPI.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Shader.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Hazel\Renderer\SubTexture2D.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClCompile Include="src\Hazel\Renderer\Texture.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\VertexArray.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Hazel\Scene\Components.cpp">
       <Filter>src\Hazel\Scene</Filter>
     </ClCompile>
@@ -1646,19 +1553,13 @@
     <ClCompile Include="src\Hazel\Scene\SceneSerializer.cpp">
       <Filter>src\Hazel\Scene</Filter>
     </ClCompile>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
-=======
-    <ClCompile Include="src\Platform\OpenGL\OpenGLMesh.cpp">
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">
@@ -1667,11 +1568,7 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLShader.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp">
-=======
-    <ClCompile Include="src\Platform\OpenGL\OpenGLTexture.cpp">
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
@@ -1680,19 +1577,15 @@
     <ClCompile Include="src\Platform\Windows\WindowsInput.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="src\Platform\Windows\WindowsPlatformUtils.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
     <ClCompile Include="src\Platform\Windows\WindowsWindow.cpp">
       <Filter>src\Platform\Windows</Filter>
     </ClCompile>
     <ClCompile Include="src\hzpch.cpp">
       <Filter>src</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="vendor\ImGuizmo\GraphEditor.cpp">
       <Filter>vendor\ImGuizmo</Filter>
     </ClCompile>
@@ -1711,22 +1604,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-=======
-    <ClCompile Include="vendor\stb_image\stb_image.cpp">
-      <Filter>vendor\stb_image</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\Renderer2D.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\FPSCamera.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\FPSCameraController.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Hazel\Renderer\Renderer3D.cpp">
-      <Filter>src\Hazel\Renderer</Filter>
-    </ClCompile>
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
   </ItemGroup>
 </Project>

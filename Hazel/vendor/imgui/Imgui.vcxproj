@@ -78,13 +78,9 @@
       <AdditionalIncludeDirectories>..\GLFW\include;..\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
-<<<<<<< HEAD
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-=======
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -103,10 +99,7 @@
       <MinimalRebuild>false</MinimalRebuild>
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-<<<<<<< HEAD
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-=======
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
@@ -121,13 +114,9 @@
       <WarningLevel>Level3</WarningLevel>
       <AdditionalIncludeDirectories>..\GLFW\include;..\Glad\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Disabled</Optimization>
-<<<<<<< HEAD
       <MinimalRebuild>false</MinimalRebuild>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-=======
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>

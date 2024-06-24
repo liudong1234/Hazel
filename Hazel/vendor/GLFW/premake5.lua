@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-=======
-
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 project "GLFW"
 	kind "StaticLib"
 	language "C"
@@ -9,11 +5,7 @@ project "GLFW"
 	warnings "off"
 
 	targetdir ("bin/" .. outputdir .. "/%{prj.name}")
-<<<<<<< HEAD
 	objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
-=======
-    objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 
 	files
 	{
@@ -35,7 +27,6 @@ project "GLFW"
 		"src/window.c",
 	}
 
-<<<<<<< HEAD
 	filter "system:linux"
 		pic "On"
 
@@ -87,17 +78,6 @@ project "GLFW"
 	filter "system:windows"
 		systemversion "latest"
 
-=======
-
-    includedirs
-    {
-        "include"
-    }
-
-    filter "system:windows"
-        systemversion "10.0"
-        
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 		files
 		{
 			"src/win32_init.c",
@@ -118,7 +98,6 @@ project "GLFW"
 			"_CRT_SECURE_NO_WARNINGS"
 		}
 
-<<<<<<< HEAD
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
@@ -136,12 +115,3 @@ project "GLFW"
 		runtime "Release"
 		optimize "speed"
         symbols "off"
-=======
-    filter "configurations:Debug"
-        runtime "Debug"
-        symbols "on"
-
-    filter "configurations:Release"
-        runtime "Release"
-        optimize "on"
->>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
