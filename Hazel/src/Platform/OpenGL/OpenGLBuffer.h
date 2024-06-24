@@ -3,6 +3,7 @@
 
 namespace Hazel
 {
+<<<<<<< HEAD
     class OpenGLVertexBuffer
         : public VertexBuffer
     {
@@ -36,5 +37,41 @@ namespace Hazel
         uint32_t m_RendererID;
         uint32_t m_Count;
     };
+=======
+	class OpenGLVertexBuffer
+		: public VertexBuffer
+	{
+	public:
+		OpenGLVertexBuffer(uint32_t size);
+		OpenGLVertexBuffer(void* vertices, uint32_t size);
+		virtual ~OpenGLVertexBuffer();
+
+		virtual void Bind() const override;
+		virtual void UnBind() const override;
+		virtual const BufferLayout& GetLayout() const override { return this->m_Layout; };
+		virtual void SetLayout(const BufferLayout& layout) override { this->m_Layout = layout; }
+		virtual void SetData(const void* data, uint32_t size) override;
+
+	private:
+		uint32_t m_RendererID;
+		BufferLayout m_Layout;
+	};
+
+	class OpenGLIndexBuffer
+		: public IndexBuffer
+	{
+	public:
+		OpenGLIndexBuffer(uint32_t* indices, uint32_t count);
+		virtual ~OpenGLIndexBuffer();
+
+		virtual uint32_t GetCount() const override;
+		virtual void Bind() const override;
+		virtual void UnBind() const override;
+
+	private:
+		uint32_t m_RendererID;
+		uint32_t m_Count;
+	};
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 
 }

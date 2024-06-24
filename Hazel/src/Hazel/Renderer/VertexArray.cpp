@@ -6,6 +6,7 @@
 
 namespace Hazel
 {
+<<<<<<< HEAD
 
 
     Ref<VertexArray> VertexArray::Create()
@@ -19,4 +20,17 @@ namespace Hazel
         }
         return nullptr;
     }
+=======
+	Ref<VertexArray> VertexArray::Create()
+	{
+		switch (Renderer::GetAPI())
+		{
+			case RendererAPI::API::None:
+				HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported !");
+			case RendererAPI::API::OpenGL:
+				return CreateRef<OpenGLVertexArray>();
+		}
+		return nullptr;
+	}
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 }

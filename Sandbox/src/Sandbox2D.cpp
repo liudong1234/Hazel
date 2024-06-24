@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ï»¿#include "hzpch.h"
 #include "Sandbox2D.h"
 #include "Hazel/Renderer/Renderer2D.h"
@@ -32,10 +33,26 @@ Sandbox2D::Sandbox2D() :
     m_QuadAngle(0.0f)
 {
 
+=======
+#include "Sandbox2D.h"
+#include "Hazel/Renderer/Renderer2D.h"
+
+#include "imgui.h"
+
+Sandbox2D::Sandbox2D() :
+	Hazel::Layer("sandbox2d"),
+	m_CameraController(1280.0f / 720.0f),
+	m_Color(glm::vec4(1.0f)),
+	m_Pos({ 0.0f, 0.0f, 1.0f }),
+	rotation(0.0f)
+{
+	this->texture = Hazel::Texture2D::Create("Assets/Textures/container2.png");
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 }
 
 Sandbox2D::~Sandbox2D()
 {
+<<<<<<< HEAD
     Hazel::Renderer2D::Shutdown();
 }
 
@@ -56,10 +73,14 @@ void Sandbox2D::OnDetach()
 {
     HZ_PROFILE_FUNCTION();
 
+=======
+	Hazel::Renderer2D::Shutdown();
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 }
 
 void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
 {
+<<<<<<< HEAD
     //InstrumentationTimer timer("sandbox2D Onupdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
     HZ_PROFILE_FUNCTION();
     
@@ -110,10 +131,36 @@ void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
         }*/
         Hazel::Renderer2D::EndScene();
     }
+=======
+	HZ_PROFILE_FUNCTION();
+
+	Hazel::RenderCommand::Clear();
+	Hazel::RenderCommand::SetClearColor({ 0.2f, 0.2f, 0.2f, 1.0f });
+
+	this->m_CameraController.OnUpdate(ts);
+
+	Hazel::Renderer2D::BeginScene(this->m_CameraController.GetCamera());
+
+	//Hazel::Renderer2D::DrawQuad(this->m_Pos, { 1.0f, 1.0f }, this->m_Color);
+
+	Hazel::Renderer2D::DrawQuad(this->m_Pos, { 1.0f, 1.0f }, this->texture, rotation, 2);
+
+	//Hazel::Renderer2D::DrawQuad({ -2.0f, -2.0f }, { 1.0f, 1.0f }, this->texture);
+
+	Hazel::Renderer2D::EndScend();
+}
+void Sandbox2D::OnAttach()
+{
+}
+
+void Sandbox2D::OnDetach()
+{
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 }
 
 void Sandbox2D::OnImGuiRender()
 {
+<<<<<<< HEAD
     HZ_PROFILE_FUNCTION();
     ImGui::Begin("Test");
     ImGui::DragFloat3(u8"ä½ç½®", &this->m_Pos.x, 0.1f);
@@ -130,9 +177,21 @@ void Sandbox2D::OnImGuiRender()
 
     ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
     ImGui::End();
+=======
+	ImGui::Begin("settings");
+
+	ImGui::ColorEdit4(u8"ÑÕÉ«", &this->m_Color[0]);
+	ImGui::DragFloat3(u8"Î»ÖÃ", &this->m_Pos.x, 0.5f);
+	ImGui::DragFloat(u8"½Ç¶È", &this->rotation, 1.0f, 0.0f, 360.0f);
+	ImGui::End();
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 }
 
 void Sandbox2D::OnEvent(Hazel::Event& e)
 {
+<<<<<<< HEAD
     this->m_CameraController.OnEvent(e);
+=======
+	this->m_CameraController.OnEvent(e);
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 }

@@ -21,14 +21,26 @@
     <ClCompile Include="src\Sandbox2D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+<<<<<<< HEAD
+=======
+    <ClCompile Include="src\Sandbox3D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Sandbox2D.h">
       <Filter>头文件</Filter>
     </ClInclude>
+<<<<<<< HEAD
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Shaders\quad.glsl" />
     <None Include="Assets\Shaders\Texture.glsl" />
+=======
+    <ClInclude Include="src\Sandbox3D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
   </ItemGroup>
 </Project>

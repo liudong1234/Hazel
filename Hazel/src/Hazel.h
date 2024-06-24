@@ -1,4 +1,8 @@
 ﻿#pragma once
+<<<<<<< HEAD
+=======
+#include <memory>
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 
 //for use by Hazel applications
 #include "Hazel/Core/Application.h"
@@ -9,11 +13,17 @@
 #include "Hazel/Core/Log.h"
 #include "Hazel/ImGui/ImGuiLayer.h"
 
+<<<<<<< HEAD
 //----------Renderer-------------
+=======
+
+//------Renderer----------
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 #include "Hazel/Renderer/Renderer.h"
 #include "Hazel/Renderer/RenderCommand.h"
 
 #include "Hazel/Renderer/Buffer.h"
+<<<<<<< HEAD
 #include "Hazel/Renderer/Framebuffer.h"
 #include "Hazel/Renderer/Shader.h"
 #include "Hazel/Renderer/Texture.h"
@@ -29,6 +39,17 @@
 //----------End ---------------------
 
 #include "Hazel/Renderer/OrthographicCameraController.h"
+=======
+#include "Hazel/Renderer/OrthoGraphicCamera.h"
+#include "Hazel/Renderer/FPSCamera.h"
+#include "Hazel/Renderer/VertexArray.h"
+#include "Hazel/Renderer/Shader.h"
+
+//------------------------
+
+#include "Hazel/Renderer/OrthoGraphicCameraController.h"
+#include "Hazel/Renderer/FPSCameraController.h"
+>>>>>>> 105b83b5a7f24a67807d82b5cf407cf934ec75b7
 
 //------Entry point--------
 //#include "Hazel/Core/EntryPoint.h"
