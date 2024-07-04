@@ -5,13 +5,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "Hazel/Scene/Components.h"
 
+#ifdef _MSVC_LANG
+#define _CRT_SECURE_NO_WARNINGS
+#endif
 namespace Hazel
 {
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
     {
         SetContext(context);
     }
-
+	 
     void SceneHierarchyPanel::SetContext(const Ref<Scene>& context)
     {
         this->m_Context = context;
@@ -27,8 +30,10 @@ namespace Hazel
 			Entity entity(en, this->m_Context.get());
 			this->DrawEntityNode(entity);
 		}
+
         if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
             m_SelectedContext = {};
+
         //右键菜单
         const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
         if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar))
@@ -41,7 +46,6 @@ namespace Hazel
             }
         }
         ImGui::EndChild();
-
         ImGui::End();
 
         ImGui::Begin("Properties");
@@ -214,12 +218,18 @@ namespace Hazel
         {
             if (ImGui::MenuItem("Camera"))
             {
-                m_SelectedContext.AddComponent<CameraComponent>();
+				if (!m_SelectedContext.HasComponent<CameraComponent>())
+					m_SelectedContext.AddComponent<CameraComponent>();
+				else
+					HZ_CORE_WARN("已经存在camera实体");
                 ImGui::CloseCurrentPopup();
             }
             if (ImGui::MenuItem("Spirte"))
             {
-                m_SelectedContext.AddComponent<SpriteRendererComponent>();
+				if (!m_SelectedContext.HasComponent<CameraComponent>())
+					m_SelectedContext.AddComponent<SpriteRendererComponent>();
+				else
+					HZ_CORE_WARN("已经存在sprite实体");
                 ImGui::CloseCurrentPopup();
             }
             ImGui::EndPopup();
@@ -228,8 +238,8 @@ namespace Hazel
 
         DrawComponent<TransformComponent>("Transform", entity, [](auto& component)
             {
-                DrawVec3Control("Position", component.Translation);
-                auto& rotation = glm::degrees(component.Rotation);
+                DrawVec3Control("Translation", component.Translation);
+                glm::vec3 rotation = glm::degrees(component.Rotation);
                 DrawVec3Control("Rotation", rotation);
                 component.Rotation = glm::radians(rotation);
                 DrawVec3Control("Scale", component.Scale, 1.0f);
@@ -237,9 +247,10 @@ namespace Hazel
 
         DrawComponent<CameraComponent>("Camera", entity, [](auto& component)
             {
-                ImGui::Checkbox("Primary", &component.Primary);
                 auto& camera = component.Camera;
-                const char* projectionTypeString[] = { "perspective", "ortho" };
+                ImGui::Checkbox("Primary", &component.Primary);
+
+                const char* projectionTypeString[] = { "perspective", "Orthographic" };
                 const char* currentProjectionTypeString = projectionTypeString[(int)camera.GetProjectionType()];
 
                 if (ImGui::BeginCombo("Projection", currentProjectionTypeString))
@@ -259,31 +270,34 @@ namespace Hazel
                     ImGui::EndCombo();
                 }
 
-                if (camera.GetProjectionType() == SceneCamera::ProjectionType::Prospective)
+                if (camera.GetProjectionType() == SceneCamera::ProjectionType::Perspective)
                 {
-                    float fari = camera.GetPerspectiveFar();
-                    float neari = camera.GetPerspectiveNear();
                     float FOV = glm::degrees(camera.GetPerspectiveVerticalFOV());
-
                     if (ImGui::DragFloat("FOV", &FOV))
                         camera.SetPerspectiveVerticalFOV(glm::radians(FOV));
+
+                    float fari = camera.GetPerspectiveFar();
                     if (ImGui::DragFloat("farClip", &fari))
                         camera.SetPerspectiveFar(fari);
+
+                    float neari = camera.GetPerspectiveNear();
                     if (ImGui::DragFloat("nearClip", &neari))
                         camera.SetPerspectiveNear(neari);
                 }
 
                 if (camera.GetProjectionType() == SceneCamera::ProjectionType::Orthographic)
                 {
-                    float fari = camera.GetOrthographicFar();
-                    float neari = camera.GetOrthographicNear();
-                    float size = camera.GetOrthographicSize();
 
+                    float size = camera.GetOrthographicSize();
                     if (ImGui::DragFloat("size", &size))
                         camera.SetOrthographicSize(size);
+
+                    float fari = camera.GetOrthographicFar();
                     if (ImGui::DragFloat("farClip", &fari))
                         camera.SetOrthographicFar(fari);
-                    if (ImGui::DragFloat("nearClip", &neari))
+                    
+                    float neari = camera.GetOrthographicNear();
+					if (ImGui::DragFloat("nearClip", &neari))
                         camera.SetOrthographicNear(neari);
 
                     ImGui::Checkbox("fixed aspect ratio", &component.FixedAspectRatio);

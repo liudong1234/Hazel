@@ -9,6 +9,7 @@
 //暂时头文件
 #include <glfw/glfw3.h>
 //#include <glad/glad.h>
+#include "ImGuizmo.h"
 namespace Hazel
 {
     ImGuiLayer::ImGuiLayer() :
@@ -20,7 +21,7 @@ namespace Hazel
     {
 
     }
-
+	 
     void ImGuiLayer::OnAttach()
     {
         HZ_PROFILE_FUNCTION();
@@ -84,6 +85,7 @@ namespace Hazel
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+		ImGuizmo::BeginFrame();
     }
 
     void ImGuiLayer::End()

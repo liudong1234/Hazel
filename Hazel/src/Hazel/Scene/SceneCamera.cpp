@@ -7,7 +7,7 @@ namespace Hazel
 {
     SceneCamera::SceneCamera() :
         m_ProjectionType(ProjectionType::Orthographic), 
-        m_PerspectiveFOV(glm::radians(45.0f)), m_PerspectiveFar(0.01f), m_PerspectiveNear(1000.0f),
+        m_PerspectiveFOV(glm::radians(45.0f)), m_PerspectiveFar(1000.0f), m_PerspectiveNear(0.01f),
         m_OrthographiSize(10.0f), m_OrthographicFar(1.0f), m_OrthographicNear(-1.0f),
         m_AspectRatio(1.0f)
     {
@@ -26,7 +26,7 @@ namespace Hazel
 
     void SceneCamera::SetPerspective(float vercialFOV, float nearClip, float farClip)
     {
-        this->m_ProjectionType = ProjectionType::Prospective;
+        this->m_ProjectionType = ProjectionType::Perspective;
         this->m_PerspectiveFOV = vercialFOV;
         this->m_PerspectiveFar = farClip;
         this->m_PerspectiveNear = nearClip;
@@ -52,7 +52,7 @@ namespace Hazel
             m_Projection = glm::ortho(orthoLeft, orthoRight, orthoBottom, orthoTop,
                 this->m_OrthographicNear, this->m_OrthographicFar);
         }
-        else if (this->m_ProjectionType == ProjectionType::Prospective)
+        else if (this->m_ProjectionType == ProjectionType::Perspective)
         {
             this->m_Projection = glm::perspective(this->m_PerspectiveFOV, this->m_AspectRatio, this->m_PerspectiveNear, this->m_PerspectiveFar);
         }

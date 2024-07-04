@@ -16,6 +16,9 @@ namespace Hazel
         void OnUpdate(TimeStep ts);
         void DestroyEntity(Entity entity);
         void OnViewportResize(uint32_t width, uint32_t height);
+
+		Entity GetPrimaryCamera();
+
     private:
         template<typename T>
         void OnComponentAdded(Entity entity, T& component);

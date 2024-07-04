@@ -31,8 +31,8 @@ namespace Hazel
         static void DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tillingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
 
 
-        static void DrawQuad(const glm::mat4 transfrom, const glm::vec4& color);
-        static void DrawQuad(const glm::mat4 transfrom, const Ref<Texture2D>& texture, float tillingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
+        static void DrawQuad(const glm::mat4& transfrom, const glm::vec4& color);
+        static void DrawQuad(const glm::mat4& transfrom, const Ref<Texture2D>& texture, float tillingFactor = 1.0f, const glm::vec4& tintColor = glm::vec4(1.0f));
         
 
         struct Statistics
@@ -47,6 +47,8 @@ namespace Hazel
         static void ResetStatics();
 
     private:
+		static void StartBatch();
+		static void NextBatch();
         static void FlushReset();
     };
 }

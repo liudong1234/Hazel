@@ -11,36 +11,14 @@
 #include "Hazel/Utils/PlatformUtils.h"
 #include "ImGuizmo.h" 
 
-static const uint32_t s_MapWidth = 24;
-static const char* s_MapTiles =
-"WWWWWWWWWWWWWWWWWWWWWWWW"
-"WWWWWWWWWWDDWWWWWWWWWWWW"
-"WWWWWWWWWDDDDWWWWWWWWWWW"
-"WWWWWWWWDDDDDDWWWWWWWWWW"
-"WWWWWWWDDDDDDDDWWWWWWWWW"
-"WWWWWWDDDDWWDDDDWWWWWWWW"
-"WWWWWDDDDDWWDDDDDWWWWWWW"
-"WWWWWWDDDDDDDDDDWWWWWWWW"
-"WWWWWWWDDDDDDDDWWWWWWWWW"
-"WWWWWWWWDDDCDDWWWWWWWWWW"
-"WWWWWWWWWDDDDWWWWWWWWWWW"
-"WWWWWWWWWWDDWWWWWWWWWWWW"
-"WWWWWWWWWWWWWWWWWWWWWWWW";
-
 namespace Hazel
 {
     EditorLayer::EditorLayer() :
         Layer("EditorLayer"),
         m_CameraController(1280.0f / 720.0f),
-        m_Pos(glm::vec3(1.0f)),
-        m_Color(glm::vec4(0.3f, 0.4f, 0.5f, 1.0f)),
-        m_QuadPos(glm::vec3(0.0f, 0.0f, 0.1f)),
-        m_QuadSize(glm::vec2(1.0f)),
-        m_QuadAngle(0.0f),
         m_ViewportSize(glm::vec2(0.0f)),
         m_ViewportFocus(false),
-        m_ViewportHover(false),
-        m_PrimaryCamera(true)
+        m_ViewportHover(false)
     {
 
     }
@@ -54,9 +32,8 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
-        this->s_TextureMap['D'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 18 }, { 17, 17 });
-        this->s_TextureMap['W'] = SubTexture2D::CreateFromCoords(this->quadTexture, { 3, 26 }, { 17, 17 });
-        this->subQuad = SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 0 }, { 17, 17 });
+
+
         FramebufferSpecification spec;
         spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
         spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
@@ -140,43 +117,11 @@ namespace Hazel
 
 
         Renderer2D::ResetStatics();
-        {
-            HZ_PROFILE_SCOPE("Renderer Prop");
-            this->m_Framebuffer->Bind();
-            RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
-            RenderCommand::Clear();
-        }
+        this->m_Framebuffer->Bind();
+        RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
+        RenderCommand::Clear();
 
-        /*{
-            static float rotation = 0.0f;
-            rotation += ts * 50.0f;
-            HZ_PROFILE_SCOPE("Draw Quad");
-            Renderer2D::BeginScene(this->m_CameraController.GetCamera());
-            Renderer2D::DrawQuad({ 1.0f, 1.0f }, { 1.0f, 1.0f }, { 0.1f, 0.2f, 0.3f, 1.0f });
-
-            size_t Height = strlen(s_MapTiles) / s_MapWidth;
-
-            for (int i = 0; i < Height; i++)
-            {
-                for (int j = 0; j < s_MapWidth; j++)
-                {
-                    char ch = s_MapTiles[j + i * s_MapWidth];
-                    Ref<SubTexture2D> texture;
-                    if (this->s_TextureMap.find(ch) != this->s_TextureMap.end())
-                        texture = this->s_TextureMap[ch];
-                    else
-                        texture = this->subQuad;
-                    Renderer2D::DrawQuad({ j - s_MapWidth / 2.0f, Height - i - Height / 2.0f, 0.1f }, { 1.0f, 1.0f }, texture);
-                }
-            }
-            Renderer2D::EndScene();
-        }*/
-        //update scene
-
-        //Renderer2D::BeginScene(this->m_CameraController.GetCamera());
         this->m_ActiveScene->OnUpdate(ts);
-        //Renderer2D::EndScene();
-
         this->m_Framebuffer->UnBind();
     }
 
@@ -190,6 +135,7 @@ namespace Hazel
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
         ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+
         if (opt_fullscreen)
         {
             const ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -222,10 +168,10 @@ namespace Hazel
         }
         style.WindowMinSize.x = minWinSizeX;
 
-        if (ImGui::BeginMenuBar())
-        {
-            if (ImGui::BeginMenu("File"))
-            {
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
 				if (ImGui::MenuItem("New", "Ctrl+N"))
 				{
 					NewScene();
@@ -241,75 +187,97 @@ namespace Hazel
 					SaveAsScene();
 				}
 				if (ImGui::MenuItem("Exit"))
-                {
-                    Application::Get().Close();
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMenuBar();
+				{
+					Application::Get().Close();
+				}
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
 
-            this->m_Panel.OnImGuiRender();
+        this->m_Panel.OnImGuiRender();
 
-            ImGui::Begin("Settings");
-            ImGui::DragFloat3(u8"位置", &this->m_Pos.x, 0.1f);
-            ImGui::DragFloat3("QuadPos", &this->m_QuadPos.x, 0.1f);
-            ImGui::DragFloat2("QuadSize", &this->m_QuadSize.x, 0.1f);
-            ImGui::DragFloat("QuadRotation", &this->m_QuadAngle, 1.0f, 0.0f, 360.0f);
+        ImGui::Begin("Settings");
+        auto stats = Renderer2D::GetStats();
+        ImGui::Text("QuadCalls:%d", stats.DrawCalls);
+        ImGui::Text("QuadCount:%d", stats.QuadCounts);
+        ImGui::Text("QuadIndexCount:%d", stats.GetQuadIndexCounts());
+        ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
+        ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        /*ImGui::Separator();
+        auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
+        ImGui::Text("%s", tag.c_str());
 
+        auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
+        ImGui::ColorEdit4("Background", &sprite.Color[0]);
+        ImGui::Separator();
+        ImGui::DragFloat3("camera transform", glm::value_ptr(
+            this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
 
-            auto stats = Renderer2D::GetStats();
-            ImGui::Text("QuadCalls:%d", stats.DrawCalls);
-            ImGui::Text("QuadCount:%d", stats.QuadCounts);
-            ImGui::Text("QuadIndexCount:%d", stats.GetQuadIndexCounts());
-            ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
-            ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-
-            /*ImGui::Separator();
-            auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
-            ImGui::Text("%s", tag.c_str());
-
-            auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
-            ImGui::ColorEdit4("Background", &sprite.Color[0]);
-            ImGui::Separator();
-            ImGui::DragFloat3("camera transform", glm::value_ptr(
-                this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
-
-            if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
-            {
-                //this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
-                //this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
-            }
-
-            {
-                auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
-                float size = camera.GetOrthographicSize();
-                if (ImGui::DragFloat("secondCamera ortho", &size))
-                    camera.SetOrthographicSize(size);
-            }*/
-
-            ImGui::End();
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
-
-            ImGui::Begin("viewport");
-            ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
-
-            this->m_ViewportFocus = ImGui::IsWindowFocused();
-            this->m_ViewportHover = ImGui::IsWindowHovered();
-            
-            
-            Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus || !this->m_ViewportHover);
-
-            this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
-
-
-            ImGui::Image((void*)this->m_Framebuffer->GetColorAttachmentID(), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
-            ImGui::End();
-
-            ImGui::PopStyleVar();
+        if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
+        {
+            //this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
+            //this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
         }
+
+        {
+            auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
+            float size = camera.GetOrthographicSize();
+            if (ImGui::DragFloat("secondCamera ortho", &size))
+                camera.SetOrthographicSize(size);
+        }*/
+        ImGui::End();
+
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+
+        ImGui::Begin("viewport");
+        this->m_ViewportFocus = ImGui::IsWindowFocused();
+        this->m_ViewportHover = ImGui::IsWindowHovered();
+
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus || !this->m_ViewportHover);
+        ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
+            
+        this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
+		uint64_t textureID = m_Framebuffer->GetColorAttachmentID();
+        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+
+		//gizmos
+		auto selectedEntity = this->m_Panel.GetSelectedEntity();
+		if (selectedEntity)
+		{
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			float windowW = ImGui::GetWindowWidth();
+			float windowH = ImGui::GetWindowHeight();
+
+			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowW, windowH);
+			//camera
+			auto cameraEntity = this->m_ActiveScene->GetPrimaryCamera();
+			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
+			const glm::mat4& cameraProjection = camera.GetProjection();
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			//entity
+			glm::mat4& transform = selectedEntity.GetComponent<TransformComponent>().GetTransform();
+			//mos
+			//ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				//ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
+			static bool useSnap = false;
+			static float snap[3] = { 1.f, 1.f, 1.f };
+			static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
+			static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
+			static bool boundSizing = false;
+			static bool boundSizingSnap = false;
+			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
+				ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform), NULL,
+				useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
+		}
+
+        ImGui::End();
+        ImGui::PopStyleVar();
         ImGui::End();
     }
-
+	 
     void EditorLayer::OnEvent(Event& e)
     {
         this->m_CameraController.OnEvent(e);
@@ -373,7 +341,7 @@ namespace Hazel
 		if (!savepath.empty())
 		{
 			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize("Assets/Scenes/example.hazel");
+			serializer.Serialize(savepath);
 		}
 	}
 }

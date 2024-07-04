@@ -10,14 +10,14 @@ namespace Hazel
     public:
         enum class ProjectionType
         {
-            Prospective = 0, Orthographic
+			Perspective = 0, Orthographic
         };
 
     public:
         SceneCamera();
         virtual ~SceneCamera() = default;
 
-        virtual const glm::mat4& GetProjection() const override { return this->m_Projection; }
+        //virtual const glm::mat4& GetProjection() const override { return this->m_Projection; }
 
         void SetOrthographic(float size, float nearClip, float farClip);
         void SetViewportSize(uint32_t width, uint32_t height);
@@ -52,6 +52,6 @@ namespace Hazel
         float m_OrthographicNear, m_OrthographicFar;
 
         float m_AspectRatio;
-        glm::mat4 m_Projection;
+        //glm::mat4 m_Projection;
     };
 }

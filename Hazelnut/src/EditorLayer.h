@@ -41,13 +41,6 @@ namespace Hazel
         Entity m_CameraEntity;
         Entity m_SecondCameraEntity;
 
-        bool m_PrimaryCamera;
-
-        glm::vec3 m_Pos;
-        glm::vec4 m_Color;
-        glm::vec3 m_QuadPos;
-        glm::vec2 m_QuadSize;
-        float m_QuadAngle;
         glm::vec2 m_ViewportSize;
         bool m_ViewportFocus;
         bool m_ViewportHover;
