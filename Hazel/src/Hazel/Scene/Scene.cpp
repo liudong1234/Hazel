@@ -6,32 +6,45 @@
 
 namespace Hazel
 {
-    Scene::Scene():
-        m_ViewportHeight(0), m_ViewportWidth(0)
-    {
-    }
+	Scene::Scene() :
+		m_ViewportHeight(0), m_ViewportWidth(0)
+	{
+	}
 
-    Scene::~Scene()
-    {
+	Scene::~Scene()
+	{
 
-    }
+	}
 
-    Entity Scene::CreateEntity(const std::string& name)
-    {
-        Entity entity = { this->m_Registry.create(), this };
-        entity.AddComponent<TransformComponent>();
-        auto& tag = entity.AddComponent<TagComponent>();
-        tag = name.empty() ? "Entity" : name;
-        
-        return entity;
-    }
+	Entity Scene::CreateEntity(const std::string& name)
+	{
+		Entity entity = { this->m_Registry.create(), this };
+		entity.AddComponent<TransformComponent>();
+		auto& tag = entity.AddComponent<TagComponent>();
+		tag = name.empty() ? "Entity" : name;
 
-    void Scene::DestroyEntity(Entity entity)
-    {
-        this->m_Registry.destroy(entity);
-    }
-    
-    void Scene::OnUpdate(TimeStep ts)
+		return entity;
+	}
+
+	void Scene::DestroyEntity(Entity entity)
+	{
+		this->m_Registry.destroy(entity);
+	}
+
+	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+		auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+		for (auto entity : group)
+		{
+			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+			Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+		}
+		Renderer2D::EndScene();
+	}
+
+    void Scene::OnUpdateRuntime(TimeStep ts)
     {
         //update scripts
         {

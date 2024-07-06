@@ -10,6 +10,8 @@
 
 #include "Hazel/Utils/PlatformUtils.h"
 #include "ImGuizmo.h" 
+#include "Hazel/Math/Math.h"
+
 
 namespace Hazel
 {
@@ -18,9 +20,10 @@ namespace Hazel
         m_CameraController(1280.0f / 720.0f),
         m_ViewportSize(glm::vec2(0.0f)),
         m_ViewportFocus(false),
-        m_ViewportHover(false)
+        m_ViewportHover(false),
+		m_GizmoType(-1)
     {
-
+		m_EditorCamera = EditorCamera();
     }
 
     EditorLayer::~EditorLayer()
@@ -40,6 +43,7 @@ namespace Hazel
         this->m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
+
 		#if 0
         auto square = m_ActiveScene->CreateEntity("Red Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
@@ -107,13 +111,16 @@ namespace Hazel
         {
             this->m_Framebuffer->Resize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
             this->m_CameraController.OnResize(this->m_ViewportSize.x, this->m_ViewportSize.y);
-
+			this->m_EditorCamera.SetViewportSize(this->m_ViewportSize.x, this->m_ViewportSize.y);
             this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
 
         }
 
-        if (this->m_ViewportFocus)
+		if (this->m_ViewportFocus)
+		{
             this->m_CameraController.OnUpdate(ts);
+		}
+		this->m_EditorCamera.OnUpdate(ts);
 
 
         Renderer2D::ResetStatics();
@@ -121,7 +128,8 @@ namespace Hazel
         RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
         RenderCommand::Clear();
 
-        this->m_ActiveScene->OnUpdate(ts);
+        //this->m_ActiveScene->OnUpdateRuntime(ts);
+        this->m_ActiveScene->OnUpdateEditor(ts, this->m_EditorCamera);
         this->m_Framebuffer->UnBind();
     }
 
@@ -235,7 +243,7 @@ namespace Hazel
         this->m_ViewportFocus = ImGui::IsWindowFocused();
         this->m_ViewportHover = ImGui::IsWindowHovered();
 
-        Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus || !this->m_ViewportHover);
+        Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus && !this->m_ViewportHover);
         ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
             
         this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
@@ -244,7 +252,7 @@ namespace Hazel
 
 		//gizmos
 		auto selectedEntity = this->m_Panel.GetSelectedEntity();
-		if (selectedEntity)
+		if (selectedEntity && m_GizmoType != -1)
 		{
 			ImGuizmo::SetOrthographic(false);
 			ImGuizmo::SetDrawlist();
@@ -252,25 +260,49 @@ namespace Hazel
 			float windowH = ImGui::GetWindowHeight();
 
 			ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowW, windowH);
-			//camera
-			auto cameraEntity = this->m_ActiveScene->GetPrimaryCamera();
+			//runtime camera
+			/*auto cameraEntity = this->m_ActiveScene->GetPrimaryCamera();
 			const auto& camera = cameraEntity.GetComponent<CameraComponent>().Camera;
 			const glm::mat4& cameraProjection = camera.GetProjection();
-			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());
+			glm::mat4 cameraView = glm::inverse(cameraEntity.GetComponent<TransformComponent>().GetTransform());*/
+
+			//editor camera
+			const glm::mat4& cameraProjection = this->m_EditorCamera
+				.GetProjection();
+			glm::mat4 cameraView = this->m_EditorCamera.GetViewMatrix();
+
 			//entity
-			glm::mat4& transform = selectedEntity.GetComponent<TransformComponent>().GetTransform();
-			//mos
-			//ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				//ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform));
-			static bool useSnap = false;
-			static float snap[3] = { 1.f, 1.f, 1.f };
-			static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
-			static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
-			static bool boundSizing = false;
-			static bool boundSizingSnap = false;
+			auto& tc = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4& transform = tc.GetTransform();
+			
+			//snapping 捕捉按住某键可以有一定度数
+			bool snap = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL);
+			float snapValue = 0.5f;
+			if (this->m_GizmoType == ImGuizmo::OPERATION::ROTATE)
+				snapValue = 45.0f;
+			float snapValues[3] = { snapValue, snapValue, snapValue };
+			
+			
 			ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection),
-				ImGuizmo::OPERATION::TRANSLATE, ImGuizmo::LOCAL, glm::value_ptr(transform), NULL,
-				useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
+				ImGuizmo::OPERATION(m_GizmoType), ImGuizmo::LOCAL, glm::value_ptr(transform),
+				nullptr, snap ? snapValues : nullptr);
+
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scale;
+				Math::DecomposeTransform(transform, translation, rotation, scale);
+
+				glm::vec3 deltaRotation = rotation - tc.Rotation;
+				
+				tc.Translation = translation;
+				tc.Rotation += deltaRotation;
+				tc.Scale = scale;
+			}
+
+			//snapping
+			//bool snap = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL);
+
+
 		}
 
         ImGui::End();
@@ -281,6 +313,7 @@ namespace Hazel
     void EditorLayer::OnEvent(Event& e)
     {
         this->m_CameraController.OnEvent(e);
+		this->m_EditorCamera.OnEvent(e);
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<KeyPressEvent>(HZ_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
@@ -306,6 +339,20 @@ namespace Hazel
 			case HZ_KEY_S:
 				if (controlPress && shiftPress)
 					SaveAsScene();
+				break;
+
+			//GIZMOS
+			case HZ_KEY_F1:
+				this->m_GizmoType = -1;
+				break;
+			case HZ_KEY_F2:
+				this->m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			case HZ_KEY_F3:
+				this->m_GizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			case HZ_KEY_F4:
+				this->m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
 			default:
 				break;

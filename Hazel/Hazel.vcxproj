@@ -154,6 +154,7 @@
     <ClInclude Include="src\Hazel\Core\LayerStack.h" />
     <ClInclude Include="src\Hazel\Core\Log.h" />
     <ClInclude Include="src\Hazel\Core\MouseButtonCodes.h" />
+    <ClInclude Include="src\Hazel\Core\MouseCodes.h" />
     <ClInclude Include="src\Hazel\Core\TimeStep.h" />
     <ClInclude Include="src\Hazel\Core\Window.h" />
     <ClInclude Include="src\Hazel\Debug\Instrumentor.h" />
@@ -162,8 +163,10 @@
     <ClInclude Include="src\Hazel\Events\KeyEvent.h" />
     <ClInclude Include="src\Hazel\Events\MouseEvent.h" />
     <ClInclude Include="src\Hazel\Imgui\ImGuiLayer.h" />
+    <ClInclude Include="src\Hazel\Math\Math.h" />
     <ClInclude Include="src\Hazel\Renderer\Buffer.h" />
     <ClInclude Include="src\Hazel\Renderer\Camera.h" />
+    <ClInclude Include="src\Hazel\Renderer\EditorCamera.h" />
     <ClInclude Include="src\Hazel\Renderer\Framebuffer.h" />
     <ClInclude Include="src\Hazel\Renderer\GraphicsContext.h" />
     <ClInclude Include="src\Hazel\Renderer\OrthographicCamera.h" />
@@ -618,7 +621,9 @@
     <ClCompile Include="src\Hazel\Core\Log.cpp" />
     <ClCompile Include="src\Hazel\Imgui\ImGuiBuild.cpp" />
     <ClCompile Include="src\Hazel\Imgui\ImGuiLayer.cpp" />
+    <ClCompile Include="src\Hazel\Math\Math.cpp" />
     <ClCompile Include="src\Hazel\Renderer\Buffer.cpp" />
+    <ClCompile Include="src\Hazel\Renderer\EditorCamera.cpp" />
     <ClCompile Include="src\Hazel\Renderer\Framebuffer.cpp" />
     <ClCompile Include="src\Hazel\Renderer\GraphicsContext.cpp" />
     <ClCompile Include="src\Hazel\Renderer\OrthographicCamera.cpp" />

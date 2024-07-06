@@ -7,6 +7,7 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Hazel/Core/TimeStep.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Hazel/Renderer/EditorCamera.h"
 
 namespace Hazel
 {
@@ -35,7 +36,7 @@ namespace Hazel
         Ref<Framebuffer> m_Framebuffer;
 
         OrthographicCameraController m_CameraController;
-        
+		EditorCamera m_EditorCamera;
         Ref<Scene> m_ActiveScene;
         Entity m_SquareEntity;
         Entity m_CameraEntity;
@@ -44,7 +45,7 @@ namespace Hazel
         glm::vec2 m_ViewportSize;
         bool m_ViewportFocus;
         bool m_ViewportHover;
-
+		int m_GizmoType;
         SceneHierarchyPanel m_Panel;
 
     };

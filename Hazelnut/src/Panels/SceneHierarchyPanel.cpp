@@ -48,7 +48,7 @@ namespace Hazel
         ImGui::EndChild();
         ImGui::End();
 
-        ImGui::Begin("Properties");
+        ImGui::Begin("Properties", 0, ImGuiWindowFlags_UnsavedDocument);
         if (m_SelectedContext)
         {
             this->DrawComponents(m_SelectedContext);
@@ -308,5 +308,6 @@ namespace Hazel
             {
                 ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
             });
+
     }
 }
