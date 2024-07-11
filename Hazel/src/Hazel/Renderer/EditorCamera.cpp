@@ -112,7 +112,7 @@ namespace Hazel
 
 	void EditorCamera::UpdateView()
 	{
-		this->m_Yaw = this->m_Pitch = 0.0f;//使得相机不可选择，即完全的2D
+		//this->m_Yaw = this->m_Pitch = 0.0f;//使得相机不可选择，即完全的2D
 		this->m_Position = CalculaePosition();
 
 		glm::quat orientation = GetOrientation();

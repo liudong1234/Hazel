@@ -38,6 +38,7 @@ namespace Hazel
 
 
         FramebufferSpecification spec;
+		spec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
         spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
         this->m_Framebuffer = Framebuffer::Create(spec);
@@ -130,6 +131,22 @@ namespace Hazel
 
         //this->m_ActiveScene->OnUpdateRuntime(ts);
         this->m_ActiveScene->OnUpdateEditor(ts, this->m_EditorCamera);
+
+		auto [mx, my] = ImGui::GetMousePos();
+		mx -= this->m_ViewportBounds[0].x;
+		my -= this->m_ViewportBounds[0].y;
+		glm::vec2 viewportSize = this->m_ViewportBounds[1] - this->m_ViewportBounds[0];
+		my = viewportSize.y - my;
+		float mouseX = (int)mx;
+		float mouseY = (int)my;
+
+		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && (int)viewportSize.y)
+		{
+			HZ_CORE_WARN("{0}", this->m_Framebuffer->ReadPixel(1, mouseX, mouseY));
+			HZ_CORE_INFO("MOUSE: {0}, {1}", mouseX, mouseY);
+		}
+
+
         this->m_Framebuffer->UnBind();
     }
 
@@ -240,6 +257,8 @@ namespace Hazel
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 
         ImGui::Begin("viewport");
+		auto viewportOffset = ImGui::GetCursorPos();//包括的tab bar
+
         this->m_ViewportFocus = ImGui::IsWindowFocused();
         this->m_ViewportHover = ImGui::IsWindowHovered();
 
@@ -248,7 +267,19 @@ namespace Hazel
             
         this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
 		uint64_t textureID = m_Framebuffer->GetColorAttachmentID();
+
         ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+
+		//鼠标位置
+		auto viewWindowSize = ImGui::GetWindowSize();//viewport窗口大小
+		ImVec2 minBound = ImGui::GetWindowPos();
+		minBound.x += viewportOffset.x;
+		minBound.y += viewportOffset.y;
+		ImVec2 maxBound = { minBound.x + viewWindowSize.x, minBound.y + viewWindowSize.y };
+
+		this->m_ViewportBounds[0] = { minBound.x, minBound.y };
+		this->m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+		//HZ_CORE_INFO("minBound: {0}, {1}", minBound.x, minBound.y);
 
 		//gizmos
 		auto selectedEntity = this->m_Panel.GetSelectedEntity();

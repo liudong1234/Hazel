@@ -48,7 +48,7 @@ namespace Hazel
         ImGui::EndChild();
         ImGui::End();
 
-        ImGui::Begin("Properties", 0, ImGuiWindowFlags_UnsavedDocument);
+        ImGui::Begin("Properties");
         if (m_SelectedContext)
         {
             this->DrawComponents(m_SelectedContext);

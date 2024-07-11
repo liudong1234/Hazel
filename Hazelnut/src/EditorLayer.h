@@ -43,6 +43,8 @@ namespace Hazel
         Entity m_SecondCameraEntity;
 
         glm::vec2 m_ViewportSize;
+		glm::vec2 m_ViewportBounds[2];
+
         bool m_ViewportFocus;
         bool m_ViewportHover;
 		int m_GizmoType;
