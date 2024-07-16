@@ -19,6 +19,7 @@ namespace Hazel
 			return this->m_ColorAttachments[index];
 		}
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
+		virtual void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
         virtual void Resize(const uint32_t width, const uint32_t height) override;
         virtual FramebufferSpecification& GetSpecification() override { return this->m_Spec; }

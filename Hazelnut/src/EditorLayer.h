@@ -50,6 +50,8 @@ namespace Hazel
 		int m_GizmoType;
         SceneHierarchyPanel m_Panel;
 
+		Entity m_HoveredEntity;
+
     };
 
 }

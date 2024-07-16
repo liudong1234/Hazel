@@ -21,7 +21,8 @@ namespace Hazel
         m_ViewportSize(glm::vec2(0.0f)),
         m_ViewportFocus(false),
         m_ViewportHover(false),
-		m_GizmoType(-1)
+		m_GizmoType(-1),
+		m_HoveredEntity({})
     {
 		m_EditorCamera = EditorCamera();
     }
@@ -35,7 +36,6 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
-
 
         FramebufferSpecification spec;
 		spec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -126,8 +126,11 @@ namespace Hazel
 
         Renderer2D::ResetStatics();
         this->m_Framebuffer->Bind();
-        RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
+        RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1, 1.0f });
         RenderCommand::Clear();
+
+		//framebuffer color clear to -1
+		this->m_Framebuffer->ClearAttachment(1, -1);
 
         //this->m_ActiveScene->OnUpdateRuntime(ts);
         this->m_ActiveScene->OnUpdateEditor(ts, this->m_EditorCamera);
@@ -140,10 +143,12 @@ namespace Hazel
 		float mouseX = (int)mx;
 		float mouseY = (int)my;
 
-		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && (int)viewportSize.y)
+		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			HZ_CORE_WARN("{0}", this->m_Framebuffer->ReadPixel(1, mouseX, mouseY));
-			HZ_CORE_INFO("MOUSE: {0}, {1}", mouseX, mouseY);
+			int pixelData = this->m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			this->m_HoveredEntity = pixelData == -1 ? Entity{} : 
+			Entity{ entt::entity(pixelData), this->m_ActiveScene.get() };
+			//this->m_Panel.SetSelectedEntity(this->m_HoveredEntity);
 		}
 
 
@@ -229,7 +234,13 @@ namespace Hazel
         ImGui::Text("QuadIndexCount:%d", stats.GetQuadIndexCounts());
         ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
         ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        /*ImGui::Separator();
+        
+		std::string entityName = "None";
+		if (this->m_HoveredEntity)
+			entityName = this->m_HoveredEntity.GetComponent<TagComponent>().Tag;
+		ImGui::Text("hoveredEntity:%s", entityName.c_str());
+		
+		/*ImGui::Separator();
         auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
         ImGui::Text("%s", tag.c_str());
 
