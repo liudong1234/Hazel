@@ -148,7 +148,6 @@ namespace Hazel
 			int pixelData = this->m_Framebuffer->ReadPixel(1, mouseX, mouseY);
 			this->m_HoveredEntity = pixelData == -1 ? Entity{} : 
 			Entity{ entt::entity(pixelData), this->m_ActiveScene.get() };
-			//this->m_Panel.SetSelectedEntity(this->m_HoveredEntity);
 		}
 
 
@@ -268,7 +267,7 @@ namespace Hazel
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 
         ImGui::Begin("viewport");
-		auto viewportOffset = ImGui::GetCursorPos();//包括的tab bar
+		//auto viewportOffset = ImGui::GetCursorPos();//包括的tab bar
 
         this->m_ViewportFocus = ImGui::IsWindowFocused();
         this->m_ViewportHover = ImGui::IsWindowHovered();
@@ -283,13 +282,17 @@ namespace Hazel
 
 		//鼠标位置
 		auto viewWindowSize = ImGui::GetWindowSize();//viewport窗口大小
-		ImVec2 minBound = ImGui::GetWindowPos();
-		minBound.x += viewportOffset.x;
-		minBound.y += viewportOffset.y;
-		ImVec2 maxBound = { minBound.x + viewWindowSize.x, minBound.y + viewWindowSize.y };
+		//ImVec2 minBound = ImGui::GetWindowPos();
+		//ImVec2 maxBound = { minBound.x + viewWindowSize.x, minBound.y + viewWindowSize.y };
+		ImVec2 minBound = ImGui::GetWindowContentRegionMin();
+		ImVec2 maxBound = ImGui::GetWindowContentRegionMax();
+		auto viewportOffset = ImGui::GetWindowPos();//不包括包括的tab bar
 
-		this->m_ViewportBounds[0] = { minBound.x, minBound.y };
-		this->m_ViewportBounds[1] = { maxBound.x, maxBound.y };
+		//minBound.x += viewportOffset.x;
+		//minBound.y += viewportOffset.y;
+
+		this->m_ViewportBounds[0] = { minBound.x + viewportOffset.x, minBound.y +viewportOffset.y };
+		this->m_ViewportBounds[1] = { maxBound.x + viewportOffset.x, maxBound.y +viewportOffset.y };
 		//HZ_CORE_INFO("minBound: {0}, {1}", minBound.x, minBound.y);
 
 		//gizmos
@@ -359,6 +362,7 @@ namespace Hazel
 		EventDispatcher dispatcher(e);
 
 		dispatcher.Dispatch<KeyPressEvent>(HZ_BIND_EVENT_FN(EditorLayer::OnKeyPressed));
+		dispatcher.Dispatch<MouseButtonPressEvent>(HZ_BIND_EVENT_FN(EditorLayer::OnMouseButtonPressed));
     }
 	
 	bool EditorLayer::OnKeyPressed(KeyPressEvent& event)
@@ -400,8 +404,21 @@ namespace Hazel
 				break;
 		}
 
-		return true;
+		return false;
 	}
+
+	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressEvent& event)
+	{
+		if (event.GetMouseButton() == HZ_MOUSE_BUTTON_LEFT)
+		{
+			if (this->m_ViewportHover && !ImGuizmo::IsOver() && !Input::IsKeyPressed(HZ_KEY_LEFT_ALT))
+			{
+				this->m_Panel.SetSelectedEntity(this->m_HoveredEntity);
+			}
+		}
+		return false;
+	}
+
 
 	void EditorLayer::NewScene()
 	{

@@ -25,6 +25,7 @@ namespace Hazel
 
 	private:
 		bool OnKeyPressed(KeyPressEvent& event);
+		bool OnMouseButtonPressed(MouseButtonPressEvent& event);
 		void NewScene();
 		void OpenScene();
 		void SaveAsScene();
