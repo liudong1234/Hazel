@@ -13,9 +13,6 @@
     <Filter Include="..\Hazel\vendor\GLFW">
       <UniqueIdentifier>{E03DB63E-CCCC-3F08-75EB-5303615950AE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="..\Hazel\vendor\GLFW\include">
-      <UniqueIdentifier>{53451323-3F00-03CF-E8B7-7B19D4514D5F}</UniqueIdentifier>
-    </Filter>
     <Filter Include="..\Hazel\vendor\Glad">
       <UniqueIdentifier>{88C9B63E-7458-4008-1D77-540309E550AE}</UniqueIdentifier>
     </Filter>
@@ -35,9 +32,6 @@
   <ItemGroup>
     <None Include="..\..\Hazel\premake5.lua">
       <Filter>..\Hazel</Filter>
-    </None>
-    <None Include="..\..\Hazel\vendor\GLFW\include\premake5.lua">
-      <Filter>..\Hazel\vendor\GLFW\include</Filter>
     </None>
     <None Include="..\..\Hazel\vendor\GLFW\premake5.lua">
       <Filter>..\Hazel\vendor\GLFW</Filter>

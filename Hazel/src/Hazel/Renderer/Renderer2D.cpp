@@ -1,7 +1,13 @@
 ﻿#include "hzpch.h"
-#include "Renderer2D.h"
-#include "Hazel/Renderer/Camera.h"
+#include "Hazel/Renderer/Renderer2D.h"
+
+#include "Hazel/Renderer/VertexArray.h"
+#include "Hazel/Renderer/Shader.h"
+#include "Hazel/Renderer/UniformBuffer.h"
+#include "Hazel/Renderer/RenderCommand.h"
+
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Hazel
 {
@@ -33,13 +39,20 @@ namespace Hazel
         QuadVertex* QuadVertexBufferBase = nullptr;
         QuadVertex* QuadVertexBufferPtr = nullptr;
 
-        uint32_t TextrueSlotIndex;
+        uint32_t TextrueSlotIndex = 1;
         std::array<Ref<Texture2D>, MaxTextureSlots> TextureSlots;
 
         glm::vec4 QuadVertexPosition[4];
 
         Renderer2D::Statistics Stats;
-    };
+    
+		struct CameraData
+		{
+			glm::mat4 ViewProjection;
+		};
+		CameraData CameraBuffer;
+		Ref<UniformBuffer> CameraUniformBuffer;
+	};
 
     static Render2DData s_Data;
 
@@ -84,8 +97,6 @@ namespace Hazel
         s_Data.QuadVertexArray->SetIndexBuffer(m_QuadIndex);
         delete[] quadIndices;
 
-        s_Data.TextureShader = Shader::Create("Assets/Shaders/Texture.glsl");
-
         s_Data.WhiteTexture = Texture2D::Create(1, 1);
         uint32_t whiteTextureData = 0xffffffff;
         s_Data.WhiteTexture->SetData(&whiteTextureData, sizeof(uint32_t));
@@ -94,8 +105,7 @@ namespace Hazel
         for (uint32_t i = 0; i < s_Data.MaxTextureSlots; i++)
             samplers[i] = i;
 
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetUniformIntArray("tex", samplers, s_Data.MaxTextureSlots);
+        s_Data.TextureShader = Shader::Create("assets/shaders/Texture.glsl");
 
         s_Data.TextureSlots[0] = s_Data.WhiteTexture;
 
@@ -105,6 +115,7 @@ namespace Hazel
         s_Data.QuadVertexPosition[2] = { 0.5f,  0.5f, 0.0f, 1.0f };
         s_Data.QuadVertexPosition[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
+        s_Data.CameraUniformBuffer = UniformBuffer::Create(sizeof(Render2DData::CameraData), 0);
     }
 
     void Renderer2D::Shutdown()
@@ -119,31 +130,28 @@ namespace Hazel
 
         s_Data.TextureShader->Bind();
         s_Data.TextureShader->SetUniformMat4("projectionView", camera.GetViewProjectionMatrix());
+		StartBatch();
+    }
+    
+	void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
+    {
+        HZ_PROFILE_FUNCTION();
+
+        s_Data.CameraBuffer.ViewProjection = camera.GetProjection() * glm::inverse(transform);
+        s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Render2DData::CameraData));
 
 		StartBatch();
     }
-
+	
 	void Renderer2D::BeginScene(const EditorCamera& camera)
 	{
 		HZ_PROFILE_FUNCTION();
 
-		glm::mat4 viewProj = camera.GetViewProjection();
-		s_Data.TextureShader->Bind();
-		s_Data.TextureShader->SetUniformMat4("projectionView", viewProj);
+		s_Data.CameraBuffer.ViewProjection = camera.GetViewProjection();
+		s_Data.CameraUniformBuffer->SetData(&s_Data.CameraBuffer, sizeof(Render2DData::CameraData));
 
 		StartBatch();
 	}
-
-    void Renderer2D::BeginScene(const Camera& camera, const glm::mat4& transform)
-    {
-        HZ_PROFILE_FUNCTION();
-
-        glm::mat4 proView = camera.GetProjection() * glm::inverse(transform);
-        s_Data.TextureShader->Bind();
-        s_Data.TextureShader->SetUniformMat4("projectionView", proView);
-
-		StartBatch();
-    }
 
     void Renderer2D::EndScene()
     {
@@ -172,6 +180,7 @@ namespace Hazel
 		for (uint32_t i = 0; i < s_Data.TextrueSlotIndex; i++)
 			s_Data.TextureSlots[i]->Bind(i);
 
+        s_Data.TextureShader->Bind();
 		RenderCommand::DrawIndexed(s_Data.QuadVertexArray, s_Data.QuadIndexCount);
 		s_Data.Stats.DrawCalls++;
     }
@@ -230,9 +239,9 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
-        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+        if (s_Data.QuadIndexCount >= Render2DData::MaxIndices)
         {
-            FlushReset();
+            NextBatch();
         }
 
         float textureIndex = 0.0f;
@@ -316,9 +325,9 @@ namespace Hazel
 	void Renderer2D::DrawRotateQuad(const glm::vec3& position, const glm::vec2& size, float rotation, const Ref<SubTexture2D>& subTexture, float tillingFactor, const glm::vec4& tintColor)
     {
         HZ_PROFILE_FUNCTION();
-        if (s_Data.QuadIndexCount >= s_Data.MaxIndices)
+        if (s_Data.QuadIndexCount >= Render2DData::MaxIndices)
         {
-            FlushReset();
+            NextBatch();
         }
         float textureIndex = 0.0f;
         auto texture = subTexture->GetTexture();

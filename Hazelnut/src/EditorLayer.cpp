@@ -12,7 +12,6 @@
 #include "ImGuizmo.h" 
 #include "Hazel/Math/Math.h"
 
-
 namespace Hazel
 {
     EditorLayer::EditorLayer() :
@@ -44,7 +43,14 @@ namespace Hazel
         this->m_Framebuffer = Framebuffer::Create(spec);
 
         m_ActiveScene = CreateRef<Scene>();
-
+		auto commandLineArgs = Application::Get().GetCommandLineArgs();
+		if (commandLineArgs.Count > 1)
+		{
+			auto sceneFilePath = commandLineArgs[1];
+			SceneSerializer serializer(m_ActiveScene);
+			serializer.Deserialize(sceneFilePath);
+		}
+		//this->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
 		#if 0
         auto square = m_ActiveScene->CreateEntity("Red Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });

@@ -9,10 +9,22 @@
 
 namespace Hazel
 {
+    struct ApplicationCommandLineArgs
+	{
+		int Count = 0;
+		char** Args = nullptr;
+
+		const char* operator[](int index) const
+		{
+			HZ_CORE_ASSERT(index < Count, "");
+			return Args[index];
+		}
+	};
+
     class HAZEL_API Application
     {
     public:
-        Application(const std::string& name = "Hazel Engine");
+        Application(const std::string& name = "Hazel App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
         virtual ~Application();
 
         void OnEvent(Event& e);
@@ -21,6 +33,7 @@ namespace Hazel
 
         void PushLayer(Layer* layer);
         void PushOverLayer(Layer* layer);
+		ApplicationCommandLineArgs GetCommandLineArgs() const { return this->m_CommandLineArgs; }
 
         ImGuiLayer* GetImGuiLayer() { return this->m_ImGuiLayer; }
         inline static Application& Get() { return *s_Instance; }
@@ -39,10 +52,12 @@ namespace Hazel
         static Application* s_Instance;
 
         float m_LastTime;
-
+		ApplicationCommandLineArgs m_CommandLineArgs;
 
     };
 
-    Application* CreateApplication();
+    // To be defined in CLIENT
+	Application* CreateApplication(ApplicationCommandLineArgs args);
+
 }
 

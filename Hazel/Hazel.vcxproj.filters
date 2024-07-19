@@ -19,6 +19,9 @@
     <Filter Include="src\Hazel\Imgui">
       <UniqueIdentifier>{3A6939B3-A6F4-A677-AF05-2A6C1B100378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Hazel\Math">
+      <UniqueIdentifier>{C91259A8-B5E0-4CAE-9E74-BDD48AE12813}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Hazel\Renderer">
       <UniqueIdentifier>{9669EB43-824D-AC99-EBAD-A6ECD7B0961B}</UniqueIdentifier>
     </Filter>
@@ -64,9 +67,6 @@
     <Filter Include="vendor\stb_image">
       <UniqueIdentifier>{0DA0BA59-F998-D9AB-22CB-BE300E23B9B7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="src\Hazel\Math">
-      <UniqueIdentifier>{bb721f75-2ba9-404a-b181-4c45058a8e0a}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Hazel.h">
@@ -99,7 +99,13 @@
     <ClInclude Include="src\Hazel\Core\MouseButtonCodes.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
+    <ClInclude Include="src\Hazel\Core\MouseCodes.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
     <ClInclude Include="src\Hazel\Core\TimeStep.h">
+      <Filter>src\Hazel\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Core\Timer.h">
       <Filter>src\Hazel\Core</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Core\Window.h">
@@ -123,10 +129,16 @@
     <ClInclude Include="src\Hazel\Imgui\ImGuiLayer.h">
       <Filter>src\Hazel\Imgui</Filter>
     </ClInclude>
+    <ClInclude Include="src\Hazel\Math\Math.h">
+      <Filter>src\Hazel\Math</Filter>
+    </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Buffer.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Camera.h">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Renderer\EditorCamera.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Framebuffer.h">
@@ -160,6 +172,9 @@
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\Texture.h">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Hazel\Renderer\UniformBuffer.h">
       <Filter>src\Hazel\Renderer</Filter>
     </ClInclude>
     <ClInclude Include="src\Hazel\Renderer\VertexArray.h">
@@ -202,6 +217,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLTexture2D.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLUniformBuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLVertexArray.h">
@@ -1467,9 +1485,6 @@
     <ClInclude Include="vendor\stb_image\stb_image.h">
       <Filter>vendor\stb_image</Filter>
     </ClInclude>
-    <ClInclude Include="src\Hazel\Math\Math.h" />
-    <ClInclude Include="src\Hazel\Renderer\EditorCamera.h" />
-    <ClInclude Include="src\Hazel\Core\MouseCodes.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Hazel\Core\Application.cpp">
@@ -1490,7 +1505,13 @@
     <ClCompile Include="src\Hazel\Imgui\ImGuiLayer.cpp">
       <Filter>src\Hazel\Imgui</Filter>
     </ClCompile>
+    <ClCompile Include="src\Hazel\Math\Math.cpp">
+      <Filter>src\Hazel\Math</Filter>
+    </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Buffer.cpp">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Renderer\EditorCamera.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Framebuffer.cpp">
@@ -1524,6 +1545,9 @@
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\Texture.cpp">
+      <Filter>src\Hazel\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Hazel\Renderer\UniformBuffer.cpp">
       <Filter>src\Hazel\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Hazel\Renderer\VertexArray.cpp">
@@ -1562,6 +1586,9 @@
     <ClCompile Include="src\Platform\OpenGL\OpenGLTexture2D.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLUniformBuffer.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLVertexArray.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
@@ -1583,7 +1610,5 @@
     <ClCompile Include="vendor\stb_image\stb_image.cpp">
       <Filter>vendor\stb_image</Filter>
     </ClCompile>
-    <ClCompile Include="src\Hazel\Math\Math.cpp" />
-    <ClCompile Include="src\Hazel\Renderer\EditorCamera.cpp" />
   </ItemGroup>
 </Project>

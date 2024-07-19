@@ -1,10 +1,22 @@
-#Directories
-.vs/
-bin/
+# Binaries
+**/bin/
+!vendor/premake/bin/
 bin-int/
 
-#File
-*user
-*.json
-*.tlog
-*.ini
+# Hazel files
+*.log
+
+# Hazelnut
+Hazelnut/**.json
+
+# Visual Studio files and folder
+.vs/
+**.sln
+**.vcxproj
+**.vcxproj.filters
+**.vcxproj.user
+
+# Directories
+Hazel/vendor/VulkanSDK
+Hazelnut/assets/cache
+scripts/__pycache__
