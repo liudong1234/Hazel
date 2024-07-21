@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "Hazel/Renderer/Texture.h"
 #include <glad/glad.h>
+
 namespace Hazel
 {
     class OpenGLTexture2D :

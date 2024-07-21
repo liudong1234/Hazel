@@ -160,48 +160,48 @@ namespace Hazel
         this->m_Framebuffer->UnBind();
     }
 
-    void EditorLayer::OnImGuiRender()
-    {
-        HZ_PROFILE_FUNCTION();
+	void EditorLayer::OnImGuiRender()
+	{
+		HZ_PROFILE_FUNCTION();
 
-        static bool p_open = true;
-        static bool opt_fullscreen = true;
-        static bool opt_padding = false;
-        static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+		static bool p_open = true;
+		static bool opt_fullscreen = true;
+		static bool opt_padding = false;
+		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-        ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-        if (opt_fullscreen)
-        {
-            const ImGuiViewport* viewport = ImGui::GetMainViewport();
-            ImGui::SetNextWindowPos(viewport->WorkPos);
-            ImGui::SetNextWindowSize(viewport->WorkSize);
-            ImGui::SetNextWindowViewport(viewport->ID);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-            window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-            window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        }
-        if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-            window_flags |= ImGuiWindowFlags_NoBackground;
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("DockSpace Demo", &p_open, window_flags);
-        ImGui::PopStyleVar();
+		if (opt_fullscreen)
+		{
+			const ImGuiViewport* viewport = ImGui::GetMainViewport();
+			ImGui::SetNextWindowPos(viewport->WorkPos);
+			ImGui::SetNextWindowSize(viewport->WorkSize);
+			ImGui::SetNextWindowViewport(viewport->ID);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+			window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+			window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		}
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			window_flags |= ImGuiWindowFlags_NoBackground;
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin("DockSpace Demo", &p_open, window_flags);
+		ImGui::PopStyleVar();
 
 
-        if (opt_fullscreen)
-            ImGui::PopStyleVar(2);
+		if (opt_fullscreen)
+			ImGui::PopStyleVar(2);
 
-        ImGuiIO& io = ImGui::GetIO();
-        ImGuiStyle& style = ImGui::GetStyle();
-        float minWinSizeX = style.WindowMinSize.x;
-        style.WindowMinSize.x = 370.0f;
-        if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
-        {
-            ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-            ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-        }
-        style.WindowMinSize.x = minWinSizeX;
+		ImGuiIO& io = ImGui::GetIO();
+		ImGuiStyle& style = ImGui::GetStyle();
+		float minWinSizeX = style.WindowMinSize.x;
+		style.WindowMinSize.x = 370.0f;
+		if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+		{
+			ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		}
+		style.WindowMinSize.x = minWinSizeX;
 
 		if (ImGui::BeginMenuBar())
 		{
@@ -230,61 +230,72 @@ namespace Hazel
 			ImGui::EndMenuBar();
 		}
 
-        this->m_Panel.OnImGuiRender();
+		this->m_Panel.OnImGuiRender();
+		this->m_ContentBrowserPanel.OnImGuiRender();
 
-        ImGui::Begin("Settings");
-        auto stats = Renderer2D::GetStats();
-        ImGui::Text("QuadCalls:%d", stats.DrawCalls);
-        ImGui::Text("QuadCount:%d", stats.QuadCounts);
-        ImGui::Text("QuadIndexCount:%d", stats.GetQuadIndexCounts());
-        ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
-        ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-        
+		ImGui::Begin("Settings");
+		auto stats = Renderer2D::GetStats();
+		ImGui::Text("QuadCalls:%d", stats.DrawCalls);
+		ImGui::Text("QuadCount:%d", stats.QuadCounts);
+		ImGui::Text("QuadIndexCount:%d", stats.GetQuadIndexCounts());
+		ImGui::Text("QuadVertexCount:%d", stats.GetQuadVertexCounts());
+		ImGui::Text("application %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
 		std::string entityName = "None";
 		if (this->m_HoveredEntity)
 			entityName = this->m_HoveredEntity.GetComponent<TagComponent>().Tag;
 		ImGui::Text("hoveredEntity:%s", entityName.c_str());
-		
+
 		/*ImGui::Separator();
-        auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
-        ImGui::Text("%s", tag.c_str());
+		auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
+		ImGui::Text("%s", tag.c_str());
 
-        auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
-        ImGui::ColorEdit4("Background", &sprite.Color[0]);
-        ImGui::Separator();
-        ImGui::DragFloat3("camera transform", glm::value_ptr(
-            this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
+		auto& sprite = this->m_SquareEntity.GetComponent<SpriteRendererComponent>();
+		ImGui::ColorEdit4("Background", &sprite.Color[0]);
+		ImGui::Separator();
+		ImGui::DragFloat3("camera transform", glm::value_ptr(
+			this->m_CameraEntity.GetComponent<TransformComponent>().Transform[3]));
 
-        if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
-        {
-            //this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
-            //this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
-        }
+		if (ImGui::Checkbox("Camera A", &this->m_PrimaryCamera))
+		{
+			//this->m_CameraEntity.GetComponent<CameraComponent>().Primary = this->m_PrimaryCamera;
+			//this->m_SecondCameraEntity.GetComponent<CameraComponent>().Primary = !this->m_PrimaryCamera;
+		}
 
-        {
-            auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
-            float size = camera.GetOrthographicSize();
-            if (ImGui::DragFloat("secondCamera ortho", &size))
-                camera.SetOrthographicSize(size);
-        }*/
-        ImGui::End();
+		{
+			auto& camera = this->m_SecondCameraEntity.GetComponent<CameraComponent>().Camera;
+			float size = camera.GetOrthographicSize();
+			if (ImGui::DragFloat("secondCamera ortho", &size))
+				camera.SetOrthographicSize(size);
+		}*/
+		ImGui::End();
 
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 
-        ImGui::Begin("viewport");
+		ImGui::Begin("viewport");
 		//auto viewportOffset = ImGui::GetCursorPos();//包括的tab bar
 
-        this->m_ViewportFocus = ImGui::IsWindowFocused();
-        this->m_ViewportHover = ImGui::IsWindowHovered();
+		this->m_ViewportFocus = ImGui::IsWindowFocused();
+		this->m_ViewportHover = ImGui::IsWindowHovered();
 
-        Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus && !this->m_ViewportHover);
-        ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
-            
-        this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
+		Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus && !this->m_ViewportHover);
+		ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
+
+		this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
 		uint64_t textureID = m_Framebuffer->GetColorAttachmentID();
 
-        ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+		ImGui::Image(reinterpret_cast<void*>(textureID), ImVec2(this->m_ViewportSize.x, this->m_ViewportSize.y), { 0, 1 }, { 1, 0 });
+
+		if (ImGui::BeginDragDropTarget())
+		{
+			if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Content browser"))
+			{
+				const wchar_t* path = (const wchar_t*)payload->Data;
+				OpenScene((std::filesystem::path)path);
+			}
+			ImGui::EndDragDropTarget();
+		}
 
 		//鼠标位置
 		auto viewWindowSize = ImGui::GetWindowSize();//viewport窗口大小
@@ -438,13 +449,18 @@ namespace Hazel
 		std::string filepath = FileDialogs::OpenFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!filepath.empty())
 		{
-			this->m_ActiveScene = CreateRef<Scene>();
-			this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
-			this->m_Panel.SetContext(this->m_ActiveScene);
-
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(filepath);
+			OpenScene(std::filesystem::path(filepath));
 		}
+	}
+
+	void EditorLayer::OpenScene(std::filesystem::path& path)
+	{
+		this->m_ActiveScene = CreateRef<Scene>();
+		this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+		this->m_Panel.SetContext(this->m_ActiveScene);
+
+		SceneSerializer serializer(m_ActiveScene);
+		serializer.Deserialize(path.string());
 	}
 
 	void EditorLayer::SaveAsScene()

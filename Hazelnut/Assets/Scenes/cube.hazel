@@ -30,9 +30,9 @@ Entities:
     TagComponent:
       Tag: right
     TransformComponent:
-      Translation: [0.349999994, 0, 0.349999994]
+      Translation: [0.349999934, 0, 0.350000054]
       Scale: [1, 1, 1]
-      Rotation: [0, 0.785398185, 0]
+      Rotation: [0, 0.785398245, 0]
     SpriteComponent:
       Color: [0, 1, 0, 1]
   - Entity: 1287246575654

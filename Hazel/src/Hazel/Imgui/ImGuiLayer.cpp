@@ -37,8 +37,11 @@ namespace Hazel
         io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; //enable Multi-viewport/platform windows
         //io.ConfigFlags |= ImGuiViewportFlags_NoTaskBarIcon;
         //io.ConfigFlags |= ImGuiConfigFlags_ViewportsNoMerge;
-        io.Fonts->AddFontFromFileTTF("assets/fonts/pala.ttf", 18.0f);
-        io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/Fonts/LBRITE.TTF", 18.0f);
+
+		float fontsize = 9.0 * 2;
+
+        io.Fonts->AddFontFromFileTTF("assets/fonts/pala.ttf", fontsize);
+        io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/Fonts/LBRITE.TTF", fontsize);
 
         ImGui::StyleColorsDark();
 

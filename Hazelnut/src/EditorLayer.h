@@ -7,8 +7,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "Hazel/Core/TimeStep.h"
 #include "Panels/SceneHierarchyPanel.h"
+#include "Panels/ContentBrowserPanel.h"
 #include "Hazel/Renderer/EditorCamera.h"
-
+#include <filesystem>
 namespace Hazel
 {
     class EditorLayer :
@@ -28,6 +29,7 @@ namespace Hazel
 		bool OnMouseButtonPressed(MouseButtonPressEvent& event);
 		void NewScene();
 		void OpenScene();
+		void OpenScene(std::filesystem::path& path);
 		void SaveAsScene();
 
     private:
@@ -50,7 +52,7 @@ namespace Hazel
         bool m_ViewportHover;
 		int m_GizmoType;
         SceneHierarchyPanel m_Panel;
-
+		ContentBrowserPanel m_ContentBrowserPanel;
 		Entity m_HoveredEntity;
 
     };

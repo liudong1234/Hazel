@@ -11,7 +11,7 @@
 
 #include "Hazel/Core/Timer.h"
 #include <filesystem>
-namespace Hazel {
+namespace Hazel { 
 
     namespace Utils {
 
@@ -51,7 +51,7 @@ namespace Hazel {
 		static const char* GetCacheDirectory()
 		{
 			// TODO: make sure the assets directory is valid
-			return "assets/cache/shader/opengl";
+			return "Assets/cache/shader/opengl";
 		}
 
 		static void CreateCacheDirectoryIfNeeded()
@@ -230,7 +230,7 @@ namespace Hazel {
 
 		shaderc::Compiler compiler;
 		shaderc::CompileOptions options;
-		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_2);
+		options.SetTargetEnvironment(shaderc_target_env_vulkan, shaderc_env_version_vulkan_1_3);
 		const bool optimize = true;
 		if (optimize)
 			options.SetOptimizationLevel(shaderc_optimization_level_performance);

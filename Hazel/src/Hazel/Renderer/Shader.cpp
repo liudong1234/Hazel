@@ -21,7 +21,8 @@ namespace Hazel
         HZ_CORE_ASSERT(false, "Unknown Shader");
         return nullptr;
     }
-    Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
+    
+	Ref<Shader> Shader::Create(const std::string& name, const std::string& vertexSrc, const std::string& fragmentSrc)
     {
         switch (Renderer::GetAPI())
         {
@@ -36,35 +37,41 @@ namespace Hazel
         HZ_CORE_ASSERT(false, "Unknown Shader");
         return nullptr;
     }
-    void ShaderLibrary::Add(const Ref<Shader>& shader)
+    
+	void ShaderLibrary::Add(const Ref<Shader>& shader)
     {
         auto name = shader->GetName();
         HZ_CORE_ASSERT(this->m_Shaders.find(name) != this->m_Shaders.end(), "shader already exist!");
         this->m_Shaders[name] = shader;
     }
-    void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
+    
+	void ShaderLibrary::Add(const std::string& name, const Ref<Shader>& shader)
     {
         HZ_CORE_ASSERT(!this->Exist(name), "shader already exist!");
         this->m_Shaders[name] = shader;
     }
-    Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
+    
+	Ref<Shader> ShaderLibrary::Load(const std::string& filepath)
     {
         auto shader = Shader::Create(filepath);
         this->Add(shader);
         return shader;
     }
+    
     Ref<Shader> ShaderLibrary::Load(const std::string& name, const std::string& filepath)
-    {
+	{
         auto shader = Shader::Create(filepath);
         this->Add(name, shader);
         return shader;
     }
-    Ref<Shader> ShaderLibrary::Get(const std::string& name)
+    
+	Ref<Shader> ShaderLibrary::Get(const std::string& name)
     {
         HZ_CORE_ASSERT(this->Exist(name), "shader not exist!");
         return this->m_Shaders[name];
     }
-    bool ShaderLibrary::Exist(const std::string& name) const
+    
+	bool ShaderLibrary::Exist(const std::string& name) const
     {
         if (this->m_Shaders.find(name) == this->m_Shaders.end())
             return false;

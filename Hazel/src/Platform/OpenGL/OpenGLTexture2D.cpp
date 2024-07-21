@@ -34,6 +34,11 @@ namespace Hazel
             internalFormat = GL_RGB8;
             dataFormat = GL_RGB;
         }
+		else if (channels == 2)
+		{
+			internalFormat = GL_RG16;
+			dataFormat = GL_RG;
+		}
         this->m_DataFormat = dataFormat;
         this->m_InternalFormat = internalFormat;
 
