@@ -159,7 +159,7 @@ namespace Hazel
 			this->m_ColorAttachments.clear();
 			this->m_DepthAttachment = 0;
         }
-
+		 
         glCreateFramebuffers(1, &this->m_RenderID);
         glBindFramebuffer(GL_FRAMEBUFFER, this->m_RenderID);
 
@@ -176,10 +176,10 @@ namespace Hazel
 				switch (this->m_ColorAttachmentSpecifications[i].TextureFormat)
 				{
 					case FramebufferTextureFormat::RGBA8:
-						Utils::AttachColorTexture(this->m_ColorAttachments[i], this->m_Spec.Samples, GL_RGBA8, GL_RGBA, this->m_Spec.Width, this->m_Spec.Height, i);
+						Utils::AttachColorTexture(this->m_ColorAttachments[i], this->m_Spec.Samples, GL_RGBA8, GL_RGBA, this->m_Spec.Width, this->m_Spec.Height, (int)i);
 						break;
 					case FramebufferTextureFormat::RED_INTEGER:
-						Utils::AttachColorTexture(this->m_ColorAttachments[i], this->m_Spec.Samples, GL_R32I, GL_RED_INTEGER, this->m_Spec.Width, this->m_Spec.Height, i);
+						Utils::AttachColorTexture(this->m_ColorAttachments[i], this->m_Spec.Samples, GL_R32I, GL_RED_INTEGER, this->m_Spec.Width, this->m_Spec.Height, (int)i);
 						break;
 					default:
 						break;

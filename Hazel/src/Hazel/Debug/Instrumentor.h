@@ -90,7 +90,7 @@ namespace Hazel
     class InstrumentationTimer
     {
     private:
-        const char* name;//������
+        const char* name;//
         std::chrono::time_point<std::chrono::steady_clock> m_start;
         bool m_stop;
     public:

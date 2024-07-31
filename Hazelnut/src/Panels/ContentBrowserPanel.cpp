@@ -5,8 +5,8 @@
 namespace Hazel
 {
 	static const std::filesystem::path s_AssetsDirPath = "Assets";
-	static const std::string s_DirImgPath = "../Resources/Icons/ContentBrowser/DirImg.png";
-	static const std::string s_FileImgPath = "../Resources/Icons/ContentBrowser/FileImg.png";
+	static const std::string s_DirImgPath = "Resources/Icons/ContentBrowser/DirImg.png";
+	static const std::string s_FileImgPath = "Resources/Icons/ContentBrowser/FileImg.png";
 
 	ContentBrowserPanel::ContentBrowserPanel():
 		m_CurDirectory(s_AssetsDirPath)

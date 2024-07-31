@@ -35,8 +35,8 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
-		this->m_IconPlay = Texture2D::Create(std::string("../Resources/Icons/play.png"));
-		this->m_IconStop = Texture2D::Create(std::string("../Resources/Icons/stop.png"));
+		this->m_IconPlay = Texture2D::Create(std::string("Resources/Icons/play.png"));
+		this->m_IconStop = Texture2D::Create(std::string("Resources/Icons/stop.png"));
 
         FramebufferSpecification spec;
 		spec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
