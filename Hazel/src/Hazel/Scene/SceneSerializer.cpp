@@ -161,7 +161,8 @@ namespace Hazel
     
     bool SceneSerializer::Deserialize(const std::string& filepath)
     {
-		if (filepath.find_last_not_of("hazel"))
+		//bool fl = filepath.find_last_not_of(".hazel");
+		if (filepath.find(".hazel") == -1)
 			return false;
 		std::ifstream stream(filepath);
 		std::stringstream strStream;

@@ -5,6 +5,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include "Hazel/Renderer/Texture.h"
 namespace Hazel
 {
     struct TagComponent
@@ -50,7 +51,8 @@ namespace Hazel
     struct SpriteRendererComponent
     {
         glm::vec4 Color{ 1.0f , 1.0f, 1.0f, 1.0f };
-
+		Ref<Texture2D> Texture;
+		float TillingFactor = 1.0f;
         SpriteRendererComponent() = default;
         SpriteRendererComponent(const SpriteRendererComponent&) = default;
         SpriteRendererComponent(const glm::vec4& color) :

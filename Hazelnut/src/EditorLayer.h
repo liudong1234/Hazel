@@ -31,9 +31,15 @@ namespace Hazel
 		void OpenScene();
 		void OpenScene(std::filesystem::path& path);
 		void SaveAsScene();
+		void SaveScene();
+		void Dialog();
 
+		void UI_ToolBar();
+		void OnScenePlay();
+		void OnSceneStop();
     private:
         Ref<Texture2D> quadTexture;
+
         Ref<SubTexture2D> subQuad;
         std::unordered_map<char, Ref<SubTexture2D>> s_TextureMap;
         Ref<Framebuffer> m_Framebuffer;
@@ -55,6 +61,16 @@ namespace Hazel
 		ContentBrowserPanel m_ContentBrowserPanel;
 		Entity m_HoveredEntity;
 
+		//UI resources
+		Ref<Texture2D> m_IconPlay;
+		Ref<Texture2D> m_IconStop;
+
+		enum class SceneState
+		{
+			Edit = 0, Play = 1,
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
     };
 
 }

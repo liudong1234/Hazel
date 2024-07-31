@@ -35,6 +35,8 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
         this->quadTexture = Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
+		this->m_IconPlay = Texture2D::Create(std::string("../Resources/Icons/play.png"));
+		this->m_IconStop = Texture2D::Create(std::string("../Resources/Icons/stop.png"));
 
         FramebufferSpecification spec;
 		spec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
@@ -50,7 +52,8 @@ namespace Hazel
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(sceneFilePath);
 		}
-		//this->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.1f, 1000.0f);
+		///this->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.01f, 1000.0f);
+		
 		#if 0
         auto square = m_ActiveScene->CreateEntity("Red Square");
         square.AddComponent<SpriteRendererComponent>(glm::vec4{ 1.0f, 0.0f, 0.0f, 1.0f });
@@ -123,11 +126,8 @@ namespace Hazel
 
         }
 
-		if (this->m_ViewportFocus)
-		{
-            this->m_CameraController.OnUpdate(ts);
-		}
-		this->m_EditorCamera.OnUpdate(ts);
+
+
 
 
         Renderer2D::ResetStatics();
@@ -139,19 +139,35 @@ namespace Hazel
 		this->m_Framebuffer->ClearAttachment(1, -1);
 
         //this->m_ActiveScene->OnUpdateRuntime(ts);
-        this->m_ActiveScene->OnUpdateEditor(ts, this->m_EditorCamera);
+		
+		switch (this->m_SceneState)
+		{
+			case  SceneState::Edit:
+				if (this->m_ViewportFocus)
+				{
+					this->m_CameraController.OnUpdate(ts);
+				}
+				this->m_EditorCamera.OnUpdate(ts);
+				this->m_ActiveScene->OnUpdateEditor(ts, this->m_EditorCamera);
+				break;
+			case SceneState::Play:
+				this->m_ActiveScene->OnUpdateRuntime(ts);
+				break;
+			default:
+				break;
+		}
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= this->m_ViewportBounds[0].x;
 		my -= this->m_ViewportBounds[0].y;
 		glm::vec2 viewportSize = this->m_ViewportBounds[1] - this->m_ViewportBounds[0];
 		my = viewportSize.y - my;
-		float mouseX = (int)mx;
-		float mouseY = (int)my;
+		float mouseX = mx;
+		float mouseY = my;
 
 		if (mouseX >= 0 && mouseY >= 0 && mouseX < (int)viewportSize.x && mouseY < (int)viewportSize.y)
 		{
-			int pixelData = this->m_Framebuffer->ReadPixel(1, mouseX, mouseY);
+			int pixelData = this->m_Framebuffer->ReadPixel(1, (int)mouseX, (int)mouseY);
 			this->m_HoveredEntity = pixelData == -1 ? Entity{} : 
 			Entity{ entt::entity(pixelData), this->m_ActiveScene.get() };
 		}
@@ -245,7 +261,7 @@ namespace Hazel
 		if (this->m_HoveredEntity)
 			entityName = this->m_HoveredEntity.GetComponent<TagComponent>().Tag;
 		ImGui::Text("hoveredEntity:%s", entityName.c_str());
-
+		
 		/*ImGui::Separator();
 		auto& tag = this->m_SquareEntity.GetComponent<TagComponent>().Tag;
 		ImGui::Text("%s", tag.c_str());
@@ -269,7 +285,6 @@ namespace Hazel
 				camera.SetOrthographicSize(size);
 		}*/
 		ImGui::End();
-
 
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 
@@ -360,17 +375,55 @@ namespace Hazel
 				tc.Rotation += deltaRotation;
 				tc.Scale = scale;
 			}
-
-			//snapping
-			//bool snap = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL);
-
-
 		}
 
         ImGui::End();
         ImGui::PopStyleVar();
+
+		UI_ToolBar();
+
         ImGui::End();
     }
+
+	void EditorLayer::UI_ToolBar()
+	{
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 2));
+		ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(0, 0));
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
+		auto& colors = ImGui::GetStyle().Colors;
+		const auto& buttonHoverd = colors[ImGuiCol_ButtonHovered];
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(buttonHoverd.x, buttonHoverd.y, buttonHoverd.z, 0.5f));
+		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
+
+		ImGui::Begin("##toolbar", nullptr, ImGuiWindowFlags_NoDecoration | 
+		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
+
+		float size = ImGui::GetWindowHeight() - 8.0f;
+		auto icon = m_SceneState == SceneState::Edit ? this->m_IconPlay : this->m_IconStop;
+		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f - size * 0.5f);
+		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, ImVec2(0, 0), ImVec2(1, 1), 0))
+		{
+			if (m_SceneState == SceneState::Edit)
+				OnScenePlay();
+			else if (m_SceneState == SceneState::Play)
+				OnSceneStop();
+
+		}
+		ImGui::End();
+		ImGui::PopStyleVar(2);
+		ImGui::PopStyleColor(3);
+	}
+
+	void EditorLayer::OnScenePlay()
+	{
+		this->m_SceneState = SceneState::Play;
+	}
+
+	void EditorLayer::OnSceneStop()
+	{
+		this->m_SceneState = SceneState::Edit;
+	}
 	 
     void EditorLayer::OnEvent(Event& e)
     {
@@ -460,7 +513,8 @@ namespace Hazel
 		this->m_Panel.SetContext(this->m_ActiveScene);
 
 		SceneSerializer serializer(m_ActiveScene);
-		serializer.Deserialize(path.string());
+		if (!serializer.Deserialize(path.string()))
+			this->Dialog();
 	}
 
 	void EditorLayer::SaveAsScene()
@@ -472,4 +526,47 @@ namespace Hazel
 			serializer.Serialize(savepath);
 		}
 	}
+
+	void EditorLayer::SaveScene()
+	{
+
+	}
+
+	void EditorLayer::Dialog()
+	{
+		////if (ImGui::Button("Delete.."))
+		//ImGui::OpenPopup("Delete?");
+
+		ImGui::BeginPopupContextWindow("viewport");
+
+		// Always center this window when appearing
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		bool open = true;
+
+		if (ImGui::BeginPopupModal("viewport", &open, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::Text("All those beautiful files will be deleted.\nThis operation cannot be undone!");
+			ImGui::Separator();
+
+			//static int unused_i = 0;
+			//ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
+
+			static bool dont_ask_me_next_time = false;
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+			ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
+			ImGui::PopStyleVar();
+
+			if (ImGui::Button("OK", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel", ImVec2(120, 0))) { ImGui::CloseCurrentPopup(); }
+			//ImGui::EndPopup();
+			ImGui::EndPopup();
+			
+		}
+	}
+
+
 }

@@ -1,18 +1,18 @@
 #include "hzpch.h"
 #include "ContentBrowserPanel.h"
 #include "imgui/imgui.h"
-#include "Platform/OpenGL/OpenGLTexture2D.h"
+
 namespace Hazel
 {
 	static const std::filesystem::path s_AssetsDirPath = "Assets";
-	static const std::string s_DirImgPath = "Assets/Textures/DirImg.png";
-	static const std::string s_FileImgPath = "Assets/Textures/FileImg.png";
+	static const std::string s_DirImgPath = "../Resources/Icons/ContentBrowser/DirImg.png";
+	static const std::string s_FileImgPath = "../Resources/Icons/ContentBrowser/FileImg.png";
 
 	ContentBrowserPanel::ContentBrowserPanel():
 		m_CurDirectory(s_AssetsDirPath)
 	{
-		this->m_FileImg = CreateRef<OpenGLTexture2D>(s_FileImgPath);
-		this->m_DirImg = CreateRef<OpenGLTexture2D>(s_DirImgPath);
+		this->m_FileImg = Texture2D::Create(std::string(s_FileImgPath));
+		this->m_DirImg = Texture2D::Create(std::string(s_DirImgPath));
 	}
 	void ContentBrowserPanel::OnImGuiRender()
 	{
@@ -24,7 +24,7 @@ namespace Hazel
 				m_CurDirectory = m_CurDirectory.parent_path();
 		}
 		static float padding = 16.0f;
-		static float buttonSize = 128.0f;
+		static float buttonSize = 75.0f;
 		float cellSize = padding + buttonSize;
 		float viewWidth = ImGui::GetContentRegionAvail().x;
 		int columnCount = (int)(viewWidth / cellSize);

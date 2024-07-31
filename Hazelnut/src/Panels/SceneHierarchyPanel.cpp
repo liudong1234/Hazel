@@ -4,7 +4,7 @@
 #include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Hazel/Scene/Components.h"
-
+ 
 #ifdef _MSVC_LANG
 #define _CRT_SECURE_NO_WARNINGS
 #endif
@@ -305,8 +305,25 @@ namespace Hazel
             });
         
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
-            {
-                ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+			{
+				ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+				//texture
+				ImGui::Button("Texture");
+				if (ImGui::BeginDragDropTarget())
+				{
+					if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("Content browser"))
+					{
+						const wchar_t* path = (const wchar_t*)payload->Data;
+						std::filesystem::path texturePath = (std::filesystem::path)path;
+						const std::filesystem::path s_AssetsDirPath = "Assets";
+						component.Texture = Texture2D::Create(texturePath.string());
+					}
+					ImGui::EndDragDropTarget();
+				}
+
+				ImGui::DragFloat("tillingFactor", &component.TillingFactor, 1.0f, 0.1f, 100.0f);
+
             });
 
     }

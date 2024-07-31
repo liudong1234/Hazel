@@ -34,10 +34,10 @@ namespace Hazel
             internalFormat = GL_RGB8;
             dataFormat = GL_RGB;
         }
-		else if (channels == 2)
+		else
 		{
-			internalFormat = GL_RG16;
-			dataFormat = GL_RG;
+			internalFormat = GL_RGBA8;
+			dataFormat = GL_RGBA;
 		}
         this->m_DataFormat = dataFormat;
         this->m_InternalFormat = internalFormat;
@@ -51,7 +51,6 @@ namespace Hazel
         glTextureParameteri(this->m_RendererID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
         glTextureSubImage2D(this->m_RendererID, 0, 0, 0, this->m_Width, this->m_Height, dataFormat, GL_UNSIGNED_BYTE, data);
-
         stbi_image_free(data);
 
     }
