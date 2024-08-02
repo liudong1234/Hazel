@@ -10,6 +10,9 @@
     <Filter Include="..\Hazel\vendor">
       <UniqueIdentifier>{011A063F-6DA5-7303-76B6-F6F7E2C0CF03}</UniqueIdentifier>
     </Filter>
+    <Filter Include="..\Hazel\vendor\Box2D">
+      <UniqueIdentifier>{CF803715-3BED-F20F-04E1-8A6D700C1578}</UniqueIdentifier>
+    </Filter>
     <Filter Include="..\Hazel\vendor\GLFW">
       <UniqueIdentifier>{E03DB63E-CCCC-3F08-75EB-5303615950AE}</UniqueIdentifier>
     </Filter>
@@ -32,6 +35,9 @@
   <ItemGroup>
     <None Include="..\..\Hazel\premake5.lua">
       <Filter>..\Hazel</Filter>
+    </None>
+    <None Include="..\..\Hazel\vendor\Box2D\premake5.lua">
+      <Filter>..\Hazel\vendor\Box2D</Filter>
     </None>
     <None Include="..\..\Hazel\vendor\GLFW\premake5.lua">
       <Filter>..\Hazel\vendor\GLFW</Filter>

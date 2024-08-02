@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\Hazel\premake5.lua" />
+    <None Include="..\..\Hazel\vendor\Box2D\premake5.lua" />
     <None Include="..\..\Hazel\vendor\GLFW\premake5.lua" />
     <None Include="..\..\Hazel\vendor\Glad\premake5.lua" />
     <None Include="..\..\Hazel\vendor\imgui\premake5.lua" />

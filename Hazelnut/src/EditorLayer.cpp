@@ -418,11 +418,13 @@ namespace Hazel
 	void EditorLayer::OnScenePlay()
 	{
 		this->m_SceneState = SceneState::Play;
+		this->m_ActiveScene->OnUpdateStart();
 	}
 
 	void EditorLayer::OnSceneStop()
 	{
 		this->m_SceneState = SceneState::Edit;
+		this->m_ActiveScene->OnUpdateStop();
 	}
 	 
     void EditorLayer::OnEvent(Event& e)

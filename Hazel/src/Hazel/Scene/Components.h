@@ -100,4 +100,44 @@ namespace Hazel
         }
     };
 
+	//刚体
+	struct RigidBody2DComponent
+	{
+		enum class BodyType
+		{
+			Static = 0,
+			Dynamic,
+			Kinematic,
+		};
+		bool FixedRotation = false;
+		BodyType Type = BodyType::Static;
+
+		//Storage for runtime
+		void* RuntimeBody = nullptr;
+
+		RigidBody2DComponent() = default;
+		RigidBody2DComponent(const RigidBody2DComponent&) = default;
+
+	};
+
+	//碰撞体
+	struct BoxCollider2DComponent
+	{
+
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		//TODO Material in future
+		float Density = 1.0f;//密度
+		float Friction = 0.5f;//摩擦
+		float Restitution = 0.0f;//弹性？
+		float RestitutionThreshold = 0.5f;//阈值
+
+		//Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		BoxCollider2DComponent() = default;
+		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
+
+	};
 }
