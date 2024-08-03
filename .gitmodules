@@ -1,9 +1,6 @@
 [submodule "Hazel/vendor/spdlog"]
 	path = Hazel/vendor/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "Hazel/vendor/GLFW"]
-	path = Hazel/vendor/GLFW
-	url = https://github.com/TheCherno/glfw
 [submodule "Hazel/vendor/yaml-cpp"]
 	path = Hazel/vendor/yaml-cpp
 	url = https://github.com/TheCherno/yaml-cpp.git
@@ -18,4 +15,7 @@
 	url = https://github.com/g-truc/glm
 [submodule "Hazel/vendor/Box2D"]
 	path = Hazel/vendor/Box2D
-	url = https://github.com/erincatto/box2d
+	url = https://github.com/liudong1234/Box2D
+[submodule "hazel/vendor/glfw"]
+	path = hazel/vendor/glfw
+	url = https://github.com/liudong1234/glfw
