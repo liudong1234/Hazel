@@ -1,41 +1,6 @@
 Scene: Name
 Entities:
-  - Entity: 1287246575654
-    TagComponent:
-      Tag: Red Square
-    TransformComponent:
-      Translation: [-0.400000006, 0, 0]
-      Scale: [1, 1, 1]
-      Rotation: [0, -0.785398185, 0]
-    SpriteComponent:
-      Color: [1, 0, 0, 1]
-  - Entity: 1287246575654
-    TagComponent:
-      Tag: Green Square
-    TransformComponent:
-      Translation: [0.300000012, 0, 0]
-      Scale: [1, 1, 1]
-      Rotation: [0, 0.785398185, 0]
-    SpriteComponent:
-      Color: [0, 1, 0, 1]
-  - Entity: 1287246575654
-    TagComponent:
-      Tag: Camera
-    TransformComponent:
-      Translation: [0, 0, 5.69999981]
-      Scale: [1, 1, 1]
-      Rotation: [0, 0.00174532924, -0.00872664619]
-    CameraComponent:
-      Primary: true
-      FixedAspectRatio: false
-      ProjectionType: 0
-      PerspectiveFov: 0.75049156
-      PerspectiveNear: 0.00999999978
-      PerspectiveFar: 1000
-      OrthographicSize: 18
-      OrthographicNear: -1
-      OrthographicFar: 1
-  - Entity: 1287246575654
+  - Entity: 11814812600503147834
     TagComponent:
       Tag: Clip-Space Camera
     TransformComponent:
@@ -52,3 +17,38 @@ Entities:
       OrthographicSize: 10
       OrthographicNear: -1
       OrthographicFar: 1
+  - Entity: 16844975077858812392
+    TagComponent:
+      Tag: Camera
+    TransformComponent:
+      Translation: [0, 0, 5.69999981]
+      Scale: [1, 1, 1]
+      Rotation: [0, 0.00174532924, -0.00872664619]
+    CameraComponent:
+      Primary: true
+      FixedAspectRatio: false
+      ProjectionType: 0
+      PerspectiveFov: 0.75049156
+      PerspectiveNear: 0.00999999978
+      PerspectiveFar: 1000
+      OrthographicSize: 18
+      OrthographicNear: -1
+      OrthographicFar: 1
+  - Entity: 8540880133011721557
+    TagComponent:
+      Tag: Green Square
+    TransformComponent:
+      Translation: [0.300000012, 0, 0]
+      Scale: [1, 1, 1]
+      Rotation: [0, 0.785398185, 0]
+    SpriteComponent:
+      Color: [0, 1, 0, 1]
+  - Entity: 796474918108612626
+    TagComponent:
+      Tag: Red Square
+    TransformComponent:
+      Translation: [-0.400000006, 0, 0]
+      Scale: [1, 1, 1]
+      Rotation: [0, -0.785398185, 0]
+    SpriteComponent:
+      Color: [1, 0, 0, 1]

@@ -1,6 +1,6 @@
 Scene: Name
 Entities:
-  - Entity: 1287246575654
+  - Entity: 11029404517755969524
     TagComponent:
       Tag: panel
     TransformComponent:
@@ -19,13 +19,13 @@ Entities:
       Friction: 0
       Restitution: 0
       Restitution Threshold: 0.5
-  - Entity: 1287246575654
+  - Entity: 459795795019483342
     TagComponent:
       Tag: squeen
     TransformComponent:
-      Translation: [0, 0, 0]
+      Translation: [1.98000002, 1.49000001, 0]
       Scale: [2.19047832, 0.891977549, 1]
-      Rotation: [0, 0, 0.512296438]
+      Rotation: [0, 0, 0.315766394]
     SpriteComponent:
       Color: [1, 1, 1, 1]
     RigidBody2DComponent:
@@ -38,7 +38,7 @@ Entities:
       Friction: 0.5
       Restitution: 0
       Restitution Threshold: 0.5
-  - Entity: 1287246575654
+  - Entity: 7302055309658962995
     TagComponent:
       Tag: camera
     TransformComponent:

@@ -1,13 +1,23 @@
 ﻿#pragma once
 
 #include "SceneCamera.h"
-#include "ScriptableEntity.h"
+//#include "ScriptableEntity.h"
+#include "Hazel/Renderer/Texture.h"
+#include "Hazel/Core/UUID.h"
+
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
-#include "Hazel/Renderer/Texture.h"
 namespace Hazel
 {
+	struct IDComponent
+	{
+		UUID ID;
+		IDComponent() = default;
+		IDComponent(const IDComponent&) = default;
+	};
+
     struct TagComponent
     {
         std::string Tag;
@@ -70,6 +80,7 @@ namespace Hazel
 
     };
 
+	class ScriptableEntity;
     struct NativeScriptComponent
     {
         ScriptableEntity* Instance = nullptr;
