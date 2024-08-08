@@ -22,7 +22,7 @@ namespace std
 	template<>
 	struct hash<Hazel::UUID>
 	{
-		std::size_t operator()(const Hazel::UUID& uuid)
+		std::size_t operator()(const Hazel::UUID& uuid) const
 		{
 			return std::hash<uint64_t>()(uuid);
 		}

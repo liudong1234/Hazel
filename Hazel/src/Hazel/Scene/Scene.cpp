@@ -44,6 +44,71 @@ namespace Hazel
 
 	}
 
+	template<typename Component>
+	static void CopyComponent(entt::registry& srcRegistry, entt::registry& dstRegistry, std::unordered_map<UUID, entt::entity>& enttMap)
+	{
+		auto srcView = srcRegistry.view<Component>();
+		for (auto& en : srcView)
+		{
+			auto& srcuuid = srcRegistry.get<IDComponent>(en).ID;
+			HZ_CORE_ASSERT(enttMap.find(srcuuid) != enttMap.end(), "");
+			entt::entity descEnttId = enttMap.at(srcuuid);
+
+			auto& component = srcRegistry.get<Component>(en);
+			dstRegistry.emplace_or_replace<Component>(descEnttId, component);
+
+
+			//auto& descView = dstRegistry.view<Component>();
+			/*for (auto& de : descView)
+			{
+				auto& descuuid = descRegistry.get<IDComponent>(en).ID;
+				if (srcuuid == descuuid)
+					descRegistry.emplace_or_replace<Component>(de, component);
+			}*/
+
+		}
+	}
+
+	template<typename Component>
+	static void CopyComponentIfExist(Entity& src, Entity& dst)
+	{
+		if (src.HasComponent<Component>())
+		{
+			dst.AddOrReplaceComponent<Component>(src.GetComponent<Component>());
+		}
+	}
+
+	Ref<Scene> Scene::Copy(Ref<Scene> other)
+	{
+		Ref<Scene> newScene = CreateRef<Scene>();
+		newScene->m_ViewportWidth = other->m_ViewportWidth;
+		newScene->m_ViewportHeight = other->m_ViewportHeight;
+
+		auto& srcSceneRegistry = other->m_Registry;
+		auto& dstSceneRegistry = newScene->m_Registry;
+		auto idView = srcSceneRegistry.view<IDComponent>();
+		std::unordered_map<UUID, entt::entity> enttMap;
+
+		for (auto en : idView)
+		{
+			UUID uuid = srcSceneRegistry.get<IDComponent>(en).ID;
+			const auto& name = srcSceneRegistry.get<TagComponent>(en).Tag;
+			Entity entity = newScene->CreateEntityWithUUID(uuid, name);
+			enttMap[uuid] = (entt::entity)entity;
+		}
+
+
+
+		CopyComponent<TransformComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<CameraComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<SpriteRendererComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<NativeScriptComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<RigidBody2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<BoxCollider2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+
+		return newScene;
+	}
+
 	Entity Scene::CreateEntity(const std::string& name)
 	{
 		return CreateEntityWithUUID(UUID(), name);
@@ -169,6 +234,19 @@ namespace Hazel
             }
         }
     }
+
+	void Scene::DuplicateEntity(Entity entity)
+	{
+		Entity newEntity = CreateEntity(entity.GetName());
+
+		CopyComponentIfExist<TransformComponent>(entity, newEntity);
+		CopyComponentIfExist<CameraComponent>(entity, newEntity);
+		CopyComponentIfExist<SpriteRendererComponent>(entity, newEntity);
+		CopyComponentIfExist<NativeScriptComponent>(entity, newEntity);
+		CopyComponentIfExist<RigidBody2DComponent>(entity, newEntity);
+		CopyComponentIfExist<BoxCollider2DComponent>(entity, newEntity);
+
+	}
 
 	Entity Scene::GetPrimaryCamera()
 	{

@@ -32,11 +32,14 @@ namespace Hazel
 		void OpenScene(std::filesystem::path& path);
 		void SaveAsScene();
 		void SaveScene();
+
+		void OnSerialzeScene(Ref<Scene>& scene, std::filesystem::path path);
 		void Dialog();
 
 		void UI_ToolBar();
 		void OnScenePlay();
 		void OnSceneStop();
+		void OnDuplicateEntity();
     private:
         Ref<Texture2D> quadTexture;
 
@@ -47,6 +50,9 @@ namespace Hazel
         OrthographicCameraController m_CameraController;
 		EditorCamera m_EditorCamera;
         Ref<Scene> m_ActiveScene;
+        Ref<Scene> m_EditorScene;
+		std::filesystem::path m_EditorScenePath;
+
         Entity m_SquareEntity;
         Entity m_CameraEntity;
         Entity m_SecondCameraEntity;

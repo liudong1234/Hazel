@@ -52,7 +52,7 @@ namespace Hazel
 			SceneSerializer serializer(m_ActiveScene);
 			serializer.Deserialize(sceneFilePath);
 		}
-		///this->m_EditorCamera = EditorCamera(30.0f, 1.778f, 0.01f, 1000.0f);
+		//this->m_EditorCamera = EditorCamera(40.0f, 1.778f, 0.01f, 1000.0f);
 		
 		#if 0
         auto square = m_ActiveScene->CreateEntity("Red Square");
@@ -418,6 +418,7 @@ namespace Hazel
 	void EditorLayer::OnScenePlay()
 	{
 		this->m_SceneState = SceneState::Play;
+		this->m_ActiveScene = Scene::Copy(this->m_EditorScene);
 		this->m_ActiveScene->OnUpdateStart();
 	}
 
@@ -425,6 +426,19 @@ namespace Hazel
 	{
 		this->m_SceneState = SceneState::Edit;
 		this->m_ActiveScene->OnUpdateStop();
+		this->m_ActiveScene = this->m_EditorScene;
+	}
+
+	void EditorLayer::OnDuplicateEntity()
+	{
+		if (m_SceneState != SceneState::Edit)
+			return;
+
+		Entity selected = this->m_Panel.GetSelectedEntity();
+		if (selected)
+		{
+			this->m_EditorScene->DuplicateEntity(selected);
+		}
 	}
 	 
     void EditorLayer::OnEvent(Event& e)
@@ -455,10 +469,19 @@ namespace Hazel
 					OpenScene();
 				break;
 			case HZ_KEY_S:
-				if (controlPress && shiftPress)
-					SaveAsScene();
+				if (controlPress)
+				{
+					if (shiftPress)
+						SaveAsScene();
+					else
+						SaveScene();
+				}
 				break;
-
+			//scene command
+			case HZ_KEY_D:
+				if (controlPress)
+					this->OnDuplicateEntity();
+				break;
 			//GIZMOS
 			case HZ_KEY_F1:
 				this->m_GizmoType = -1;
@@ -472,6 +495,7 @@ namespace Hazel
 			case HZ_KEY_F4:
 				this->m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
+
 			default:
 				break;
 		}
@@ -497,6 +521,8 @@ namespace Hazel
 		this->m_ActiveScene = CreateRef<Scene>();
 		this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
 		this->m_Panel.SetContext(this->m_ActiveScene);
+
+		this->m_EditorScenePath = std::filesystem::path();
 	}
 
 	void EditorLayer::OpenScene()
@@ -510,13 +536,28 @@ namespace Hazel
 
 	void EditorLayer::OpenScene(std::filesystem::path& path)
 	{
-		this->m_ActiveScene = CreateRef<Scene>();
-		this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
-		this->m_Panel.SetContext(this->m_ActiveScene);
+		if (this->m_SceneState != SceneState::Edit)
+			this->OnSceneStop();
+		if (path.extension().string() != ".hazel")
+		{
+			HZ_WARN("Couldn't load {0} - not a scene file", path.filename().string());
+			return;
+		}
 
-		SceneSerializer serializer(m_ActiveScene);
-		if (!serializer.Deserialize(path.string()))
+		Ref<Scene> newScene = CreateRef<Scene>();
+		SceneSerializer serializer(newScene);
+		if (serializer.Deserialize(path.string()))
+		{
+			this->m_EditorScene = newScene;
+			this->m_EditorScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+			this->m_Panel.SetContext(this->m_EditorScene);
+			this->m_ActiveScene = this->m_EditorScene;
+
+			this->m_EditorScenePath = path;
+		}
+		else
 			this->Dialog();
+
 	}
 
 	void EditorLayer::SaveAsScene()
@@ -524,14 +565,24 @@ namespace Hazel
 		std::string savepath = FileDialogs::SaveFile("Hazel Scene (*.hazel)\0*.hazel\0");
 		if (!savepath.empty())
 		{
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Serialize(savepath);
+			this->OnSerialzeScene(m_ActiveScene, savepath);
+
+			this->m_EditorScenePath = savepath;
 		}
 	}
 
 	void EditorLayer::SaveScene()
 	{
+		if (!this->m_EditorScenePath.empty())
+			this->OnSerialzeScene(m_ActiveScene, this->m_EditorScenePath);
+		else
+			this->SaveAsScene();
+	}
 
+	void EditorLayer::OnSerialzeScene(Ref<Scene>& scene, std::filesystem::path path)
+	{
+		SceneSerializer serializer(scene);
+		serializer.Serialize(path.string());
 	}
 
 	void EditorLayer::Dialog()

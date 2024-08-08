@@ -9,7 +9,7 @@
 namespace Hazel
 {
 	EditorCamera::EditorCamera():
-		m_Fov(45.0f), m_AspectRatio(1.778f), m_NearClip(0.1f), m_FarClip(1000.0f),
+		m_Fov(80.0f), m_AspectRatio(1.778f), m_NearClip(0.1f), m_FarClip(1000.0f),
 		m_Position({0.0f, 0.0f, -10.0f}), m_FocalPoint({0.0f, 0.0f, 0.0f}),
 		m_Distance(10.0f), m_Pitch(0.0f), m_Yaw(0.0f),
 		m_ViewportWidth(1280.0f), m_ViewportHeight(720.0f),
