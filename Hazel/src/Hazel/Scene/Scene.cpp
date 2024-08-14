@@ -102,6 +102,7 @@ namespace Hazel
 		CopyComponent<TransformComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<CameraComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<SpriteRendererComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
+		CopyComponent<CircleRendererComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<NativeScriptComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<RigidBody2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
 		CopyComponent<BoxCollider2DComponent>(srcSceneRegistry, dstSceneRegistry, enttMap);
@@ -133,14 +134,29 @@ namespace Hazel
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
 		Renderer2D::BeginScene(camera);
-		auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
+		//Draw Quad
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+			auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
 
-			//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-			Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+			}
 		}
+		//Draw Circle
+		{
+			auto view = this->m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
+			}
+		}
+		
 		Renderer2D::EndScene();
 	}
 
@@ -206,18 +222,30 @@ namespace Hazel
         if (mainCamera)
         {
             Renderer2D::BeginScene(*mainCamera, cameraTransform);
-            auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-            for (auto entity : group)
-            {
-                auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
-                //Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-            }
-            Renderer2D::EndScene();
+			{
+				auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+				for (auto entity : group)
+				{
+					auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+					Renderer2D::DrawSprite(transform.GetTransform(), sprite, (int)entity);
+					//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				}
+			}
 
+			//Draw Circle
+			{
+				auto view = this->m_Registry.view<TransformComponent, CircleRendererComponent>();
+				for (auto entity : view)
+				{
+					auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+					//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+					Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
+				}
+			}
+            Renderer2D::EndScene();
         }
     }
-
 
     void Scene::OnViewportResize(uint32_t width, uint32_t height)
     {
@@ -242,6 +270,7 @@ namespace Hazel
 		CopyComponentIfExist<TransformComponent>(entity, newEntity);
 		CopyComponentIfExist<CameraComponent>(entity, newEntity);
 		CopyComponentIfExist<SpriteRendererComponent>(entity, newEntity);
+		CopyComponentIfExist<CircleRendererComponent>(entity, newEntity);
 		CopyComponentIfExist<NativeScriptComponent>(entity, newEntity);
 		CopyComponentIfExist<RigidBody2DComponent>(entity, newEntity);
 		CopyComponentIfExist<BoxCollider2DComponent>(entity, newEntity);
@@ -325,6 +354,11 @@ namespace Hazel
     {
 
     }
+	template<>
+	void Scene::OnComponentAdded<CircleRendererComponent>(Entity entity, CircleRendererComponent& component)
+	{
+
+	}
     template<>
     void Scene::OnComponentAdded<CameraComponent>(Entity entity, CameraComponent& component)
     {

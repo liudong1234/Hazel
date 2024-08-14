@@ -191,6 +191,16 @@ namespace Hazel
 			out << YAML::Key << "Color" << YAML::Value << sprite.Color;
 			out << YAML::EndMap;
 		}
+		if (entity.HasComponent<CircleRendererComponent>())
+		{
+			out << YAML::Key << "CircleRendererComponent";
+			out << YAML::BeginMap;
+			auto& circle = entity.GetComponent<CircleRendererComponent>();
+			out << YAML::Key << "Color" << YAML::Value << circle.Color;
+			out << YAML::Key << "Thickness" << YAML::Value << circle.Thickness;
+			out << YAML::Key << "Fade" << YAML::Value << circle.Fade;
+			out << YAML::EndMap;
+		}
 		if (entity.HasComponent<RigidBody2DComponent>())
 		{
 			out << YAML::Key << "RigidBody2DComponent";
@@ -308,6 +318,15 @@ namespace Hazel
 					auto& sprite = deserialedEntity.AddComponent<SpriteRendererComponent>();
 					sprite.Color = spriteComponent["Color"].as<glm::vec4>();
 				}
+				auto& circleComponent = entity["CircleRendererComponent"];
+				if (circleComponent)
+				{
+					auto& circle = deserialedEntity.AddComponent<CircleRendererComponent>();
+					circle.Color = circleComponent["Color"].as<glm::vec4>();
+					circle.Thickness = circleComponent["Thickness"].as<float>();
+					circle.Fade = circleComponent["Fade"].as<float>();
+				}
+
 				auto& rb2dComponent = entity["RigidBody2DComponent"];
 				if (rb2dComponent)
 				{

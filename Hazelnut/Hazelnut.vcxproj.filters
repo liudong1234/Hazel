@@ -24,4 +24,7 @@
       <Filter>Panels</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\Renderer2D_Quad.glsl" />
+  </ItemGroup>
 </Project>
