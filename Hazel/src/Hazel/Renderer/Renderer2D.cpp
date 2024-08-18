@@ -23,6 +23,14 @@ namespace Hazel
 		int EntityID;
     };
 
+	struct LineVertex
+	{
+		glm::vec3 Position;
+		glm::vec4 Color;
+
+		int EntityID;
+	};
+
 	struct CircleVertex
 	{
 		glm::vec3 WorldPosition;
@@ -51,6 +59,15 @@ namespace Hazel
         QuadVertex* QuadVertexBufferBase = nullptr;
         QuadVertex* QuadVertexBufferPtr = nullptr;
 
+
+		//Line
+		Ref<VertexArray> LineVertexArray;
+		Ref<VertexBuffer> LineVertexBuffer;
+		Ref<Shader> LineShader;
+		uint32_t LineVertexCount = 0;
+		uint32_t LineWidth = 2;
+		LineVertex* LineVertexBufferBase = nullptr;
+		LineVertex* LineVertexBufferPtr = nullptr;
 
 		//Circle
 		Ref<VertexArray> CircleVertexArray;
@@ -131,6 +148,19 @@ namespace Hazel
         s_Data.QuadVertexPosition[3] = { -0.5f,  0.5f, 0.0f, 1.0f };
 
 
+		//Line
+		s_Data.LineVertexArray = VertexArray::Create();
+		s_Data.LineVertexBuffer = VertexBuffer::Create(sizeof(LineVertex) * s_Data.MaxVertices);
+		s_Data.LineVertexBuffer->SetLayout({
+			{ "g_Position",			ShaderDataType::Float3 },
+			{ "g_Color",			ShaderDataType::Float4 },
+			{ "g_EntityID", 		ShaderDataType::Int		}
+			});
+		s_Data.LineVertexArray->AddVertexBuffer(s_Data.LineVertexBuffer);
+		s_Data.LineVertexBufferBase = new LineVertex[s_Data.MaxVertices];
+		s_Data.LineShader = Shader::Create("assets/shaders/Renderer2D_Line.glsl");
+
+
 		//Circle
 		s_Data.CircleVertexArray = VertexArray::Create();
 		s_Data.CircleVertexBuffer = VertexBuffer::Create(sizeof(CircleVertex) * s_Data.MaxVertices);
@@ -201,6 +231,9 @@ namespace Hazel
 
 		s_Data.CircleIndexCount = 0;
 		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
 	}
 
     void Renderer2D::Flush()
@@ -228,6 +261,16 @@ namespace Hazel
 			s_Data.Stats.DrawCalls++;
 		}
 
+		if (s_Data.LineVertexCount)
+		{
+			uint32_t dataSize = (uint32_t)((uint8_t*)s_Data.LineVertexBufferPtr - (uint8_t*)s_Data.LineVertexBufferBase);
+			s_Data.LineVertexBuffer->SetData(s_Data.LineVertexBufferBase, dataSize);
+			s_Data.LineShader->Bind();
+			RenderCommand::SetLineWidth(s_Data.LineWidth);
+			RenderCommand::DrawLines(s_Data.LineVertexArray, s_Data.LineVertexCount);
+			s_Data.Stats.DrawCalls++;
+		}
+
     }
 
 	void Renderer2D::NextBatch()
@@ -242,6 +285,13 @@ namespace Hazel
         s_Data.QuadIndexCount = 0;
         s_Data.QuadVertexBufferPtr = s_Data.QuadVertexBufferBase;
         s_Data.TextrueSlotIndex = 1;
+
+		s_Data.CircleIndexCount = 0;
+		s_Data.CircleVertexBufferPtr = s_Data.CircleVertexBufferBase;
+
+		s_Data.LineVertexCount = 0;
+		s_Data.LineVertexBufferPtr = s_Data.LineVertexBufferBase;
+
     }
 
 
@@ -520,6 +570,50 @@ namespace Hazel
 
 		s_Data.Stats.QuadCounts++;
 	}
+
+    void Renderer2D::DrawLine(const glm::vec3& start, const glm::vec3& end, const glm::vec4& color, int entityID)
+    {
+		s_Data.LineVertexBufferPtr->Position = start;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr->EntityID = entityID;
+		s_Data.LineVertexBufferPtr++;
+		
+		s_Data.LineVertexBufferPtr->Position = end;
+		s_Data.LineVertexBufferPtr->Color = color;
+		s_Data.LineVertexBufferPtr->EntityID = entityID;
+		s_Data.LineVertexBufferPtr++;
+
+		s_Data.LineVertexCount += 2;
+	}
+
+	void Renderer2D::DrawRect(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, int entityID)
+	{
+		//从左上角
+		glm::vec3 p0 = { position.x - size.x * 0.5f, position.y - size.y * 0.5f, position.z };
+		glm::vec3 p1 = { position.x + size.x * 0.5f, position.y - size.y * 0.5f, position.z };
+		glm::vec3 p2 = { position.x + size.x * 0.5f, position.y + size.y * 0.5f, position.z };
+		glm::vec3 p3 = { position.x - size.x * 0.5f, position.y + size.y * 0.5f, position.z };
+		
+		DrawLine(p0, p1, color, entityID);
+		DrawLine(p1, p2, color, entityID);
+		DrawLine(p2, p3, color, entityID);
+		DrawLine(p3, p0, color, entityID);
+	}
+
+	void Renderer2D::DrawRect(const glm::mat4& transform, const glm::vec4& color, int entityID)
+	{
+		glm::vec3 lineVertices[4];
+
+		for (int i = 0; i < 4; i++)
+		{
+			lineVertices[i] = transform * s_Data.QuadVertexPosition[i];
+		}
+		DrawLine(lineVertices[0], lineVertices[1], color, entityID);
+		DrawLine(lineVertices[1], lineVertices[2], color, entityID);
+		DrawLine(lineVertices[2], lineVertices[3], color, entityID);
+		DrawLine(lineVertices[3], lineVertices[0], color, entityID);
+	}
+
 
 	void Renderer2D::DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID)
 	{

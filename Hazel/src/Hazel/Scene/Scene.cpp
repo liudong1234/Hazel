@@ -143,6 +143,7 @@ namespace Hazel
 
 				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
 				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+				//Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, int(entity));
 			}
 		}
 		//Draw Circle
@@ -156,6 +157,11 @@ namespace Hazel
 				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
 			}
 		}
+
+		/*{
+			Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(4.0f), glm::vec4(1.0f, 0.0f, 0.34f, 1.0f));
+			Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec2(3.0f, 3.0f), glm::vec4(1.0f));
+		}*/
 		
 		Renderer2D::EndScene();
 	}
