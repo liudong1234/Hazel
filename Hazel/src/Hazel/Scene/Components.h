@@ -161,4 +161,25 @@ namespace Hazel
 		BoxCollider2DComponent(const BoxCollider2DComponent&) = default;
 
 	};
+
+	struct CircleCollider2DComponent
+	{
+
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		float Radius = 0.5f;
+
+		//TODO Material in future
+		float Density = 1.0f;//密度
+		float Friction = 0.5f;//摩擦
+		float Restitution = 0.0f;//弹性？
+		float RestitutionThreshold = 0.5f;//阈值
+
+		//Storage for runtime
+		void* RuntimeFixture = nullptr;
+
+		CircleCollider2DComponent() = default;
+		CircleCollider2DComponent(const CircleCollider2DComponent&) = default;
+
+	};
+
 }
