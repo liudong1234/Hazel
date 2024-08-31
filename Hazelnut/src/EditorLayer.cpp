@@ -21,7 +21,8 @@ namespace Hazel
         m_ViewportFocus(false),
         m_ViewportHover(false),
 		m_GizmoType(-1),
-		m_HoveredEntity({})
+		m_HoveredEntity({}),
+		m_ShowCollider(false)
     {
 		m_EditorCamera = EditorCamera();
     }
@@ -38,13 +39,16 @@ namespace Hazel
 		this->m_IconPlay = Texture2D::Create(std::string("Resources/Icons/play.png"));
 		this->m_IconStop = Texture2D::Create(std::string("Resources/Icons/stop.png"));
 
+		this->m_IconSimulationPlay = Texture2D::Create(std::string("Resources/Icons/play.png"));
+
         FramebufferSpecification spec;
 		spec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
         spec.Width = 1280/*Application::Get().GetWindow().GetWidth()*/;
         spec.Height = 720/*Application::Get().GetWindow().GetHeight()*/;
         this->m_Framebuffer = Framebuffer::Create(spec);
 
-        m_ActiveScene = CreateRef<Scene>();
+		m_EditorScene = CreateRef<Scene>();
+		m_ActiveScene = m_EditorScene;
 		auto commandLineArgs = Application::Get().GetCommandLineArgs();
 		if (commandLineArgs.Count > 1)
 		{
@@ -112,7 +116,7 @@ namespace Hazel
 
     void EditorLayer::OnUpdate(TimeStep ts)
     {
-        //InstrumentationTimer timer("EditorLayer Onupdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
+        //InstrumentationTimer timer("EditorLayer OnUpdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
         HZ_PROFILE_FUNCTION();
 
         if (FramebufferSpecification spec = this->m_Framebuffer->GetSpecification();
@@ -125,10 +129,6 @@ namespace Hazel
             this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
 
         }
-
-
-
-
 
         Renderer2D::ResetStatics();
         this->m_Framebuffer->Bind();
@@ -153,9 +153,16 @@ namespace Hazel
 			case SceneState::Play:
 				this->m_ActiveScene->OnUpdateRuntime(ts);
 				break;
+			case SceneState::Simulate:
+				this->m_ActiveScene->OnUpdateSimulation(ts, this->m_EditorCamera);
+				break;
 			default:
 				break;
 		}
+		
+		if (this->m_ShowCollider)
+			this->OnOverlayRender();
+
 
 		auto [mx, my] = ImGui::GetMousePos();
 		mx -= this->m_ViewportBounds[0].x;
@@ -254,7 +261,7 @@ namespace Hazel
 		this->m_Panel.OnImGuiRender();
 		this->m_ContentBrowserPanel.OnImGuiRender();
 
-		ImGui::Begin("Settings");
+		ImGui::Begin("Stats");
 		auto stats = Renderer2D::GetStats();
 		ImGui::Text("QuadCalls:%d", stats.DrawCalls);
 		ImGui::Text("QuadCount:%d", stats.QuadCounts);
@@ -291,8 +298,12 @@ namespace Hazel
 		}*/
 		ImGui::End();
 
-		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
+		ImGui::Begin("Settings");
+		ImGui::Checkbox("Show Colliders", &m_ShowCollider);
+		ImGui::End();
 
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2{ 0,0 });
 		ImGui::Begin("viewport");
 		//auto viewportOffset = ImGui::GetCursorPos();//包括的tab bar
 
@@ -386,7 +397,6 @@ namespace Hazel
         ImGui::PopStyleVar();
 
 		UI_ToolBar();
-
         ImGui::End();
     }
 
@@ -405,16 +415,33 @@ namespace Hazel
 		ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse);
 
 		float size = ImGui::GetWindowHeight() - 8.0f;
-		auto icon = m_SceneState == SceneState::Edit ? this->m_IconPlay : this->m_IconStop;
-		ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f - size * 0.5f);
-		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, ImVec2(0, 0), ImVec2(1, 1), 0))
+		//ImGui::SameLine(ImGui::GetWindowContentRegionMax().x * 0.5f - size * 0.5f);
 		{
-			if (m_SceneState == SceneState::Edit)
-				OnScenePlay();
-			else if (m_SceneState == SceneState::Play)
-				OnSceneStop();
+			auto icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate) ? this->m_IconPlay : this->m_IconStop;
+			ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - size * 0.5f);
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, ImVec2(0, 0), ImVec2(1, 1), 0))
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Simulate)
+					OnScenePlay();
+				else if (m_SceneState == SceneState::Play)
+					OnSceneStop();
+			}
+		}
+		ImGui::SameLine();
+		{
+			auto icon = (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play) ? this->m_IconSimulationPlay : this->m_IconStop;
+			//ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) + size);
+			if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), { size, size }, ImVec2(0, 0), ImVec2(1, 1), 0))
+
+			{
+				if (m_SceneState == SceneState::Edit || m_SceneState == SceneState::Play)
+					OnSceneSimulate();
+				else if (m_SceneState == SceneState::Simulate)
+					OnSceneStop();
+			}
 
 		}
+
 		ImGui::End();
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
@@ -422,15 +449,31 @@ namespace Hazel
 
 	void EditorLayer::OnScenePlay()
 	{
+		if (this->m_SceneState == SceneState::Simulate)
+			this->OnSceneStop();
+
 		this->m_SceneState = SceneState::Play;
 		this->m_ActiveScene = Scene::Copy(this->m_EditorScene);
 		this->m_ActiveScene->OnUpdateStart();
 	}
 
+	void EditorLayer::OnSceneSimulate()
+	{
+		if (m_SceneState == SceneState::Play)
+			this->OnSceneStop();
+		this->m_SceneState = SceneState::Simulate;
+		this->m_ActiveScene = Scene::Copy(this->m_EditorScene);
+		this->m_ActiveScene->OnSimulationStart();
+	}
+
 	void EditorLayer::OnSceneStop()
 	{
+		if (m_SceneState == SceneState::Play)
+			this->m_ActiveScene->OnUpdateStop();
+		else if (m_SceneState == SceneState::Simulate)
+			this->m_ActiveScene->OnSimulationStop();
+
 		this->m_SceneState = SceneState::Edit;
-		this->m_ActiveScene->OnUpdateStop();
 		this->m_ActiveScene = this->m_EditorScene;
 	}
 
@@ -520,6 +563,56 @@ namespace Hazel
 		return false;
 	}
 
+	void EditorLayer::OnOverlayRender()
+	{
+		
+		if (this->m_SceneState == SceneState::Play)
+		{
+			auto camera = m_ActiveScene->GetPrimaryCamera();
+			if (!camera)
+				return;
+			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
+		}
+		else
+		{
+			Renderer2D::BeginScene(m_EditorCamera);
+		}
+
+		{
+			auto view = this->m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+			for (auto entity : view)
+			{
+				auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+			
+				glm::vec3 translate = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
+				glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2);
+				auto transform = glm::translate(glm::mat4(1.0f), translate)
+					* glm::scale(glm::mat4(1.0f), scale);
+
+				Renderer2D::DrawCircle(transform, { 0.0f, 1.0f, 0.0f, 1.0f }, 0.05f);
+
+			}
+		}
+
+		{
+			auto view = this->m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+			for (auto entity : view)
+			{
+				auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+
+				glm::vec3 translate = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
+				glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size.x * 2, bc2d.Size.y * 2, 1.0f);
+				auto transform = glm::translate(glm::mat4(1.0f), translate)
+					* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+					* glm::scale(glm::mat4(1.0f), scale);
+
+				Renderer2D::DrawRect(transform, { 0.0f, 1.0f, 0.0f, 1.0f });
+
+			}
+
+		}
+		Renderer2D::EndScene();
+	}
 
 	void EditorLayer::NewScene()
 	{

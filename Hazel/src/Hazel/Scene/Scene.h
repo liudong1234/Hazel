@@ -25,17 +25,33 @@ namespace Hazel
 		void OnUpdateStart();
 		void OnUpdateStop();
 
+		void OnSimulationStart();
+		void OnSimulationStop();
+
+
+		void OnUpdateSimulation(TimeStep ts, EditorCamera& camera);
         void OnUpdateEditor(TimeStep ts, EditorCamera& camera);
         void OnUpdateRuntime(TimeStep ts);
+
         void OnViewportResize(uint32_t width, uint32_t height);
 
 		void DuplicateEntity(Entity entity);
 
 		Entity GetPrimaryCamera();
 
+		template<typename... Component>
+		auto GetAllEntitiesWith()
+		{
+			return this->m_Registry.view<Component...>();
+		}
+
     private:
         template<typename T>
         void OnComponentAdded(Entity entity, T& component);
+
+		void RenderScene(EditorCamera& camera);
+		void OnPhysics2DStart();
+		void OnPhysics2DStop();
     private:
         entt::registry m_Registry;//组件和实体的容器
         uint32_t m_ViewportWidth, m_ViewportHeight;

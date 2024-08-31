@@ -65,7 +65,7 @@ namespace Hazel
 		Ref<VertexBuffer> LineVertexBuffer;
 		Ref<Shader> LineShader;
 		uint32_t LineVertexCount = 0;
-		uint32_t LineWidth = 2;
+		uint32_t LineWidth = 1;
 		LineVertex* LineVertexBufferBase = nullptr;
 		LineVertex* LineVertexBufferPtr = nullptr;
 

@@ -133,39 +133,10 @@ namespace Hazel
 		this->m_Registry.destroy(entity);
 	}
 
+
 	void Scene::OnUpdateEditor(TimeStep ts, EditorCamera& camera)
 	{
-		Renderer2D::BeginScene(camera);
-		//Draw Quad
-		{
-			auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-			for (auto entity : group)
-			{
-				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-
-				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
-				//Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, int(entity));
-			}
-		}
-		//Draw Circle
-		{
-			auto view = this->m_Registry.view<TransformComponent, CircleRendererComponent>();
-			for (auto entity : view)
-			{
-				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
-
-				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
-				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
-			}
-		}
-
-		/*{
-			Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(4.0f), glm::vec4(1.0f, 0.0f, 0.34f, 1.0f));
-			Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec2(3.0f, 3.0f), glm::vec4(1.0f));
-		}*/
-		
-		Renderer2D::EndScene();
+		this->RenderScene(camera);
 	}
 
     void Scene::OnUpdateRuntime(TimeStep ts)
@@ -205,7 +176,6 @@ namespace Hazel
 				transform.Rotation.z = body->GetAngle();
 			}
 		}
-
 
         //render sprites
         Camera* mainCamera = nullptr;
@@ -255,7 +225,33 @@ namespace Hazel
         }
     }
 
-    void Scene::OnViewportResize(uint32_t width, uint32_t height)
+	void Scene::OnUpdateSimulation(TimeStep ts, EditorCamera& camera)
+	{
+		//physics
+		{
+			const int32_t velocityIterations = 6;
+			const int32_t positionIterations = 2;
+			this->m_PhysicsWorld->Step(ts, velocityIterations, positionIterations);
+			//重新从Box2D得到transform
+			auto view = this->m_Registry.view<RigidBody2DComponent>();
+			for (auto& en : view)
+			{
+				Entity  entity = { en, this };
+				auto& transform = entity.GetComponent<TransformComponent>();
+				auto& rb2d = entity.GetComponent<RigidBody2DComponent>();
+
+				b2Body* body = (b2Body*)rb2d.RuntimeBody;
+				const auto& position = body->GetPosition();
+				transform.Translation.x = position.x;
+				transform.Translation.y = position.y;
+				transform.Rotation.z = body->GetAngle();
+			}
+		}
+
+		this->RenderScene(camera);
+	}
+    
+	void Scene::OnViewportResize(uint32_t width, uint32_t height)
     {
         this->m_ViewportWidth = width;
         this->m_ViewportHeight = height;
@@ -301,6 +297,62 @@ namespace Hazel
 
 	void Scene::OnUpdateStart()
 	{
+		this->OnPhysics2DStart();
+	}
+
+	void Scene::OnUpdateStop()
+	{
+		this->OnPhysics2DStop();
+	}
+
+	void Scene::OnSimulationStart()
+	{
+		this->OnPhysics2DStart();
+	}
+
+	void Scene::OnSimulationStop()
+	{
+		this->OnPhysics2DStop();
+	}
+
+
+	void Scene::RenderScene(EditorCamera& camera)
+	{
+		Renderer2D::BeginScene(camera);
+		//Draw Quad
+		{
+			auto group = this->m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawSprite(transform.GetTransform(), sprite, int(entity));
+				//Renderer2D::DrawRect(transform.GetTransform(), sprite.Color, int(entity));
+			}
+		}
+		//Draw Circle
+		{
+			auto view = this->m_Registry.view<TransformComponent, CircleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, circle] = view.get<TransformComponent, CircleRendererComponent>(entity);
+
+				//Renderer2D::DrawQuad(transform.GetTransform(), sprite.Color);
+				Renderer2D::DrawCircle(transform.GetTransform(), circle.Color, circle.Thickness, circle.Fade, int(entity));
+			}
+		}
+
+		/*{
+			Renderer2D::DrawLine(glm::vec3(0.0f), glm::vec3(4.0f), glm::vec4(1.0f, 0.0f, 0.34f, 1.0f));
+			Renderer2D::DrawRect(glm::vec3(0.0f), glm::vec2(3.0f, 3.0f), glm::vec4(1.0f));
+		}*/
+
+		Renderer2D::EndScene();
+	}
+
+	void Scene::OnPhysics2DStart()
+	{
 		this->m_PhysicsWorld = new b2World({ 0.0f, -9.8f });
 		auto view = m_Registry.view<RigidBody2DComponent>();
 		for (auto& en : view)
@@ -332,13 +384,13 @@ namespace Hazel
 				fixtureDef.restitutionThreshold = bc2d.RestitutionThreshold;
 				body->CreateFixture(&fixtureDef);
 			}
-			
+
 			if (entity.HasComponent<CircleCollider2DComponent>())
 			{
 				auto& cc2d = entity.GetComponent<CircleCollider2DComponent>();
 				b2CircleShape circleShape;
 				circleShape.m_p.Set(cc2d.Offset.x, cc2d.Offset.y);
-				circleShape.m_radius = cc2d.Radius;
+				circleShape.m_radius = transform.Scale.x * cc2d.Radius;
 
 				b2FixtureDef fixtureDef;
 				fixtureDef.shape = &circleShape;
@@ -349,14 +401,12 @@ namespace Hazel
 				body->CreateFixture(&fixtureDef);
 			}
 		}
-
 	}
 
-	void Scene::OnUpdateStop()
+	void Scene::OnPhysics2DStop()
 	{
 		delete this->m_PhysicsWorld;
 		this->m_PhysicsWorld = nullptr;
-
 	}
 
     template<typename T>
