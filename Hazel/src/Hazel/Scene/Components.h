@@ -182,4 +182,14 @@ namespace Hazel
 
 	};
 
+	template<typename... Component>
+	struct ComponentGroup
+	{
+
+	};
+	using AllComponents =
+		ComponentGroup<TransformComponent, SpriteRendererComponent,
+		CircleRendererComponent, CameraComponent, NativeScriptComponent,
+		RigidBody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
+
 }
