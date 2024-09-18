@@ -20,11 +20,12 @@ namespace Hazel
         virtual uint32_t GetHeight() const override { return this->m_Height; }
 
         virtual void SetData(void* data, uint32_t size) override;
-        virtual uint32_t GetRendererID() override { return this->m_RendererID; }
+        virtual uint32_t GetRendererID() const override { return this->m_RendererID; }
         
         virtual bool operator == (const Texture& other) const override 
         {
-            return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
+            //return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
+			return m_RendererID == other.GetRendererID();
         }
 
 

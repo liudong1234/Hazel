@@ -269,7 +269,10 @@ namespace Hazel
     {
 		//bool fl = filepath.find_last_not_of(".hazel");
 		if (filepath.find(".hazel") == -1)
+		{
+			HZ_CORE_ERROR("Failed to load this file '{0}'\n", filepath);
 			return false;
+		}
 		std::ifstream stream(filepath);
 		std::stringstream strStream;
 		strStream << stream.rdbuf();

@@ -41,6 +41,7 @@ namespace Hazel
 			s_RendererAPI->SetLineWidth(width);
 		}
     private:
-        static RendererAPI* s_RendererAPI;
+        //static RendererAPI* s_RendererAPI;s
+		static Scope<RendererAPI> s_RendererAPI;
     };
 }

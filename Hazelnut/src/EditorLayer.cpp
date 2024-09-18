@@ -225,7 +225,6 @@ namespace Hazel
 			ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 		}
 		style.WindowMinSize.x = minWinSizeX;
-
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -501,7 +500,7 @@ namespace Hazel
 	
 	bool EditorLayer::OnKeyPressed(KeyPressEvent& event)
 	{
-		if (event.GetRepeatCount() > 0)
+		if (event.IsRepeat())
 			return false;
 		bool controlPress = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL) || Input::IsKeyPressed(HZ_KEY_RIGHT_CONTROL);
 		bool shiftPress = Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT) || Input::IsKeyPressed(HZ_KEY_RIGHT_SHIFT);

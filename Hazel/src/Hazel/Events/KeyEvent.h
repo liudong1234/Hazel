@@ -22,21 +22,21 @@ namespace Hazel
 	{
 	public:
 		KeyPressEvent(int keycode, int repeatCount) :
-			KeyEvent(keycode), m_RepeatCount(repeatCount) {}
+			KeyEvent(keycode), m_IsRepeat(repeatCount) {}
 
-		inline int GetRepeatCount() const { return m_RepeatCount; }
+		inline int IsRepeat() const { return m_IsRepeat; }
 
 		std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "KeyPresssEvent: " << this->m_KeyCode << "(" << this->m_RepeatCount << "repeats)";
+			ss << "KeyPresssEvent: " << this->m_KeyCode << "(" << this->m_IsRepeat << "repeats)";
 			return ss.str();
 		}
 
 		EVENT_CLASS_TYPE(KeyPressed)
 
 	private:
-		int m_RepeatCount;
+		bool m_IsRepeat;
 	};
 
 	class HAZEL_API KeyReleaseEvent :

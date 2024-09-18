@@ -36,7 +36,9 @@ namespace Hazel
 		{
 			//与cherno略有不同
 			std::filesystem::path curpath = directoryDir.path();
-			std::string pathString = curpath.filename().string();
+			//std::string pathString = curpath.filename().string();
+			auto relativePath = std::filesystem::relative(curpath, s_AssetsDirPath);
+			std::string pathString = relativePath.filename().string();
 			Ref<Texture2D> ico = std::filesystem::is_directory(curpath) ? this->m_DirImg : this->m_FileImg;
 			ImGui::PushID(pathString.c_str());
 			

@@ -40,12 +40,11 @@ namespace Hazel
 
 		float fontsize = 9.0 * 2;
 
-        io.Fonts->AddFontFromFileTTF("assets/fonts/pala.ttf", fontsize);
-        io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/Fonts/LBRITE.TTF", fontsize);
+		io.Fonts->AddFontFromFileTTF("assets/fonts/pala.ttf", fontsize, NULL, io.Fonts->GetGlyphRangesChineseFull());
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("assets/Fonts/LBRITE.TTF", fontsize, NULL, io.Fonts->GetGlyphRangesChineseFull());
 
-        ImGui::StyleColorsDark();
-
-        ImGuiStyle& style = ImGui::GetStyle();
+		ImGui::StyleColorsDark();
+		ImGuiStyle& style = ImGui::GetStyle();
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
         {
             style.WindowRounding = 0.0f;
