@@ -623,6 +623,11 @@ namespace Hazel
 			DrawQuad(transform, src.Color, entityID);
 	}
 
+	void Renderer2D::SetLineWidth(float width)
+	{
+		RenderCommand::SetLineWidth(width);
+	}
+
     void Renderer2D::ResetStatics()
     {
         memset(&s_Data.Stats, 0, sizeof(Statistics));

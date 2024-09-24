@@ -8,7 +8,6 @@ bin-int/
 
 # Hazelnut
 Hazelnut/**.json
-
 # Visual Studio files and folder
 .vs/
 **.sln

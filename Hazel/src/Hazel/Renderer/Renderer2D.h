@@ -42,7 +42,7 @@ namespace Hazel
 
 		static void DrawSprite(const glm::mat4& transform, SpriteRendererComponent& src, int entityID);
 
-
+		static void SetLineWidth(float width);
         struct Statistics
         {
             uint32_t DrawCalls = 0;

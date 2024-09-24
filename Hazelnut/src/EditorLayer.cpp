@@ -106,6 +106,7 @@ namespace Hazel
         
 		#endif
         this->m_Panel.SetContext(this->m_ActiveScene);  
+		Renderer2D::SetLineWidth(0.5);
     }
 
     void EditorLayer::OnDetach()
@@ -160,8 +161,7 @@ namespace Hazel
 				break;
 		}
 		
-		if (this->m_ShowCollider)
-			this->OnOverlayRender();
+		this->OnOverlayRender();
 
 
 		auto [mx, my] = ImGui::GetMousePos();
@@ -577,39 +577,53 @@ namespace Hazel
 			Renderer2D::BeginScene(m_EditorCamera);
 		}
 
+		if (this->m_ShowCollider)
 		{
-			auto view = this->m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
-			for (auto entity : view)
 			{
-				auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
+				auto view = this->m_ActiveScene->GetAllEntitiesWith<TransformComponent, CircleCollider2DComponent>();
+				for (auto entity : view)
+				{
+					auto [tc, cc2d] = view.get<TransformComponent, CircleCollider2DComponent>(entity);
 			
-				glm::vec3 translate = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
-				glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2);
-				auto transform = glm::translate(glm::mat4(1.0f), translate)
-					* glm::scale(glm::mat4(1.0f), scale);
+					glm::vec3 translate = tc.Translation + glm::vec3(cc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(cc2d.Radius * 2);
+					auto transform = glm::translate(glm::mat4(1.0f), translate)
+						* glm::scale(glm::mat4(1.0f), scale);
 
-				Renderer2D::DrawCircle(transform, { 0.0f, 1.0f, 0.0f, 1.0f }, 0.05f);
+					Renderer2D::DrawCircle(transform, { 0.0f, 1.0f, 0.0f, 1.0f }, 0.05f);
 
+				}
 			}
-		}
 
-		{
-			auto view = this->m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
-			for (auto entity : view)
 			{
-				auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
+				auto view = this->m_ActiveScene->GetAllEntitiesWith<TransformComponent, BoxCollider2DComponent>();
+				for (auto entity : view)
+				{
+					auto [tc, bc2d] = view.get<TransformComponent, BoxCollider2DComponent>(entity);
 
-				glm::vec3 translate = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
-				glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size.x * 2, bc2d.Size.y * 2, 1.0f);
-				auto transform = glm::translate(glm::mat4(1.0f), translate)
-					* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
-					* glm::scale(glm::mat4(1.0f), scale);
+					glm::vec3 translate = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
+					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size.x * 2, bc2d.Size.y * 2, 1.0f);
+					auto transform = glm::translate(glm::mat4(1.0f), translate)
+						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::scale(glm::mat4(1.0f), scale);
 
-				Renderer2D::DrawRect(transform, { 0.0f, 1.0f, 0.0f, 1.0f });
+					Renderer2D::DrawRect(transform, { 0.0f, 1.0f, 0.0f, 1.0f });
+
+				}
 
 			}
 
 		}
+
+		//Draw Edge line
+		if (Entity selectEntity = this->m_Panel.GetSelectedEntity())
+		{
+			TransformComponent transform = selectEntity.GetComponent<TransformComponent>();
+				
+			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+
+		}
+
 		Renderer2D::EndScene();
 	}
 
