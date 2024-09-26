@@ -1,14 +1,5 @@
 Scene: Name
 Entities:
-  - Entity: 2117107453687944236
-    TagComponent:
-      Tag: back
-    TransformComponent:
-      Translation: [0, 0, 0]
-      Scale: [12, 12, 1]
-      Rotation: [0, 0, 0]
-    SpriteComponent:
-      Color: [1, 1, 1, 1]
   - Entity: 10184463142813469996
     TagComponent:
       Tag: front
@@ -18,3 +9,14 @@ Entities:
       Rotation: [0, 0, 0]
     SpriteComponent:
       Color: [1, 1, 1, 1]
+      TexturePath: Assets\Textures\ChernoLogo.png
+  - Entity: 2117107453687944236
+    TagComponent:
+      Tag: back
+    TransformComponent:
+      Translation: [0, 0, 0]
+      Scale: [12, 12, 1]
+      Rotation: [0, 0, 0]
+    SpriteComponent:
+      Color: [1, 1, 1, 1]
+      TexturePath: Assets\Textures\Checkerboard.png

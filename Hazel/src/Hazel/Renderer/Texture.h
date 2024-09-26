@@ -16,7 +16,7 @@ namespace Hazel
         virtual bool operator == (const Texture& other) const = 0;
         virtual uint32_t GetWidth() const = 0;
         virtual uint32_t GetHeight() const = 0;
-
+		virtual std::string GetFilePath() const = 0;
         virtual uint32_t GetRendererID() const = 0;
     };
 

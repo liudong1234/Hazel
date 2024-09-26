@@ -5,7 +5,8 @@
 
 namespace Hazel
 {
-    OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath)
+    OpenGLTexture2D::OpenGLTexture2D(const std::string& filepath):
+		m_FilePath(filepath)
     {
         HZ_PROFILE_FUNCTION();
 
@@ -58,8 +59,8 @@ namespace Hazel
     OpenGLTexture2D::OpenGLTexture2D(const char* filepath) :
         OpenGLTexture2D(std::string(filepath))
     {
+		m_FilePath = filepath;
         HZ_PROFILE_FUNCTION();
-
     }
 
     OpenGLTexture2D::OpenGLTexture2D(const uint32_t width, const uint32_t height) :

@@ -21,8 +21,9 @@ namespace Hazel
 
         virtual void SetData(void* data, uint32_t size) override;
         virtual uint32_t GetRendererID() const override { return this->m_RendererID; }
+		virtual std::string GetFilePath() const override { return this->m_FilePath; }
         
-        virtual bool operator == (const Texture& other) const override 
+		virtual bool operator == (const Texture& other) const override 
         {
             //return m_RendererID == ((OpenGLTexture2D&)other).m_RendererID;
 			return m_RendererID == other.GetRendererID();
@@ -30,6 +31,7 @@ namespace Hazel
 
 
     private:
+		std::string m_FilePath;
         uint32_t m_Width, m_Height;
         uint32_t m_RendererID;
         GLenum m_InternalFormat, m_DataFormat;
