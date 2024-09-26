@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClInclude Include="src\Hazel.h" />
     <ClInclude Include="src\Hazel\Core\Application.h" />
+    <ClInclude Include="src\Hazel\Core\Assert.h" />
     <ClInclude Include="src\Hazel\Core\Core.h" />
     <ClInclude Include="src\Hazel\Core\EntryPoint.h" />
     <ClInclude Include="src\Hazel\Core\Input.h" />
@@ -155,6 +156,7 @@
     <ClInclude Include="src\Hazel\Core\Log.h" />
     <ClInclude Include="src\Hazel\Core\MouseButtonCodes.h" />
     <ClInclude Include="src\Hazel\Core\MouseCodes.h" />
+    <ClInclude Include="src\Hazel\Core\PlatformDetection.h" />
     <ClInclude Include="src\Hazel\Core\TimeStep.h" />
     <ClInclude Include="src\Hazel\Core\Timer.h" />
     <ClInclude Include="src\Hazel\Core\UUID.h" />

@@ -10,8 +10,8 @@ namespace Hazel
     Application* Application::s_Instance = nullptr;
 
 
-    Application::Application(const std::string& name, ApplicationCommandLineArgs args)
-		: m_CommandLineArgs(args),
+    Application::Application(const ApplcationSpecification& specification)
+		: m_Specification(specification),
         m_LastTime(0.0f),
         is_Minimum(false)
     {
@@ -19,7 +19,10 @@ namespace Hazel
 
         HZ_CORE_ASSERT(!s_Instance, "application already exist! ");
         s_Instance = this;
-        this->m_Windnow = Scope<Window>(Window::Create({ name, 1280, 720 }));
+		if (!specification.WorkingDir.empty())
+			std::filesystem::current_path(specification.WorkingDir);
+
+        this->m_Windnow = Scope<Window>(Window::Create({ specification.Name, 1280, 720 }));
         this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
         this->m_Windnow->SetVSync(true);
 

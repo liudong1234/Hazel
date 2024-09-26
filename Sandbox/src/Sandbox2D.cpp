@@ -4,8 +4,6 @@
 #include "Hazel/Debug/Instrumentor.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 
-#include <chrono>
-
 static const uint32_t s_MapWidth = 24;
 static const char* s_MapTiles =
 "WWWWWWWWWWWWWWWWWWWWWWWW"
@@ -43,13 +41,13 @@ void Sandbox2D::OnAttach()
 {
     HZ_PROFILE_FUNCTION();
 
-    this->quadTexture = Hazel::Texture2D::Create(std::string("Assets/map/spritesheet/roguelikeSheet_magenta.png"));
+    this->quadTexture = Hazel::Texture2D::Create(std::string("Assets/map/Spritesheet/roguelikeSheet_transparent.png"));
     this->s_TextureMap['D'] = Hazel::SubTexture2D::CreateFromCoords(this->quadTexture, {0, 18}, {17, 17});
     this->s_TextureMap['W'] = Hazel::SubTexture2D::CreateFromCoords(this->quadTexture, {3, 26}, {17, 17});
     this->subQuad = Hazel::SubTexture2D::CreateFromCoords(this->quadTexture, { 0, 0 }, { 17, 17 });
-    Hazel::FramebufferSpecification spec;
-    spec.Width = Hazel::Application::Get().GetWindow().GetWidth();
-    spec.Height = Hazel::Application::Get().GetWindow().GetHeight();
+    //Hazel::FramebufferSpecification spec;
+    //spec.Width = Hazel::Application::Get().GetWindow().GetWidth();
+    //spec.Height = Hazel::Application::Get().GetWindow().GetHeight();
 }
 
 void Sandbox2D::OnDetach()
@@ -60,7 +58,6 @@ void Sandbox2D::OnDetach()
 
 void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
 {
-    //InstrumentationTimer timer("sandbox2D Onupdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
     HZ_PROFILE_FUNCTION();
     
     this->m_CameraController.OnUpdate(ts);
@@ -69,8 +66,8 @@ void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
     Hazel::Renderer2D::ResetStatics();
     {
         HZ_PROFILE_SCOPE("Renderer Prop");
+        Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1, 1.0f });
         Hazel::RenderCommand::Clear();
-        Hazel::RenderCommand::SetClearColor({ 0.0f, 0.0f, 0.0, 1.0f });
     }
 
     {
@@ -78,36 +75,37 @@ void Sandbox2D::OnUpdate(Hazel::TimeStep ts)
         rotation += ts * 50.0f;
         HZ_PROFILE_SCOPE("Draw Quad");
         Hazel::Renderer2D::BeginScene(this->m_CameraController.GetCamera());
-        Hazel::Renderer2D::DrawQuad({ 1.0f, 1.0f }, { 1.0f, 1.0f }, { 0.1f, 0.2f, 0.3f, 1.0f });
-        //Hazel::Renderer2D::DrawRotateQuad({ 1.0f, 0.8f }, this->m_QuadSize, this->m_QuadAngle, this->m_Color);
-        //Hazel::Renderer2D::DrawRotateQuad(this->m_QuadPos, this->m_QuadSize, rotation, this->quadTexture, 2.0f, { 1.0f, 0.8f, 0.8f, 1.0f });
-        //Hazel::Renderer2D::DrawQuad(this->m_QuadPos, this->m_QuadSize, this->quadTexture, 2.0f, {1.0f, 0.8f, 0.8f, 1.0f});
-        //Hazel::Renderer2D::DrawQuad({ -1.0f, -1.0f, 0.1f }, { 1.0f, 1.0f }, this->subQuad);
         
-        int Height =  strlen(s_MapTiles) / s_MapWidth;
+		Hazel::Renderer2D::DrawQuad({ 1.0f, 1.0f }, { 1.0f, 1.0f }, { 1.0f, 0.2f, 0.3f, 1.0f });
+		Hazel::Renderer2D::DrawRotateQuad({ 1.0f, 0.8f }, this->m_QuadSize, this->m_QuadAngle, this->m_Color);
+		Hazel::Renderer2D::DrawRotateQuad(this->m_QuadPos, this->m_QuadSize, rotation, this->quadTexture, 2.0f, { 1.0f, 0.8f, 0.8f, 1.0f });
+		Hazel::Renderer2D::DrawQuad(this->m_QuadPos, this->m_QuadSize, this->quadTexture, 2.0f, { 1.0f, 0.8f, 0.8f, 1.0f });
+		Hazel::Renderer2D::DrawQuad({ -1.0f, -1.0f, 0.1f }, { 1.0f, 1.0f }, this->subQuad);
+        
+		int Height =  strlen(s_MapTiles) / s_MapWidth;
 
-        for (int i = 0; i < Height; i++)
-        {
-            for (int j = 0; j < s_MapWidth; j++)
-            {
-                char ch = s_MapTiles[j + i * s_MapWidth];
-                Hazel::Ref<Hazel::SubTexture2D> texture;
-                if (this->s_TextureMap.find(ch) != this->s_TextureMap.end())
-                    texture = this->s_TextureMap[ch];
-                else
-                    texture = this->subQuad;
-                Hazel::Renderer2D::DrawQuad({ j - s_MapWidth / 2.0f, Height - i - Height / 2.0f, 0.1f }, { 1.0f, 1.0f }, texture);
-            }
-        }
+		for (int i = 0; i < Height; i++)
+		{
+			for (int j = 0; j < s_MapWidth; j++)
+			{
+				char ch = s_MapTiles[j + i * s_MapWidth];
+				Hazel::Ref<Hazel::SubTexture2D> texture;
+				if (this->s_TextureMap.find(ch) != this->s_TextureMap.end())
+					texture = this->s_TextureMap[ch];
+				else
+					texture = this->subQuad;
+				Hazel::Renderer2D::DrawQuad({ j - s_MapWidth / 2.0f, Height - i - Height / 2.0f, 0.1f }, { 1.0f, 1.0f }, texture);
+			}
+		}
 
-        /*for (float x = -5.0f; x < 5.0f; x+=0.5f)
-        {
-            for (float y = -5.0f; y < 5.0f; y+=0.5f)
-            {
-                glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 0.5f) / 10.0f, 1.0f };
-                Hazel::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
-            }
-        }*/
+		for (float x = -5.0f; x < 5.0f; x+=0.5f)
+		{
+			for (float y = -5.0f; y < 5.0f; y+=0.5f)
+			{
+				glm::vec4 color = { (x + 5.0f) / 10.0f, 0.4f, (y + 0.5f) / 10.0f, 1.0f };
+				Hazel::Renderer2D::DrawQuad({ x, y }, { 0.45f, 0.45f }, color);
+			}
+		}
         Hazel::Renderer2D::EndScene();
     }
 }

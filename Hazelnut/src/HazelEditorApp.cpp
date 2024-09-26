@@ -11,8 +11,8 @@ namespace Hazel
         public Application
     {
     public:
-        Hazelnut(ApplicationCommandLineArgs args):
-            Application("Hazelnut", args)
+        Hazelnut(ApplcationSpecification& spec):
+			Application(spec)
         {
             //PushLayer(new ExampleLayer());
             PushLayer(new EditorLayer());
@@ -25,6 +25,9 @@ namespace Hazel
 
     Application* CreateApplication(ApplicationCommandLineArgs args)
     {
-        return new Hazelnut(args);
+		ApplcationSpecification spec;
+		spec.Name = "Hazelnut";
+		spec.CommandLineArgs = args;
+        return new Hazelnut(spec);
     }
 }

@@ -16,15 +16,23 @@ namespace Hazel
 
 		const char* operator[](int index) const
 		{
-			HZ_CORE_ASSERT(index < Count, "");
+			HZ_CORE_ASSERT(index < Count);
 			return Args[index];
 		}
 	};
 
+	struct ApplcationSpecification
+	{
+		std::string Name = "Hazel App";
+		std::string WorkingDir;
+		ApplicationCommandLineArgs CommandLineArgs;
+	};
+
+
     class HAZEL_API Application
     {
     public:
-        Application(const std::string& name = "Hazel App", ApplicationCommandLineArgs args = ApplicationCommandLineArgs());
+        Application(const ApplcationSpecification& spec);
         virtual ~Application();
 
         void OnEvent(Event& e);
@@ -33,7 +41,7 @@ namespace Hazel
 
         void PushLayer(Layer* layer);
         void PushOverLayer(Layer* layer);
-		ApplicationCommandLineArgs GetCommandLineArgs() const { return this->m_CommandLineArgs; }
+		ApplcationSpecification GetSpecification() const { return this->m_Specification; }
 
         ImGuiLayer* GetImGuiLayer() { return this->m_ImGuiLayer; }
         inline static Application& Get() { return *s_Instance; }
@@ -52,8 +60,7 @@ namespace Hazel
         static Application* s_Instance;
 
         float m_LastTime;
-		ApplicationCommandLineArgs m_CommandLineArgs;
-
+		ApplcationSpecification m_Specification;
     };
 
     // To be defined in CLIENT

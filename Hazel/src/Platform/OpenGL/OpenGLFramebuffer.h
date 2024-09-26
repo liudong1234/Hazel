@@ -15,7 +15,7 @@ namespace Hazel
         virtual void UnBind() override;
         virtual uint32_t GetColorAttachmentID(uint32_t index = 0) override 
 		{
-			HZ_CORE_ASSERT(index < this->m_ColorAttachments.size(), "");
+			HZ_CORE_ASSERT(index < this->m_ColorAttachments.size());
 			return this->m_ColorAttachments[index];
 		}
 		virtual int ReadPixel(uint32_t attachmentIndex, int x, int y) override;

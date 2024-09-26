@@ -33,7 +33,7 @@ namespace Hazel {
 				case GL_VERTEX_SHADER:   return shaderc_glsl_vertex_shader;
 				case GL_FRAGMENT_SHADER: return shaderc_glsl_fragment_shader;
 			}
-			HZ_CORE_ASSERT(false, "");
+			HZ_CORE_ASSERT(false);
 			return (shaderc_shader_kind)0;
 		}
 
@@ -44,7 +44,7 @@ namespace Hazel {
 				case GL_VERTEX_SHADER:   return "GL_VERTEX_SHADER";
 				case GL_FRAGMENT_SHADER: return "GL_FRAGMENT_SHADER";
 			}
-			HZ_CORE_ASSERT(false, "");
+			HZ_CORE_ASSERT(false);
 			return nullptr;
 		}
 
@@ -68,7 +68,7 @@ namespace Hazel {
 				case GL_VERTEX_SHADER:    return ".cached_opengl.vert";
 				case GL_FRAGMENT_SHADER:  return ".cached_opengl.frag";
 			}
-			HZ_CORE_ASSERT(false, "");
+			HZ_CORE_ASSERT(false);
 			return "";
 		}
 
@@ -79,7 +79,7 @@ namespace Hazel {
 			case GL_VERTEX_SHADER:    return ".cached_vulkan.vert";
 			case GL_FRAGMENT_SHADER:  return ".cached_vulkan.frag";
 			}
-			HZ_CORE_ASSERT(false, "");
+			HZ_CORE_ASSERT(false);
 			return "";
 		}
 
@@ -261,7 +261,7 @@ namespace Hazel {
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					HZ_CORE_ERROR(module.GetErrorMessage());
-					HZ_CORE_ASSERT(false, "");
+					HZ_CORE_ASSERT(false);
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());
@@ -322,7 +322,7 @@ namespace Hazel {
 				if (module.GetCompilationStatus() != shaderc_compilation_status_success)
 				{
 					HZ_CORE_ERROR(module.GetErrorMessage());
-                HZ_CORE_ASSERT(false, "");
+                HZ_CORE_ASSERT(false);
 				}
 
 				shaderData[stage] = std::vector<uint32_t>(module.cbegin(), module.cend());

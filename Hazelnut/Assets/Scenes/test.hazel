@@ -1,28 +1,20 @@
 Scene: Name
 Entities:
-  - Entity: 14060182828783286549
+  - Entity: 2117107453687944236
     TagComponent:
-      Tag: Empty Entity
+      Tag: back
     TransformComponent:
       Translation: [0, 0, 0]
-      Scale: [7.0999999, 7.0999999, 1]
+      Scale: [12, 12, 1]
       Rotation: [0, 0, 0]
     SpriteComponent:
-      Color: [0.602316618, 0.167439356, 0.167439356, 1]
-  - Entity: 10678761169337249358
+      Color: [1, 1, 1, 1]
+  - Entity: 10184463142813469996
     TagComponent:
-      Tag: Empty Entity
+      Tag: front
     TransformComponent:
-      Translation: [0, 0, 0]
-      Scale: [1, 1, 1]
+      Translation: [0, 0, 1]
+      Scale: [5.0999999, 5, 1]
       Rotation: [0, 0, 0]
-    CameraComponent:
-      Primary: true
-      FixedAspectRatio: false
-      ProjectionType: 1
-      PerspectiveFov: 0.785398185
-      PerspectiveNear: 0.00999999978
-      PerspectiveFar: 1000
-      OrthographicSize: 10
-      OrthographicNear: -1
-      OrthographicFar: 1
+    SpriteComponent:
+      Color: [1, 1, 1, 1]
