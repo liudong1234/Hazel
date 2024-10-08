@@ -55,6 +55,7 @@ namespace Hazel
 		EditorCamera m_EditorCamera;
 		Ref<Scene> m_ActiveScene;
 		Ref<Scene> m_EditorScene;
+
 		std::filesystem::path m_EditorScenePath;
 
 		Entity m_SquareEntity;

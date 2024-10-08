@@ -1,35 +1,15 @@
 Scene: Name
 Entities:
-  - Entity: 2867503747118816502
-    TagComponent:
-      Tag: Circle
-    TransformComponent:
-      Translation: [0.253385186, 5.50310516, 0]
-      Scale: [3, 3, 1]
-      Rotation: [0, 0, 0]
-    CircleRendererComponent:
-      Color: [0.0638630912, 0.181849524, 0.590733588, 1]
-      Thickness: 1
-      Fade: 0.00499999989
-    RigidBody2DComponent:
-      RigidBodyType: Dynamic
-      FixedRotation: false
-    CircleCollider2DComponent:
-      Offset: [0, 0]
-      Radius: 1.5
-      Density: 1
-      Friction: 0.5
-      Restitution: 0
-      Restitution Threshold: 0.5
-  - Entity: 11029404517755969524
+  - Entity: 13880690627099615880
     TagComponent:
       Tag: panel
     TransformComponent:
-      Translation: [5.81658363, 2.90677285, 1.28032446]
-      Scale: [13.1995554, 0.70000118, 0.999949276]
-      Rotation: [0, 0, -2.55444789]
+      Translation: [-4.47379494, 3.66676712, 1.73111725]
+      Scale: [13.2000427, 0.70000124, 1.00000048]
+      Rotation: [0, 0, -0.731505692]
     SpriteComponent:
       Color: [0.776061773, 0.164800748, 0.164800748, 1]
+      TillingFactor: 1
     RigidBody2DComponent:
       RigidBodyType: Static
       FixedRotation: false
@@ -40,23 +20,44 @@ Entities:
       Friction: 0
       Restitution: 0
       Restitution Threshold: 0.5
-  - Entity: 459795795019483342
+  - Entity: 3786420380802188832
     TagComponent:
-      Tag: squeen
+      Tag: panel
     TransformComponent:
-      Translation: [0.0898327827, 9.59066963, 0]
-      Scale: [2.19047832, 0.891977549, 1]
-      Rotation: [0, 0, 0.315766394]
+      Translation: [-0.700687349, -15.7282963, 6.10348652e-05]
+      Scale: [13.2000437, 0.70000118, 1.00000048]
+      Rotation: [0, 0, 0.496716917]
     SpriteComponent:
-      Color: [0.0306644123, 0.467181444, 0.350889206, 1]
+      Color: [0.776061773, 0.164800748, 0.164800748, 1]
+      TillingFactor: 1
     RigidBody2DComponent:
-      RigidBodyType: Dynamic
+      RigidBodyType: Static
       FixedRotation: false
     BoxCollider2DComponent:
       Offset: [0, 0]
       Size: [0.5, 0.5]
       Density: 1
-      Friction: 0.5
+      Friction: 0
+      Restitution: 0
+      Restitution Threshold: 0.5
+  - Entity: 3056673437579234699
+    TagComponent:
+      Tag: panel
+    TransformComponent:
+      Translation: [-11.9236603, -8.86579895, 0.000122070029]
+      Scale: [13.2000399, 0.70000124, 1.00000048]
+      Rotation: [0, 0, -0.586898744]
+    SpriteComponent:
+      Color: [0.776061773, 0.164800748, 0.164800748, 1]
+      TillingFactor: 1
+    RigidBody2DComponent:
+      RigidBodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0
       Restitution: 0
       Restitution Threshold: 0.5
   - Entity: 7302055309658962995
@@ -86,15 +87,36 @@ Entities:
       Friction: 0.5
       Restitution: 0
       Restitution Threshold: 0.5
-  - Entity: 3056673437579234699
+  - Entity: 459795795019483342
+    TagComponent:
+      Tag: squeen
+    TransformComponent:
+      Translation: [0.0898327827, 9.59066963, 0]
+      Scale: [2.19047832, 0.891977549, 1]
+      Rotation: [0, 0, 0.315766394]
+    SpriteComponent:
+      Color: [0.0306644123, 0.467181444, 0.350889206, 1]
+      TillingFactor: 1
+    RigidBody2DComponent:
+      RigidBodyType: Dynamic
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [-6.4000001, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      Restitution Threshold: 0.5
+  - Entity: 11029404517755969524
     TagComponent:
       Tag: panel
     TransformComponent:
-      Translation: [-11.9236603, -8.86579895, 0.000122070029]
-      Scale: [13.2000399, 0.70000124, 1.00000048]
-      Rotation: [0, 0, -0.586898744]
+      Translation: [5.81658363, 2.90677285, 1.28032446]
+      Scale: [13.1995554, 0.70000118, 0.999949276]
+      Rotation: [0, 0, -2.55444789]
     SpriteComponent:
       Color: [0.776061773, 0.164800748, 0.164800748, 1]
+      TillingFactor: 1
     RigidBody2DComponent:
       RigidBodyType: Static
       FixedRotation: false
@@ -105,41 +127,24 @@ Entities:
       Friction: 0
       Restitution: 0
       Restitution Threshold: 0.5
-  - Entity: 3786420380802188832
+  - Entity: 2867503747118816502
     TagComponent:
-      Tag: panel
+      Tag: Circle
     TransformComponent:
-      Translation: [-0.700687349, -15.7282963, 6.10348652e-05]
-      Scale: [13.2000437, 0.70000118, 1.00000048]
-      Rotation: [0, 0, 0.496716917]
-    SpriteComponent:
-      Color: [0.776061773, 0.164800748, 0.164800748, 1]
+      Translation: [0.253385186, 5.50310516, 0]
+      Scale: [3, 3, 1]
+      Rotation: [0, 0, 0]
+    CircleRendererComponent:
+      Color: [0.0638630912, 0.181849524, 0.590733588, 1]
+      Thickness: 1
+      Fade: 0.00499999989
     RigidBody2DComponent:
-      RigidBodyType: Static
+      RigidBodyType: Dynamic
       FixedRotation: false
-    BoxCollider2DComponent:
+    CircleCollider2DComponent:
       Offset: [0, 0]
-      Size: [0.5, 0.5]
+      Radius: 1.5
       Density: 1
-      Friction: 0
-      Restitution: 0
-      Restitution Threshold: 0.5
-  - Entity: 13880690627099615880
-    TagComponent:
-      Tag: panel
-    TransformComponent:
-      Translation: [-4.47379494, 3.66676712, 1.73111725]
-      Scale: [13.2000427, 0.70000124, 1.00000048]
-      Rotation: [0, 0, -0.731505692]
-    SpriteComponent:
-      Color: [0.776061773, 0.164800748, 0.164800748, 1]
-    RigidBody2DComponent:
-      RigidBodyType: Static
-      FixedRotation: false
-    BoxCollider2DComponent:
-      Offset: [0, 0]
-      Size: [0.5, 0.5]
-      Density: 1
-      Friction: 0
+      Friction: 0.5
       Restitution: 0
       Restitution Threshold: 0.5

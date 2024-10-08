@@ -603,8 +603,9 @@ namespace Hazel
 
 					glm::vec3 translate = tc.Translation + glm::vec3(bc2d.Offset, 0.001f);
 					glm::vec3 scale = tc.Scale * glm::vec3(bc2d.Size.x * 2, bc2d.Size.y * 2, 1.0f);
-					auto transform = glm::translate(glm::mat4(1.0f), translate)
+					auto transform = glm::translate(glm::mat4(1.0f), tc.Translation)
 						* glm::rotate(glm::mat4(1.0f), tc.Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f))
+						* glm::translate(glm::mat4(1.0f), glm::vec3(bc2d.Offset, 0.001f))
 						* glm::scale(glm::mat4(1.0f), scale);
 
 					Renderer2D::DrawRect(transform, { 0.0f, 1.0f, 0.0f, 1.0f });
