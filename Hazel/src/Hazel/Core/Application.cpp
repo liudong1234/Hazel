@@ -2,6 +2,8 @@
 #include "Application.h"
 #include "Input.h"
 #include "Hazel/Renderer/Renderer.h"
+#include "Hazel/Scripting/scriptEngine.h"
+
 #include <GLFW/glfw3.h>
 
 namespace Hazel
@@ -27,7 +29,7 @@ namespace Hazel
         this->m_Windnow->SetVSync(true);
 
         Hazel::Renderer::Init();
-
+		ScriptEngine::Init();
         this->m_ImGuiLayer = new ImGuiLayer();
         PushOverLayer(this->m_ImGuiLayer);
 
@@ -37,8 +39,11 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
+		ScriptEngine::Shutdown();
+		Renderer::Shutdown();
         if (this->m_ImGuiLayer)
             delete this->m_ImGuiLayer;
+
     }
     
     void Application::OnEvent(Event& e)

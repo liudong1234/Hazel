@@ -2,6 +2,7 @@
 **/bin/
 !vendor/premake/bin/
 bin-int/
+Intermediates/
 
 # Hazel files
 *.log
@@ -15,6 +16,8 @@ Hazelnut/**.ini
 **.vcxproj
 **.vcxproj.filters
 **.vcxproj.user
+**.csproj
+**.csproj.user
 
 # Directories
 Hazel/vendor/VulkanSDK

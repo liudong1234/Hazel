@@ -31,6 +31,11 @@ namespace Hazel
 
     }
 
+    void Renderer::Shutdown()
+    {
+		Renderer2D::Shutdown();
+    }
+
     void Renderer::Submit(const std::shared_ptr<VertexArray>& vertexArray, const std::shared_ptr<Shader>& shader, const glm::mat4 transform)
     {
         shader->Bind();
