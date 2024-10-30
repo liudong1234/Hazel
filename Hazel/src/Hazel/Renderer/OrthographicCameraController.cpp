@@ -15,7 +15,6 @@ namespace Hazel
         m_CameraRotation(0.0f),
         m_Rotation(rotation)
     {
-        HZ_CORE_WARN("{0}", m_ZoomLevel);
     }
 
     void OrthographicCameraController::OnResize(float width, float height)
