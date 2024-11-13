@@ -328,7 +328,7 @@ namespace Hazel
 		}
 
 		//鼠标位置
-		auto viewWindowSize = ImGui::GetWindowSize();//viewport窗口大小
+		auto viewWindowSize = ImGui::GetWindowSize();//viewport 窗口大小
 		//ImVec2 minBound = ImGui::GetWindowPos();
 		//ImVec2 maxBound = { minBound.x + viewWindowSize.x, minBound.y + viewWindowSize.y };
 		ImVec2 minBound = ImGui::GetWindowContentRegionMin();
@@ -368,7 +368,7 @@ namespace Hazel
 			glm::mat4& transform = tc.GetTransform();
 			
 			//snapping 捕捉按住某键可以有一定度数
-			bool snap = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL);
+			bool snap = Input::IsKeyPressed(Key::LeftControl);
 			float snapValue = 0.5f;
 			if (this->m_GizmoType == ImGuizmo::OPERATION::ROTATE)
 				snapValue = 45.0f;
@@ -502,20 +502,20 @@ namespace Hazel
 	{
 		if (event.IsRepeat())
 			return false;
-		bool controlPress = Input::IsKeyPressed(HZ_KEY_LEFT_CONTROL) || Input::IsKeyPressed(HZ_KEY_RIGHT_CONTROL);
-		bool shiftPress = Input::IsKeyPressed(HZ_KEY_LEFT_SHIFT) || Input::IsKeyPressed(HZ_KEY_RIGHT_SHIFT);
+		bool controlPress = Input::IsKeyPressed(Key::LeftControl) || Input::IsKeyPressed(Key::RightControl);
+		bool shiftPress = Input::IsKeyPressed(Key::LeftShift) || Input::IsKeyPressed(Key::RightShift);
 
 		switch (event.GetKeyCode())
 		{
-			case HZ_KEY_N:
+			case Key::N:
 				if (controlPress)
 					NewScene();
 				break;
-			case HZ_KEY_O:
+			case Key::O:
 				if (controlPress)
 					OpenScene();
 				break;
-			case HZ_KEY_S:
+			case Key::S:
 				if (controlPress)
 				{
 					if (shiftPress)
@@ -523,23 +523,24 @@ namespace Hazel
 					else
 						SaveScene();
 				}
+				HZ_CORE_TRACE("保存成功");
 				break;
 			//scene command
-			case HZ_KEY_D:
+			case Key::D:
 				if (controlPress)
 					this->OnDuplicateEntity();
 				break;
 			//GIZMOS
-			case HZ_KEY_F1:
+			case Key::F1:
 				this->m_GizmoType = -1;
 				break;
-			case HZ_KEY_F2:
+			case Key::F2:
 				this->m_GizmoType = ImGuizmo::OPERATION::TRANSLATE;
 				break;
-			case HZ_KEY_F3:
+			case Key::F3:
 				this->m_GizmoType = ImGuizmo::OPERATION::ROTATE;
 				break;
-			case HZ_KEY_F4:
+			case Key::F4:
 				this->m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
 
@@ -554,12 +555,13 @@ namespace Hazel
 	{
 		if (event.GetMouseButton() == HZ_MOUSE_BUTTON_LEFT)
 		{
-			if (this->m_ViewportHover && !ImGuizmo::IsOver() && !Input::IsKeyPressed(HZ_KEY_LEFT_ALT))
+			if (this->m_ViewportHover && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
 			{
 				this->m_Panel.SetSelectedEntity(this->m_HoveredEntity);
+				m_SelectedEntity = this->m_Panel.GetSelectedEntity();
 			}
 		}
-		return false;
+ 		return false;
 	}
 
 	void EditorLayer::OnOverlayRender()
@@ -619,10 +621,8 @@ namespace Hazel
 		//Draw Edge line
 		if (Entity selectEntity = this->m_Panel.GetSelectedEntity())
 		{
-			TransformComponent transform = selectEntity.GetComponent<TransformComponent>();
-				
+			TransformComponent transform = selectEntity.GetComponent<TransformComponent>();			
 			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
-
 		}
 
 		Renderer2D::EndScene();
@@ -667,8 +667,6 @@ namespace Hazel
 
 			this->m_EditorScenePath = path;
 		}
-		else
-			this->Dialog();
 
 	}
 
@@ -685,6 +683,7 @@ namespace Hazel
 
 	void EditorLayer::SaveScene()
 	{
+		//ImGui::ShowDemoWindow();
 		if (!this->m_EditorScenePath.empty())
 			this->OnSerialzeScene(m_ActiveScene, this->m_EditorScenePath);
 		else
@@ -701,6 +700,8 @@ namespace Hazel
 	{
 		////if (ImGui::Button("Delete.."))
 		//ImGui::OpenPopup("Delete?");
+		
+		ImGui::NewFrame();
 
 		ImGui::BeginPopupContextWindow("viewport");
 
@@ -731,6 +732,8 @@ namespace Hazel
 			ImGui::EndPopup();
 			
 		}
+
+		ImGui::EndFrame();
 	}
 
 

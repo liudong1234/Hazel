@@ -27,20 +27,20 @@ namespace Hazel
     {
         HZ_PROFILE_FUNCTION();
 
-        if (Input::IsKeyPressed(HZ_KEY_W))
+        if (Input::IsKeyPressed(Key::W))
             this->m_CameraPos.y += this->m_CameraTranslationSpeed * ts.GetSeconds();
-        if (Input::IsKeyPressed(HZ_KEY_S))
+        if (Input::IsKeyPressed(Key::S))
             this->m_CameraPos.y -= this->m_CameraTranslationSpeed * ts;
-        if (Input::IsKeyPressed(HZ_KEY_A))
+        if (Input::IsKeyPressed(Key::A))
             this->m_CameraPos.x -= this->m_CameraTranslationSpeed * ts;
-        if (Input::IsKeyPressed(HZ_KEY_D))
+        if (Input::IsKeyPressed(Key::D))
             this->m_CameraPos.x += this->m_CameraTranslationSpeed * ts;
 
         if (this->m_Rotation)
         {
-            if (Input::IsKeyPressed(HZ_KEY_Q))
+            if (Input::IsKeyPressed(Key::Q))
                 this->m_CameraRotation -= this->m_CameraRotationSpeed * ts;
-            if (Input::IsKeyPressed(HZ_KEY_E))
+            if (Input::IsKeyPressed(Key::E))
                 this->m_CameraRotation += this->m_CameraRotationSpeed * ts;
             this->m_Camera.SetRotation(this->m_CameraRotation);
         }

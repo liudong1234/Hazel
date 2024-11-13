@@ -182,6 +182,15 @@ namespace Hazel
 
 	};
 
+	struct ScriptComponent
+	{
+		std::string ClassName;
+
+		ScriptComponent() = default;
+		ScriptComponent(const ScriptComponent&) = default;
+
+	};
+
 	template<typename... Component>
 	struct ComponentGroup
 	{
@@ -189,7 +198,7 @@ namespace Hazel
 	};
 	using AllComponents =
 		ComponentGroup<TransformComponent, SpriteRendererComponent,
-		CircleRendererComponent, CameraComponent, NativeScriptComponent,
-		RigidBody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
+		CircleRendererComponent, CameraComponent, ScriptComponent,
+		NativeScriptComponent, RigidBody2DComponent, BoxCollider2DComponent, CircleCollider2DComponent>;
 
 }

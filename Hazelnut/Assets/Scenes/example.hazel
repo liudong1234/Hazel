@@ -43,6 +43,7 @@ Entities:
       Rotation: [0, 0.785398185, 0]
     SpriteComponent:
       Color: [0, 1, 0, 1]
+      TillingFactor: 1
   - Entity: 796474918108612626
     TagComponent:
       Tag: Red Square
@@ -52,3 +53,4 @@ Entities:
       Rotation: [0, -0.785398185, 0]
     SpriteComponent:
       Color: [1, 0, 0, 1]
+      TillingFactor: 1

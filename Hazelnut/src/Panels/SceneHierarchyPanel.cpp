@@ -4,12 +4,27 @@
 #include <imgui/imgui_internal.h>
 #include <glm/gtc/type_ptr.hpp>
 #include "Hazel/Scene/Components.h"
- 
+#include "Hazel/Scripting/ScriptEngine.h"
+
 #ifdef _MSVC_LANG
 #define _CRT_SECURE_NO_WARNINGS
 #endif
 namespace Hazel
 {
+	template<typename Component>
+	void SceneHierarchyPanel::DisplayAddComponentEntry(std::string item)
+	{
+		if (!m_SelectedContext.HasComponent<Component>())
+		{
+			if (ImGui::MenuItem(item.c_str()))
+			{
+				m_SelectedContext.AddComponent<Component>();
+				ImGui::CloseCurrentPopup();
+			}
+		}
+	}
+
+
     SceneHierarchyPanel::SceneHierarchyPanel(const Ref<Scene>& context)
     {
         SetContext(context);
@@ -216,60 +231,13 @@ namespace Hazel
 
         if (ImGui::BeginPopup("AddComponent"))
         {
-			if (!m_SelectedContext.HasComponent<CameraComponent>())
-			{
-				if (ImGui::MenuItem("Camera"))
-				{
-					m_SelectedContext.AddComponent<CameraComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-            }
-
-			if (!m_SelectedContext.HasComponent<SpriteRendererComponent>())
-			{
-				if (ImGui::MenuItem("Sprite"))
-				{
-					m_SelectedContext.AddComponent<SpriteRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectedContext.HasComponent<CircleRendererComponent>())
-			{
-				if (ImGui::MenuItem("Circle"))
-				{
-					m_SelectedContext.AddComponent<CircleRendererComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectedContext.HasComponent<RigidBody2DComponent>())
-			{
-				if (ImGui::MenuItem("RigidBody 2D"))
-				{
-					m_SelectedContext.AddComponent<RigidBody2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectedContext.HasComponent<BoxCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("BoxCollider 2D"))
-				{
-					m_SelectedContext.AddComponent<BoxCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
-			if (!m_SelectedContext.HasComponent<CircleCollider2DComponent>())
-			{
-				if (ImGui::MenuItem("CircleCollider 2D"))
-				{
-					m_SelectedContext.AddComponent<CircleCollider2DComponent>();
-					ImGui::CloseCurrentPopup();
-				}
-			}
-
+			DisplayAddComponentEntry<CameraComponent>("Camera");
+			DisplayAddComponentEntry<ScriptComponent>("Script");
+			DisplayAddComponentEntry<SpriteRendererComponent>("SpriteRendererComponent");
+			DisplayAddComponentEntry<CircleRendererComponent>("CircleRendererComponent");
+			DisplayAddComponentEntry<RigidBody2DComponent>("RigidBody2DComponent");
+			DisplayAddComponentEntry<BoxCollider2DComponent>("BoxCollider2DComponent");
+			DisplayAddComponentEntry<CircleCollider2DComponent>("CircleCollider2DComponent");
             ImGui::EndPopup();
         }
         ImGui::PopItemWidth();
@@ -341,6 +309,22 @@ namespace Hazel
                     ImGui::Checkbox("fixed aspect ratio", &component.FixedAspectRatio);
                 }
             });
+
+		DrawComponent<ScriptComponent>("Script", entity, [](auto& component)
+			{
+				bool exists = ScriptEngine::EntityClassExists(component.ClassName);
+
+				char buffer[256];
+				strcpy_s(buffer, sizeof(buffer), component.ClassName.c_str());
+				if (!exists)
+					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.4f, 0.2f, 1.0f));
+
+				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
+					component.ClassName = std::string(buffer);
+				if (!exists)
+					ImGui::PopStyleColor();
+				
+			});
         
 		DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component)
 			{
@@ -419,4 +403,5 @@ namespace Hazel
 
 			});
     }
+
 }

@@ -20,7 +20,8 @@ namespace Hazel
         void DrawEntityNode(Entity entity);
 
         void DrawComponents(Entity entity);
-
+		template<typename Component>
+		void DisplayAddComponentEntry(std::string item);
     private:
 
         Ref<Scene> m_Context;

@@ -9,13 +9,14 @@ Entities:
       Rotation: [1.57079637, 0.785398185, 0]
     SpriteComponent:
       Color: [1, 0, 0, 1]
+      TillingFactor: 1
   - Entity: 9516277245616436344
     TagComponent:
       Tag: Camera
     TransformComponent:
-      Translation: [0, 1.70000005, 4]
+      Translation: [0, 0, 8.89999962]
       Scale: [1, 1, 1]
-      Rotation: [-0.404916406, 0.00174532924, 0]
+      Rotation: [0, 0, 0]
     CameraComponent:
       Primary: true
       FixedAspectRatio: false
@@ -30,11 +31,14 @@ Entities:
     TagComponent:
       Tag: right
     TransformComponent:
-      Translation: [0.349999934, 0, 0.350000054]
+      Translation: [0.349999994, 0, 0.349999994]
       Scale: [1, 1, 1]
       Rotation: [0, 0.785398245, 0]
+    ScriptComponent:
+      ClassName: Sandbox.Player
     SpriteComponent:
       Color: [0.969111979, 0.969111979, 0.969111979, 1]
+      TillingFactor: 1
   - Entity: 4478871366139595468
     TagComponent:
       Tag: left
@@ -44,3 +48,4 @@ Entities:
       Rotation: [0, -0.785398185, 0]
     SpriteComponent:
       Color: [0.446800917, 0.157123476, 0.598455608, 1]
+      TillingFactor: 1

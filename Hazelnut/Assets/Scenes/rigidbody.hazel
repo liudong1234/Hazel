@@ -9,6 +9,7 @@ Entities:
       Rotation: [0, 0, 0.315766007]
     SpriteComponent:
       Color: [0.776061773, 0.164800748, 0.164800748, 1]
+      TillingFactor: 1
     RigidBody2DComponent:
       RigidBodyType: Static
       FixedRotation: false
@@ -28,6 +29,7 @@ Entities:
       Rotation: [0, 0, 0.315766394]
     SpriteComponent:
       Color: [1, 1, 1, 1]
+      TillingFactor: 1
     RigidBody2DComponent:
       RigidBodyType: Dynamic
       FixedRotation: false
@@ -62,6 +64,8 @@ Entities:
       Translation: [0, 0, 0]
       Scale: [1, 1, 1]
       Rotation: [0, 0, 0]
+    ScriptComponent:
+      ClassName: Sandbox.Player
     CircleRendererComponent:
       Color: [0.776061773, 0.0539347902, 0.0539347902, 1]
       Thickness: 1

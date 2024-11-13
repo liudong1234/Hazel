@@ -36,7 +36,7 @@ namespace Hazel
 
 	void EditorCamera::OnUpdate(TimeStep ts)
 	{
-		if (Input::IsKeyPressed(HZ_KEY_LEFT_ALT))
+		if (Input::IsKeyPressed(Key::LeftAlt))
 		{
 			const glm::vec2& mouse {Input::GetMouseX(), Input::GetMouseY()};
 			glm::vec2 delta = (mouse - this->m_InitialMousePositon) * 0.003f;

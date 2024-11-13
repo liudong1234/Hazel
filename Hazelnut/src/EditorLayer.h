@@ -71,6 +71,7 @@ namespace Hazel
 		SceneHierarchyPanel m_Panel;
 		ContentBrowserPanel m_ContentBrowserPanel;
 		Entity m_HoveredEntity;
+		Entity m_SelectedEntity;
 
 		//UI resources
 		Ref<Texture2D> m_IconPlay;

@@ -10,7 +10,7 @@
 #include "box2d/b2_fixture.h"
 #include "box2d/b2_polygon_shape.h"
 #include "box2d/b2_circle_shape.h"
-
+#include "Hazel/Scripting/ScriptEngine.h"
 namespace Hazel
 {
 	static b2BodyType RigidBody2DTypeTOBox2DBody(RigidBody2DComponent::BodyType bodyType)
@@ -144,12 +144,15 @@ namespace Hazel
 		auto& tag = entity.AddComponent<TagComponent>();
 		tag = name.empty() ? "Entity" : name;
 
+		m_EnttMap[uuid] = entity;
+
 		return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
 	{
 		this->m_Registry.destroy(entity);
+		m_EnttMap.erase(entity.GetUUID());
 	}
 
 
@@ -162,6 +165,15 @@ namespace Hazel
     {
         //update scripts
         {
+			//C# Script
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnUpdateEntity(entity, ts);
+			}
+
+
             this->m_Registry.view<NativeScriptComponent>().each([=](auto entity, auto& nsc)
                 {
                     if (!nsc.Instance)
@@ -169,7 +181,7 @@ namespace Hazel
                         nsc.Instance = nsc.InstantiateScript();
                         nsc.Instance->m_Entity = Entity{ entity, this };
                         nsc.Instance->OnCreate();
-                    }
+                    } 
                     nsc.Instance->OnUpdate(ts);
                 });
 
@@ -316,14 +328,38 @@ namespace Hazel
 		return {};
 	}
 
+	Entity Scene::GetEntityByUUID(UUID uuid)
+	{
+		if (m_EnttMap.find(uuid) != m_EnttMap.end())
+		{
+			return { m_EnttMap.at(uuid), this };
+		}
+
+		return {};
+	}
+
 	void Scene::OnUpdateStart()
 	{
 		this->OnPhysics2DStart();
+
+		//scripting
+		{
+			ScriptEngine::OnRuntimeStart(this);
+			// Instantiate all script entities
+			auto view = m_Registry.view<ScriptComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				ScriptEngine::OnCreateEntity(entity);
+			}
+		}
 	}
 
 	void Scene::OnUpdateStop()
 	{
 		this->OnPhysics2DStop();
+
+		ScriptEngine::OnRuntimeStop();
 	}
 
 	void Scene::OnSimulationStart()
@@ -492,6 +528,12 @@ namespace Hazel
 	
 	template<>
 	void Scene::OnComponentAdded<CircleCollider2DComponent>(Entity entity, CircleCollider2DComponent& component)
+	{
+
+	}
+
+	template<>
+	void Scene::OnComponentAdded<ScriptComponent>(Entity entity, ScriptComponent& component)
 	{
 
 	}

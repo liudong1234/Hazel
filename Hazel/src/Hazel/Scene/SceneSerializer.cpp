@@ -183,6 +183,17 @@ namespace Hazel
 			out << YAML::Key << "OrthographicFar" << YAML::Value << camera.GetOrthographicFar();
 			out << YAML::EndMap;
 		}
+
+		if (entity.HasComponent<ScriptComponent>())
+		{
+			auto& tc = entity.GetComponent<ScriptComponent>();
+			
+			out << YAML::Key << "ScriptComponent";
+			out << YAML::BeginMap;
+			out << YAML::Key << "ClassName" << YAML::Value << tc.ClassName;
+			out << YAML::EndMap;
+		}
+
 		if (entity.HasComponent<SpriteRendererComponent>())
 		{
 			out << YAML::Key << "SpriteComponent";
@@ -329,6 +340,13 @@ namespace Hazel
 					camera.SetOrthographicSize(cameraComponent["OrthographicSize"].as<float>());
 					camera.SetOrthographicFar(cameraComponent["OrthographicFar"].as<float>());
 					camera.SetOrthographicNear(cameraComponent["OrthographicNear"].as<float>());
+				}
+
+				auto& scriptComponent = entity["ScriptComponent"];
+				if (scriptComponent)
+				{
+					auto& sc = deserialedEntity.AddComponent<ScriptComponent>();
+					sc.ClassName = scriptComponent["ClassName"].as<std::string>();
 				}
 
 				auto& spriteComponent = entity["SpriteComponent"];

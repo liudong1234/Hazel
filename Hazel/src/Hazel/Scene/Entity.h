@@ -10,7 +10,7 @@ namespace Hazel
     public:
 		Entity() = default;
 		Entity(entt::entity handle, Scene * scene);
-		Entity(const Entity & other) = default;
+		Entity(const Entity& other) = default;
 
 		template<typename T, typename... Args>
 		T& AddComponent(Args&&... args)
@@ -53,12 +53,12 @@ namespace Hazel
 		UUID GetUUID() { return GetComponent<IDComponent>().ID; }
 		const std::string& GetName() { return GetComponent<TagComponent>().Tag; }
 
+        operator entt::entity() const{ return this->m_EntityHandle; }
         operator bool() const { return m_EntityHandle != entt::null; }
         operator uint32_t() const{ return (uint32_t)m_EntityHandle; }
 		//这里遇到的问题是，由于自身习惯，类内成员会加上this,以至于在强制转换时没有用括号确定好范围
 		// 导致了很难发现的错误！！！
         //operator uint32_t() const{ return (uint32_t)this->m_EntityHandle; }
-        operator entt::entity() const{ return this->m_EntityHandle; }
 
         bool operator == (const Entity& entity) const 
         {

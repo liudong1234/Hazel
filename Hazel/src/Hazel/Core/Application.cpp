@@ -26,7 +26,7 @@ namespace Hazel
 
         this->m_Windnow = Scope<Window>(Window::Create({ specification.Name, 1280, 720 }));
         this->m_Windnow->SetEventCallback(BIND_EVENT_FN(Application::OnEvent));
-        this->m_Windnow->SetVSync(true);
+        this->m_Windnow->SetVSync(false);
 
         Hazel::Renderer::Init();
 		ScriptEngine::Init();
