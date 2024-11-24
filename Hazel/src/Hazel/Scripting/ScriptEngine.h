@@ -48,14 +48,16 @@ namespace Hazel
 		static bool EntityClassExists(const std::string& fullClassName);
 		static Scene* GetSceneContext();
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
+
+		static MonoImage* GetCoreAssemblyImage();
 	private:
 		static void InitMono();
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
 		static void LoadAssemblyClasses(MonoAssembly* assembly);
-		friend class ScriptClass;
 
+		friend class ScriptClass;
 	};
 
 	class ScriptInstance

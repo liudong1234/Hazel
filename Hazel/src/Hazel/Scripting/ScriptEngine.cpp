@@ -115,6 +115,7 @@ namespace Hazel
 		LoadAssemblyClasses(s_Data->CoreAssembly);
 	
 		auto& classes = s_Data->EntityClasses;
+		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
 		s_Data->EntityClass = ScriptClass("Hazel", "Entity");
@@ -277,6 +278,11 @@ namespace Hazel
 			HZ_CORE_TRACE("{}.{}", nameSpace, name);
 		}
 	}
+
+	MonoImage* ScriptEngine::GetCoreAssemblyImage()
+	{
+		return s_Data->CoreAssemblyImage;
+	}
     
 	void ScriptEngine::Shutdown()
     {
@@ -334,13 +340,18 @@ namespace Hazel
 
 	void ScriptInstance::InvokeOnCreate()
 	{
-		m_ScriptClass->InvokeMethod(m_onCreateMethod, m_Instance);
+		if (m_onCreateMethod)
+			m_ScriptClass->InvokeMethod(m_onCreateMethod, m_Instance);
 	}
 
 	void ScriptInstance::InvokeOnUpdate(float ts)
 	{
-		void* param = &ts;
-		m_ScriptClass->InvokeMethod(m_OnUpdateMethod, m_Instance, &param);
+		if (m_OnUpdateMethod)
+		{
+			void* param = &ts;
+			m_ScriptClass->InvokeMethod(m_OnUpdateMethod, m_Instance, &param);
+		}
+
 	}
 
 }

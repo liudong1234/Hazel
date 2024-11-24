@@ -26,6 +26,16 @@ namespace Hazel
 			Z = z;
 		}
 
+		public Vector2 XY
+		{
+			get => new Vector2(X, Y);
+			set
+			{
+				X = value.X;
+				Y = value.Y;
+			}
+		}
+
 		public static Vector3 operator *(Vector3 vector, float sccalar)
 		{
 			return new Vector3(vector.X * sccalar, vector.Y * sccalar, vector.Z * sccalar);

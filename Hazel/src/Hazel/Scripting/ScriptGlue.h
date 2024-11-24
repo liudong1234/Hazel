@@ -6,5 +6,6 @@ namespace Hazel
 	{
 	public:
 		static void RegisterFunctions();
+		static void RegisterComponents();
 	};
 }
