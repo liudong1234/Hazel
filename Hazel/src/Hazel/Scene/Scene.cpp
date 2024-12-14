@@ -36,13 +36,13 @@ namespace Hazel
 
 	Scene::Scene() :
 		m_ViewportHeight(0), m_ViewportWidth(0),
-		m_PhysicsWorld(nullptr)
+		m_PhysicsWorld(nullptr), m_EnttMap({})
 	{
 	}
 
 	Scene::~Scene()
 	{
-
+		m_EnttMap.clear();
 	}
 
 	template<typename... Component>
@@ -151,8 +151,8 @@ namespace Hazel
 
 	void Scene::DestroyEntity(Entity entity)
 	{
-		this->m_Registry.destroy(entity);
 		m_EnttMap.erase(entity.GetUUID());
+		this->m_Registry.destroy(entity);
 	}
 
 
@@ -304,6 +304,7 @@ namespace Hazel
 
 		CopyComponentIfExist(AllComponents{}, entity, newEntity);
 
+		/*CopyComponentIfExist<IDComponent>(entity, newEntity);
 		CopyComponentIfExist<TransformComponent>(entity, newEntity);
 		CopyComponentIfExist<CameraComponent>(entity, newEntity);
 		CopyComponentIfExist<SpriteRendererComponent>(entity, newEntity);
@@ -311,7 +312,7 @@ namespace Hazel
 		CopyComponentIfExist<NativeScriptComponent>(entity, newEntity);
 		CopyComponentIfExist<RigidBody2DComponent>(entity, newEntity);
 		CopyComponentIfExist<BoxCollider2DComponent>(entity, newEntity);
-		CopyComponentIfExist<CircleCollider2DComponent>(entity, newEntity);
+		CopyComponentIfExist<CircleCollider2DComponent>(entity, newEntity);*/
 
 	}
 
@@ -338,7 +339,7 @@ namespace Hazel
 		return {};
 	}
 
-	void Scene::OnUpdateStart()
+	void Scene::OnRuntimeStart()
 	{
 		this->OnPhysics2DStart();
 
@@ -355,7 +356,7 @@ namespace Hazel
 		}
 	}
 
-	void Scene::OnUpdateStop()
+	void Scene::OnRuntimeStop()
 	{
 		this->OnPhysics2DStop();
 

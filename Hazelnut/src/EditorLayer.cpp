@@ -155,13 +155,13 @@ namespace Hazel
 				this->m_ActiveScene->OnUpdateRuntime(ts);
 				break;
 			case SceneState::Simulate:
+				this->m_EditorCamera.OnUpdate(ts);
 				this->m_ActiveScene->OnUpdateSimulation(ts, this->m_EditorCamera);
 				break;
 			default:
 				break;
 		}
 		
-		this->OnOverlayRender();
 
 
 		auto [mx, my] = ImGui::GetMousePos();
@@ -179,6 +179,7 @@ namespace Hazel
 			Entity{ entt::entity(pixelData), this->m_ActiveScene.get() };
 		}
 
+		this->OnOverlayRender();
 
         this->m_Framebuffer->UnBind();
     }
@@ -451,9 +452,11 @@ namespace Hazel
 		if (this->m_SceneState == SceneState::Simulate)
 			this->OnSceneStop();
 
+		//if (m_HoveredEntity)
+		//	this->m_Panel.SetSelectedEntity(m_HoveredEntity);
 		this->m_SceneState = SceneState::Play;
 		this->m_ActiveScene = Scene::Copy(this->m_EditorScene);
-		this->m_ActiveScene->OnUpdateStart();
+		this->m_ActiveScene->OnRuntimeStart();
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -468,12 +471,13 @@ namespace Hazel
 	void EditorLayer::OnSceneStop()
 	{
 		if (m_SceneState == SceneState::Play)
-			this->m_ActiveScene->OnUpdateStop();
+			this->m_ActiveScene->OnRuntimeStop();
 		else if (m_SceneState == SceneState::Simulate)
 			this->m_ActiveScene->OnSimulationStop();
 
 		this->m_SceneState = SceneState::Edit;
 		this->m_ActiveScene = this->m_EditorScene;
+		this->m_Panel.SetSelectedEntity(Entity());
 	}
 
 	void EditorLayer::OnDuplicateEntity()
@@ -522,8 +526,8 @@ namespace Hazel
 						SaveAsScene();
 					else
 						SaveScene();
+					HZ_CORE_TRACE("保存成功");
 				}
-				HZ_CORE_TRACE("保存成功");
 				break;
 			//scene command
 			case Key::D:
@@ -572,6 +576,7 @@ namespace Hazel
 			auto camera = m_ActiveScene->GetPrimaryCamera();
 			if (!camera)
 				return;
+			
 			Renderer2D::BeginScene(camera.GetComponent<CameraComponent>().Camera, camera.GetComponent<TransformComponent>().GetTransform());
 		}
 		else
@@ -622,7 +627,7 @@ namespace Hazel
 		if (Entity selectEntity = this->m_Panel.GetSelectedEntity())
 		{
 			TransformComponent transform = selectEntity.GetComponent<TransformComponent>();			
-			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(0.0f, 0.0f, 1.0f, 1.0f));
+			Renderer2D::DrawRect(transform.GetTransform(), glm::vec4(1.0f, 0.5f, 0.0f, 1.0f));
 		}
 
 		Renderer2D::EndScene();
@@ -683,7 +688,6 @@ namespace Hazel
 
 	void EditorLayer::SaveScene()
 	{
-		//ImGui::ShowDemoWindow();
 		if (!this->m_EditorScenePath.empty())
 			this->OnSerialzeScene(m_ActiveScene, this->m_EditorScenePath);
 		else

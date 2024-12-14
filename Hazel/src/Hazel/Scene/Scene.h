@@ -22,8 +22,8 @@ namespace Hazel
 
         void DestroyEntity(Entity entity);
 
-		void OnUpdateStart();
-		void OnUpdateStop();
+		void OnRuntimeStart();
+		void OnRuntimeStop();
 
 		void OnSimulationStart();
 		void OnSimulationStop();

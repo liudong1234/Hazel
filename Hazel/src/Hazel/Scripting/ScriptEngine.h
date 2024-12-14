@@ -9,10 +9,29 @@ extern "C"
 	typedef struct _MonoMethod MonoMethod;
 	typedef struct _MonoAssembly MonoAssembly;
 	typedef struct _MonoImage MonoImage;
+	typedef struct _MonoClassField MonoClassField;
 }
 
 namespace Hazel
 {
+	enum class ScriptFieldType
+	{
+		None = 0,
+		Float, Double,
+		Bool, Byte, Char, Short, Int, Long,
+		UShort, UInt, ULong,
+		Vector2, Vector3, Vector4,
+		Entity,
+	};
+
+	struct ScriptField
+	{
+		ScriptFieldType Type;
+		std::string Name;
+
+		MonoClassField* ClassField;
+
+	};
 
 	class ScriptClass
 	{
@@ -25,12 +44,19 @@ namespace Hazel
 		MonoMethod* GetMethod(const std::string& functionName, int parameterCount);
 		MonoObject* InvokeMethod(MonoMethod* momoMethod, MonoObject* instance, void** params = nullptr);
 
+		const std::map<std::string, ScriptField>& GetFields() { return m_Fields; }
+
 	private:
 		std::string m_ClassNamespace;
 		std::string m_ClassName;
 		MonoClass* m_MonoClass;
+
+		std::map<std::string, ScriptField> m_Fields;
+
+		friend class ScriptEngine;
 	};
 
+	class ScriptInstance;
 	class ScriptEngine
 	{
 	public:
@@ -38,6 +64,7 @@ namespace Hazel
 		static void Shutdown();
 
 		static void LoadAssembly(const std::filesystem::path& filepath);
+		static void LoadAppAssembly(const std::filesystem::path& filepath);
 
 		static void OnRuntimeStart(Scene* scene);
 		static void OnRuntimeStop();
@@ -49,13 +76,15 @@ namespace Hazel
 		static Scene* GetSceneContext();
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
 
+		static Ref<ScriptInstance> GetEntityScriptInstance(UUID);
+
 		static MonoImage* GetCoreAssemblyImage();
 	private:
 		static void InitMono();
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
-		static void LoadAssemblyClasses(MonoAssembly* assembly);
+		static void LoadAssemblyClasses();
 
 		friend class ScriptClass;
 	};
@@ -69,6 +98,31 @@ namespace Hazel
 		void InvokeOnCreate();
 		void InvokeOnUpdate(float ts);
 
+		Ref<ScriptClass> GetScriptClass() { return m_ScriptClass; }
+
+
+
+		template<typename T>
+		T GetFieldValue(const std::string& name)
+		{
+			bool success = GetFieldValueInternal(name, s_FieldValue);
+			if (success == false)
+				return T();
+			return *(T*)s_FieldValue;
+		}
+
+		//TODO
+		template<typename T>
+		void SetFieldValue(const std::string& name, T& value)
+		{
+			bool success = SetFieldValueInternal(name, &value);
+			if (success == false)
+				HZ_CORE_ERROR("Not Exist {}", name);
+		}
+
+	private:
+		bool GetFieldValueInternal(const std::string& name, void* fieldValue);
+		bool SetFieldValueInternal(const std::string& name, void* value);
 	private:
 		Ref<ScriptClass> m_ScriptClass;
 
@@ -77,5 +131,5 @@ namespace Hazel
 		MonoMethod* m_onCreateMethod = nullptr;
 		MonoMethod* m_OnUpdateMethod = nullptr;
 	};
-
+	static char s_FieldValue[8];
 }

@@ -57,7 +57,27 @@ Entities:
       OrthographicSize: 10
       OrthographicNear: -1
       OrthographicFar: 1
-  - Entity: 4584079418888901997
+  - Entity: 3400238108502772481
+    TagComponent:
+      Tag: panel2
+    TransformComponent:
+      Translation: [-6.9000001, -2.5, 0]
+      Scale: [1, 9.89999962, 1]
+      Rotation: [0, 0, 0]
+    SpriteComponent:
+      Color: [0.261266261, 0.532818556, 0.265460104, 1]
+      TillingFactor: 1
+    RigidBody2DComponent:
+      RigidBodyType: Static
+      FixedRotation: false
+    BoxCollider2DComponent:
+      Offset: [0, 0]
+      Size: [0.5, 0.5]
+      Density: 1
+      Friction: 0.5
+      Restitution: 0
+      Restitution Threshold: 0.5
+  - Entity: 4584079418888901998
     TagComponent:
       Tag: Circle
     TransformComponent:

@@ -101,24 +101,6 @@ namespace Hazel
 	}
 
 
-	void ScriptGlue::RegisterFunctions()
-	{
-		HZ_ADD_INTERNAL_CALL(NativeLog);
-		HZ_ADD_INTERNAL_CALL(Native_Vector);
-		HZ_ADD_INTERNAL_CALL(Native_VectorDot);
-
-		HZ_ADD_INTERNAL_CALL(Entity_HasComponent);
-		HZ_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
-		HZ_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
-
-		HZ_ADD_INTERNAL_CALL(RigidbodyComponent_ApplyLinearImpulse);
-		HZ_ADD_INTERNAL_CALL(RigidbodyComponent_ApplyLinearImpulseToCenter);
-		
-		HZ_ADD_INTERNAL_CALL(Input_IsKeydown);
-	}
-
-	
-
 	template<typename... Component>
 	static void ReigisterComponent()
 	{
@@ -154,5 +136,21 @@ namespace Hazel
 		HZ_CORE_ASSERT(managedType, "managedType is null");
 		s_EntityHasComponentFuncs[managedType] = [](Entity entity) { return entity.HasComponent<TransformComponent>(); };		*/
 
+	}
+
+	void ScriptGlue::RegisterFunctions()
+	{
+		HZ_ADD_INTERNAL_CALL(NativeLog);
+		HZ_ADD_INTERNAL_CALL(Native_Vector);
+		HZ_ADD_INTERNAL_CALL(Native_VectorDot);
+
+		HZ_ADD_INTERNAL_CALL(Entity_HasComponent);
+		HZ_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
+		HZ_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
+
+		HZ_ADD_INTERNAL_CALL(RigidbodyComponent_ApplyLinearImpulse);
+		HZ_ADD_INTERNAL_CALL(RigidbodyComponent_ApplyLinearImpulseToCenter);
+
+		HZ_ADD_INTERNAL_CALL(Input_IsKeydown);
 	}
 }

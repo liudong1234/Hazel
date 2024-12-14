@@ -310,7 +310,7 @@ namespace Hazel
                 }
             });
 
-		DrawComponent<ScriptComponent>("Script", entity, [](auto& component)
+		DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
 			{
 				bool exists = ScriptEngine::EntityClassExists(component.ClassName);
 
@@ -321,6 +321,27 @@ namespace Hazel
 
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 					component.ClassName = std::string(buffer);
+
+				//fields
+				const Ref<ScriptInstance> instance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+				if (instance)
+				{
+					std::map<std::string, ScriptField> fields = instance->GetScriptClass()->GetFields();
+					for (const auto [name, field] : fields)
+					{
+						if (field.Type == ScriptFieldType::Float)
+						{
+							float value = instance->GetFieldValue<float>(name);
+							//TODO
+							if (ImGui::DragFloat(name.c_str(), &value))
+							{
+								instance->SetFieldValue<float>(name, value);
+							}
+							
+						}
+					}
+				}
+
 				if (!exists)
 					ImGui::PopStyleColor();
 				
