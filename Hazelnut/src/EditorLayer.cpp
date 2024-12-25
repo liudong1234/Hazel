@@ -4,7 +4,7 @@
 #include "Hazel/Debug/Instrumentor.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Hazel/Scene/SceneSerializer.h"
-
+#include "Hazel/Core/MouseCodes.h"
 #include <chrono>
 #include <glm/gtc/type_ptr.hpp >
 
@@ -457,6 +457,7 @@ namespace Hazel
 		this->m_SceneState = SceneState::Play;
 		this->m_ActiveScene = Scene::Copy(this->m_EditorScene);
 		this->m_ActiveScene->OnRuntimeStart();
+		this->m_Panel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnSceneSimulate()
@@ -466,6 +467,8 @@ namespace Hazel
 		this->m_SceneState = SceneState::Simulate;
 		this->m_ActiveScene = Scene::Copy(this->m_EditorScene);
 		this->m_ActiveScene->OnSimulationStart();
+
+		this->m_Panel.SetContext(m_ActiveScene);
 	}
 
 	void EditorLayer::OnSceneStop()
@@ -477,7 +480,8 @@ namespace Hazel
 
 		this->m_SceneState = SceneState::Edit;
 		this->m_ActiveScene = this->m_EditorScene;
-		this->m_Panel.SetSelectedEntity(Entity());
+		this->m_Panel.SetContext(m_ActiveScene);
+		//this->m_Panel.SetSelectedEntity(Entity());
 	}
 
 	void EditorLayer::OnDuplicateEntity()
@@ -547,7 +551,6 @@ namespace Hazel
 			case Key::F4:
 				this->m_GizmoType = ImGuizmo::OPERATION::SCALE;
 				break;
-
 			default:
 				break;
 		}
@@ -557,12 +560,11 @@ namespace Hazel
 
 	bool EditorLayer::OnMouseButtonPressed(MouseButtonPressEvent& event)
 	{
-		if (event.GetMouseButton() == HZ_MOUSE_BUTTON_LEFT)
+		if (event.GetMouseButton() == Mouse::ButtonLeft)
 		{
 			if (this->m_ViewportHover && !ImGuizmo::IsOver() && !Input::IsKeyPressed(Key::LeftAlt))
 			{
 				this->m_Panel.SetSelectedEntity(this->m_HoveredEntity);
-				m_SelectedEntity = this->m_Panel.GetSelectedEntity();
 			}
 		}
  		return false;

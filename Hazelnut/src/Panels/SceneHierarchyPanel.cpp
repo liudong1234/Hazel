@@ -40,28 +40,32 @@ namespace Hazel
     {
         ImGui::Begin("Scene Hierarchy");
 
-		for (auto en : this->m_Context->m_Registry.view<entt::entity>())
+		if (m_Context)
 		{
-			Entity entity(en, this->m_Context.get());
-			this->DrawEntityNode(entity);
+			for (auto en : this->m_Context->m_Registry.view<entt::entity>())
+			{
+				Entity entity(en, this->m_Context.get());
+				this->DrawEntityNode(entity);
+			}
+
+			if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
+				m_SelectedContext = {};
+
+			//右键菜单
+			const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
+			if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar))
+			{
+				if (ImGui::BeginPopupContextWindow())
+				{
+					if (ImGui::MenuItem("Create Empty Entity"))
+						this->m_Context->CreateEntity("Empty Entity");
+					ImGui::EndPopup();
+				}
+			}
+			ImGui::EndChild();
 		}
-
-        if (ImGui::IsMouseDown(0) && ImGui::IsWindowHovered())
-            m_SelectedContext = {};
-
-        //右键菜单
-        const float footer_height_to_reserve = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
-        if (ImGui::BeginChild("ScrollingRegion", ImVec2(0, -footer_height_to_reserve), false, ImGuiWindowFlags_HorizontalScrollbar))
-        {
-            if (ImGui::BeginPopupContextWindow())
-            {
-                if (ImGui::MenuItem("Create Empty Entity"))
-                    this->m_Context->CreateEntity("Empty Entity");
-                ImGui::EndPopup();
-            }
-        }
-        ImGui::EndChild();
         ImGui::End();
+
 
         ImGui::Begin("Properties");
         if (m_SelectedContext)
@@ -310,39 +314,83 @@ namespace Hazel
                 }
             });
 
-		DrawComponent<ScriptComponent>("Script", entity, [entity](auto& component) mutable
+		DrawComponent<ScriptComponent>("Script", entity, [entity, scene = m_Context](auto& component) mutable
 			{
-				bool exists = ScriptEngine::EntityClassExists(component.ClassName);
+				bool entityClassExists = ScriptEngine::EntityClassExists(component.ClassName);
 
 				char buffer[256];
 				strcpy_s(buffer, sizeof(buffer), component.ClassName.c_str());
-				if (!exists)
+				if (!entityClassExists)
 					ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.2f, 0.4f, 0.2f, 1.0f));
 
 				if (ImGui::InputText("Class", buffer, sizeof(buffer)))
 					component.ClassName = std::string(buffer);
 
 				//fields
-				const Ref<ScriptInstance> instance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
-				if (instance)
+				bool isRuntime = scene->IsRunning();
+
+				if (isRuntime)
 				{
-					std::map<std::string, ScriptField> fields = instance->GetScriptClass()->GetFields();
-					for (const auto [name, field] : fields)
+					const Ref<ScriptInstance> instance = ScriptEngine::GetEntityScriptInstance(entity.GetUUID());
+					if (instance)
 					{
-						if (field.Type == ScriptFieldType::Float)
+						std::map<std::string, ScriptField> fields = instance->GetScriptClass()->GetFields();
+						for (const auto [name, field] : fields)
 						{
-							float value = instance->GetFieldValue<float>(name);
-							//TODO
-							if (ImGui::DragFloat(name.c_str(), &value))
+							if (field.Type == ScriptFieldType::Float)
 							{
-								instance->SetFieldValue<float>(name, value);
+								float value = instance->GetFieldValue<float>(name);
+								//TODO
+								if (ImGui::DragFloat(name.c_str(), &value))
+								{
+									instance->SetFieldValue<float>(name, value);
+								}
+
 							}
-							
 						}
 					}
 				}
+				else
+				{
+					if (entityClassExists)
+					{
+						Ref<ScriptClass> entityClass = ScriptEngine::GetEntityClass(component.ClassName);
+						const auto& fields = entityClass->GetFields();
 
-				if (!exists)
+						//field has been set in editor
+						auto& entityFields = ScriptEngine::GetScriptFieldMap(entity);
+						for (auto [name, field] : fields)
+						{
+							if (entityFields.find(name) != entityFields.end())
+							{
+								ScriptFieldInstance& scriptFieldInstance = entityFields.at(name);
+								if (field.Type == ScriptFieldType::Float)
+								{
+									float data = scriptFieldInstance.GetValue<float>();
+									if (ImGui::DragFloat(name.c_str(), &data))
+										scriptFieldInstance.SetValue<float>(data);
+
+								}
+							}
+							else
+							{
+								if (field.Type == ScriptFieldType::Float)
+								{
+									float data = 0;
+									if (ImGui::DragFloat(name.c_str(), &data))
+									{
+										ScriptFieldInstance& scriptFieldInstance = entityFields[name];
+										scriptFieldInstance.Field = field;
+										scriptFieldInstance.SetValue(data);
+									}
+
+								}
+							}
+						}
+					}
+
+				}
+				if (!entityClassExists)
 					ImGui::PopStyleColor();
 				
 			});

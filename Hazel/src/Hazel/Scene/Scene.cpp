@@ -36,7 +36,7 @@ namespace Hazel
 
 	Scene::Scene() :
 		m_ViewportHeight(0), m_ViewportWidth(0),
-		m_PhysicsWorld(nullptr), m_EnttMap({})
+		m_PhysicsWorld(nullptr), m_EnttMap({}), m_IsRunning(false)
 	{
 	}
 
@@ -341,6 +341,7 @@ namespace Hazel
 
 	void Scene::OnRuntimeStart()
 	{
+		m_IsRunning = true;
 		this->OnPhysics2DStart();
 
 		//scripting
@@ -358,6 +359,7 @@ namespace Hazel
 
 	void Scene::OnRuntimeStop()
 	{
+		m_IsRunning = false;
 		this->OnPhysics2DStop();
 
 		ScriptEngine::OnRuntimeStop();
@@ -365,6 +367,7 @@ namespace Hazel
 
 	void Scene::OnSimulationStart()
 	{
+
 		this->OnPhysics2DStart();
 	}
 

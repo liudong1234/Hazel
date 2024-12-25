@@ -39,7 +39,7 @@ namespace Hazel
 
 		Entity GetPrimaryCamera();
 		Entity GetEntityByUUID(UUID uuid);
-
+		bool IsRunning() { return m_IsRunning; }
 		template<typename... Component>
 		auto GetAllEntitiesWith()
 		{
@@ -59,7 +59,7 @@ namespace Hazel
 
 		b2World* m_PhysicsWorld;
 		std::unordered_map<UUID, entt::entity> m_EnttMap;
-
+		bool m_IsRunning;
         friend class Entity;
         friend class SceneSerializer;
         friend class SceneHierarchyPanel;
