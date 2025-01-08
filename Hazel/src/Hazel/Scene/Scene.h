@@ -39,6 +39,8 @@ namespace Hazel
 
 		Entity GetPrimaryCamera();
 		Entity GetEntityByUUID(UUID uuid);
+		Entity FindEntityByName(std::string_view name);
+
 		bool IsRunning() { return m_IsRunning; }
 		template<typename... Component>
 		auto GetAllEntitiesWith()

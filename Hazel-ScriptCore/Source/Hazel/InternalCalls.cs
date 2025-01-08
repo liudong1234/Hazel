@@ -6,7 +6,13 @@ namespace Hazel
 	public static class InternalCalls
 	{
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static object GetScriptInstance(ulong entityID);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static bool Entity_HasComponent(ulong entityID, Type componentType);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		internal extern static ulong Entity_FindEntityByName(string entityName);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static float TransformComponent_GetTranslation(ulong entityID, out Vector3 translation);

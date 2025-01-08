@@ -59,6 +59,11 @@ namespace Hazel
 		return Input::IsKeyPressed(keycode);
 	}
 
+	static MonoObject* GetScriptInstance(UUID uuid)
+	{
+		return ScriptEngine::GetManagedInstance(uuid);
+	}
+
 	static bool Entity_HasComponent(UUID entityID, MonoReflectionType* componentType)
 	{
 		Scene* scene = ScriptEngine::GetSceneContext();
@@ -72,6 +77,20 @@ namespace Hazel
 
 		return s_EntityHasComponentFuncs.at(managedType)(entity);
 
+	}
+
+	static uint64_t Entity_FindEntityByName(MonoString* name)
+	{
+		char* cStr = mono_string_to_utf8(name);
+
+		Scene* scene = ScriptEngine::GetSceneContext();
+		HZ_CORE_ASSERT(scene, "scene is empty");
+		Entity entity = scene->FindEntityByName(cStr);
+		mono_free(cStr);
+		if (!entity)
+			return 0;
+
+		return entity.GetUUID();
 	}
 
 	static void RigidbodyComponent_ApplyLinearImpulse(UUID entityID, glm::vec2* impulse, glm::vec2* point, bool wake)
@@ -144,7 +163,10 @@ namespace Hazel
 		HZ_ADD_INTERNAL_CALL(Native_Vector);
 		HZ_ADD_INTERNAL_CALL(Native_VectorDot);
 
+		HZ_ADD_INTERNAL_CALL(GetScriptInstance);
+
 		HZ_ADD_INTERNAL_CALL(Entity_HasComponent);
+		HZ_ADD_INTERNAL_CALL(Entity_FindEntityByName);
 		HZ_ADD_INTERNAL_CALL(TransformComponent_GetTranslation);
 		HZ_ADD_INTERNAL_CALL(TransformComponent_SetTranslation);
 

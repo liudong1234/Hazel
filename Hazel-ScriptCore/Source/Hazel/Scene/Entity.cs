@@ -33,6 +33,12 @@ namespace Hazel
 			return InternalCalls.Entity_HasComponent(ID, componentType);
 		}
 
+		public Entity FindEntityByName(string entityName)
+		{
+			ulong entityID = InternalCalls.Entity_FindEntityByName(entityName);
+			return new Entity(entityID);
+		}
+
 		public T GetComponent<T>() where T: Component, new()
 		{
 			if (!HasComponent<T>())
@@ -40,6 +46,13 @@ namespace Hazel
 			T component = new T() { Entity = this };
 			return component;
 		}
+
+		public T As<T>() where T: Entity, new()
+		{
+			object instance = InternalCalls.GetScriptInstance(ID);
+			return instance as T;
+		}
+
 	}
 
 }

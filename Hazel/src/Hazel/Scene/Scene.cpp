@@ -284,6 +284,9 @@ namespace Hazel
     
 	void Scene::OnViewportResize(uint32_t width, uint32_t height)
     {
+		if (this->m_ViewportHeight == width && this->m_ViewportWidth == width)
+			return;
+
         this->m_ViewportWidth = width;
         this->m_ViewportHeight = height;
 
@@ -336,6 +339,18 @@ namespace Hazel
 			return { m_EnttMap.at(uuid), this };
 		}
 
+		return {};
+	}
+
+	Entity Scene::FindEntityByName(std::string_view name)
+	{
+		auto view = m_Registry.view<TagComponent>();
+		for (auto entity : view)
+		{
+			const auto& tc = view.get<TagComponent>(entity);
+			if (tc.Tag == name)
+				return Entity{ entity, this };
+		}
 		return {};
 	}
 

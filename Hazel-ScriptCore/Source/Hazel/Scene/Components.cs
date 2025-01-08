@@ -7,7 +7,7 @@ namespace Hazel
 		public Entity Entity { get; internal set; }
 	}
 
-	class TransformComponent: Component
+	public class TransformComponent: Component
 	{
 		public static int ID = 1;
 		//public Vector3 Translation;
@@ -26,7 +26,7 @@ namespace Hazel
 
 	}
 
-	class RigidBody2DComponent : Component
+	public class RigidBody2DComponent : Component
 	{
 		public void ApplyLinerImpulse(Vector2 impulse, Vector2 worldPosition, bool wake)
 		{

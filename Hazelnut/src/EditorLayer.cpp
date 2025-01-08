@@ -52,9 +52,10 @@ namespace Hazel
 		auto commandLineArgs = Application::Get().GetSpecification().CommandLineArgs;
 		if (commandLineArgs.Count > 1)
 		{
-			auto sceneFilePath = commandLineArgs[1];
-			SceneSerializer serializer(m_ActiveScene);
-			serializer.Deserialize(sceneFilePath);
+			std::filesystem::path sceneFilePath = commandLineArgs[1];
+			//SceneSerializer serializer(m_ActiveScene);
+			//serializer.Deserialize(sceneFilePath);
+			this->OpenScene(sceneFilePath);
 		}
 		//this->m_EditorCamera = EditorCamera(40.0f, 1.778f, 0.01f, 1000.0f);
 		
@@ -120,14 +121,15 @@ namespace Hazel
         //InstrumentationTimer timer("EditorLayer OnUpdate", [&](ProfileResult result) {this->m_ProfileResults.push_back(result); });
         HZ_PROFILE_FUNCTION();
 
-        if (FramebufferSpecification spec = this->m_Framebuffer->GetSpecification();
+        this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+        
+		if (FramebufferSpecification spec = this->m_Framebuffer->GetSpecification();
             this->m_ViewportSize.x > 0.0f && this->m_ViewportSize.y > 0.0f && //
             (spec.Width != this->m_ViewportSize.x || spec.Height != this->m_ViewportSize.y))
         {
             this->m_Framebuffer->Resize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
             this->m_CameraController.OnResize(this->m_ViewportSize.x, this->m_ViewportSize.y);
 			this->m_EditorCamera.SetViewportSize(this->m_ViewportSize.x, this->m_ViewportSize.y);
-            this->m_ActiveScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
 
         }
 
@@ -310,7 +312,7 @@ namespace Hazel
 		this->m_ViewportFocus = ImGui::IsWindowFocused();
 		this->m_ViewportHover = ImGui::IsWindowHovered();
 
-		Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportFocus && !this->m_ViewportHover);
+		Application::Get().GetImGuiLayer()->SetBlockEvents(!this->m_ViewportHover);
 		ImVec2 viewPanelSize = ImGui::GetContentRegionAvail();
 
 		this->m_ViewportSize = { viewPanelSize.x, viewPanelSize.y };
@@ -668,7 +670,7 @@ namespace Hazel
 		if (serializer.Deserialize(path.string()))
 		{
 			this->m_EditorScene = newScene;
-			this->m_EditorScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
+			//this->m_EditorScene->OnViewportResize((uint32_t)this->m_ViewportSize.x, (uint32_t)this->m_ViewportSize.y);
 			this->m_Panel.SetContext(this->m_EditorScene);
 			this->m_ActiveScene = this->m_EditorScene;
 

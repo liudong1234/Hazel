@@ -175,11 +175,11 @@ namespace Hazel
 		LoadAppAssembly("SandboxProject/Assets/Scripts/Binaries/Sandbox.dll");
 		LoadAssemblyClasses();
 	
-		auto& classes = s_Data->EntityClasses;
+		//auto& classes = s_Data->EntityClasses;
 		ScriptGlue::RegisterComponents();
 		ScriptGlue::RegisterFunctions();
 
-		s_Data->EntityClass = ScriptClass("Hazel", "Entity");
+		s_Data->EntityClass = ScriptClass("Hazel", "Entity", true);
 
 #if 0
 		//1.
@@ -247,7 +247,7 @@ namespace Hazel
 	void ScriptEngine::LoadAppAssembly(const std::filesystem::path& filepath)
 	{
 		s_Data->AppAssembly = Utils::LoadMonoAssembly(filepath);
-		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
+		s_Data->AppAssemblyImage = mono_assembly_get_image(s_Data->AppAssembly);
 		//Utils::PrintAssemblyTypes(s_Data->AppAssembly);
 
 	}
@@ -409,6 +409,12 @@ namespace Hazel
 
 	}
 
+	MonoObject* ScriptEngine::GetManagedInstance(UUID uuid)
+	{
+		HZ_CORE_ASSERT(s_Data->EntityInstances.find(uuid) != s_Data->EntityInstances.end());
+		return s_Data->EntityInstances[uuid]->GetManagedObject();
+	}
+
 	MonoImage* ScriptEngine::GetCoreAssemblyImage()
 	{
 		return s_Data->CoreAssemblyImage;
@@ -431,10 +437,12 @@ namespace Hazel
 
 
 
-	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className) :
-		m_ClassNamespace(classNamespace), m_ClassName(m_ClassName), m_MonoClass(nullptr)
+	ScriptClass::ScriptClass(const std::string& classNamespace, const std::string& className, bool isCore) :
+		m_ClassNamespace(classNamespace), m_ClassName(className), m_MonoClass(nullptr)
 	{
-		m_MonoClass = mono_class_from_name(s_Data->AppAssemblyImage, classNamespace.c_str(), className.c_str());
+		//m_MonoClass = mono_class_from_name(s_Data->AppAssemblyImage, classNamespace.c_str(), className.c_str());
+
+		m_MonoClass = mono_class_from_name(isCore ? s_Data->CoreAssemblyImage : s_Data->AppAssemblyImage, classNamespace.c_str(), className.c_str());
 	}
 
 	MonoObject* ScriptClass::Instantiate()
